@@ -8,6 +8,11 @@
   <sprites name="sprites"/>
   <backgrounds name="background"/>
   <paths name="paths"/>
+  <scripts name="scripts">
+    <script>scripts\choose_weighted.gml</script>
+    <script>scripts\create_maze.gml</script>
+    <script>scripts\get_decimals.gml</script>
+  </scripts>
   <rooms name="rooms">
     <room>rooms\rm_game</room>
   </rooms>
