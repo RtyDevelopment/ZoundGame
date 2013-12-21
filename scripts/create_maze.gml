@@ -11,7 +11,6 @@ NESW
 1=connection
 0=wall
 */
-//*
 var grid, minconn, maxconn, setconn, connspace, wallno, newconn, connlist;
 grid = ds_grid_create(argument0, argument1);
 
@@ -77,6 +76,6 @@ for (var i=0; i<argument0; i++) { //x
         
         show_debug_message("["+string(i)+","+string(j)+"] w/ "+string(wallno)+" conns: "+debug+" => "+connlist[0]+connlist[1]+connlist[2]+connlist[3]);
     }
-}//*/
+}
 
 return grid;
