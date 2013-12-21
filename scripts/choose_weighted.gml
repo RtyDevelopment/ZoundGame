@@ -3,7 +3,7 @@ var chancesum, multiplier, result, sum;
 chancesum = 0;
 multiplier = 0;
 for (var i=0; i<floor(argument_count/2); i++) {
-    chancesum += argument[i+1];
+    chancesum += argument[i*2+1];
     var dec = get_decimals(argument[i*2+1]);
     if (dec > multiplier) multiplier = dec;
 }
