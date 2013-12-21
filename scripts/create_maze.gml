@@ -1,4 +1,5 @@
-//create_maze(width, height, chance1, chance2, chance3, chance4)
+//create_maze(width, height, chance1, chance2, chance3, chance4);
+//Copyright Jasper Weyne (c) 2013
 
 /*
 0000    0000    0000
@@ -73,8 +74,6 @@ for (var i=0; i<argument0; i++) { //x
         if (connlist[1]=="-") connlist[1] = "0";
         if (connlist[2]=="-") connlist[2] = "0";
         ds_grid_set(grid, i, j, connlist[0]+connlist[1]+connlist[2]+connlist[3]);
-        
-        show_debug_message("["+string(i)+","+string(j)+"] w/ "+string(wallno)+" conns: "+debug+" => "+connlist[0]+connlist[1]+connlist[2]+connlist[3]);
     }
 }
 
