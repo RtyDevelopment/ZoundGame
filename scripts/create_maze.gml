@@ -12,7 +12,7 @@ NESW
 0=wall
 */
 //*
-var grid, wallno, minconn, maxconn, setconn, connlist;
+var grid, minconn, maxconn, setconn, connspace, wallno, newconn, connlist;
 grid = ds_grid_create(argument0, argument1);
 
 for (var i=0; i<argument0; i++) { //x
@@ -22,7 +22,8 @@ for (var i=0; i<argument0; i++) { //x
         maxconn = 4;
         setconn = 0;   //Amount of preset connections
         connspace = 2; //Amount of unset connections
-        newconn = 0;   //Amount of connections to be made in unset
+        wallno = 0;    //Amount of connections to be made (total)
+        newconn = 0;   //Amount of connections to be made (from unset)
         connlist[0] = "-"; // N //0=conn, 1=wall, - =unset
         connlist[1] = "-"; // E
         connlist[2] = "-"; // S
@@ -73,3 +74,5 @@ for (var i=0; i<argument0; i++) { //x
         ds_grid_set(grid, i, j, connlist[0]+connlist[1]+connlist[2]+connlist[3]);
     }
 }//*/
+
+return grid;
