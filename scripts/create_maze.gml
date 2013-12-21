@@ -28,42 +28,58 @@ for (var i=0; i<argument0; i++) { //x
         connlist[1] = "-"; // E
         connlist[2] = "-"; // S
         connlist[3] = "-"; // W
+        
         //Check environment
-        if (string_char_at(ds_grid_get(grid, i, j-1), 3)=="0" || j==0) { //If above is wall or border; else above is conn
+        if (j==0) { //If above is wall or border; else above is conn
             maxconn--;
             connlist[0] = "0";
         } else {
-            minconn++;
-            setconn++; //Add existent connection
-            connlist[0] = "1";
+            if (string_char_at(ds_grid_get(grid, i, j-1), 3)=="0") {
+                maxconn--;
+                connlist[0] = "0";
+            } else {
+                minconn++;
+                setconn++; //Add existent connection
+                connlist[0] = "1";
+            }
         }
         if (j==argument1-1) {  //Check if at bottom; when true max available =-1;
             maxconn--;
             connspace--;
             connlist[2] = "0";
         }
-        if (string_char_at(ds_grid_get(grid, i-1, j), 2)=="0" || i==0) { //If left is wall or border; else left is conn
+        if (i==0) { //If left is wall or border; else left is conn
             maxconn--;
             connlist[3] = "0";
         } else {
-            minconn++;
-            setconn++; //Add existent connection
-            connlist[3] = "1";
+            if (string_char_at(ds_grid_get(grid, i-1, j), 2)=="0") {
+                maxconn--;
+                connlist[3] = "0";
+            } else {
+                minconn++;
+                setconn++; //Add existent connection
+                connlist[3] = "1";
+            }
         }
         if (i==argument0-1) {  //Check if at right; when true max available =-1;
             maxconn--;
             connspace--;
             connlist[1] = "0";
         }
+        
         //Set chances according to available connections
         if (minconn<=1 && maxconn>=1) chance1 = argument2; else chance1 = 0;
-        if (minconn<=2 && maxconn>=2) chance2 = argument3; else chance3 = 0;
+        if (minconn<=2 && maxconn>=2) chance2 = argument3; else chance2 = 0;
         if (minconn<=3 && maxconn>=3) chance3 = argument4; else chance3 = 0;
         if (minconn<=4 && maxconn>=4) chance4 = argument5; else chance4 = 0;
+        
         wallno = choose_weighted(1, chance1, 2, chance2, 3, chance3, 4, chance4);
         newconn = wallno-setconn; //Set the amount of new connections (subtract existent from total)
         
-        debug = connlist[0]+connlist[1]+connlist[2]+connlist[3];
+        deblist[0] = connlist[0];
+        deblist[1] = connlist[1];
+        deblist[2] = connlist[2];
+        deblist[3] = connlist[3];
         
         for (var k=0; k<newconn; k++) {
             if (connlist[1]=="-") chance1 = 1; else chance1 = 0;
@@ -74,7 +90,15 @@ for (var i=0; i<argument0; i++) { //x
         if (connlist[1]=="-") connlist[1] = "0";
         if (connlist[2]=="-") connlist[2] = "0";
         ds_grid_set(grid, i, j, connlist[0]+connlist[1]+connlist[2]+connlist[3]);
+        
+        for (var k=0; k<4; k++) {
+            if (deblist[k]!="-" && deblist[k]!=connlist[k]) {
+                show_debug_message("[REPORT] {"+string(i)+","+string(j)+"} on index "+string(k)+": "+deblist[k]+" => "+connlist[k]+" ("+deblist[0]+deblist[1]+deblist[2]+deblist[3]+" => "+connlist[0]+connlist[1]+connlist[2]+connlist[3]+")");
+                faults+=1;
+            }
+        }
     }
 }
+//ds_grid_destroy(grid);
 
 return grid;
