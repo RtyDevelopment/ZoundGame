@@ -37,7 +37,7 @@ for (var i=0; i<argument0; i++) { //x
             setconn++; //Add existent connection
             connlist[0] = "1";
         }
-        if (j==argument1) {  //Check if at bottom; when true max available =-1;
+        if (j==argument1-1) {  //Check if at bottom; when true max available =-1;
             maxconn--;
             connspace--;
             connlist[2] = "0";
@@ -50,7 +50,7 @@ for (var i=0; i<argument0; i++) { //x
             setconn++; //Add existent connection
             connlist[3] = "1";
         }
-        if (i==argument0) {  //Check if at right; when true max available =-1;
+        if (i==argument0-1) {  //Check if at right; when true max available =-1;
             maxconn--;
             connspace--;
             connlist[1] = "0";
@@ -63,6 +63,8 @@ for (var i=0; i<argument0; i++) { //x
         wallno = choose_weighted(1, chance1, 2, chance2, 3, chance3, 4, chance4);
         newconn = wallno-setconn; //Set the amount of new connections (subtract existent from total)
         
+        debug = connlist[0]+connlist[1]+connlist[2]+connlist[3];
+        
         for (var k=0; k<newconn; k++) {
             if (connlist[1]=="-") chance1 = 1; else chance1 = 0;
             if (connlist[2]=="-") chance2 = 1; else chance2 = 0;
@@ -72,6 +74,8 @@ for (var i=0; i<argument0; i++) { //x
         if (connlist[1]=="-") connlist[1] = "0";
         if (connlist[2]=="-") connlist[2] = "0";
         ds_grid_set(grid, i, j, connlist[0]+connlist[1]+connlist[2]+connlist[3]);
+        
+        show_debug_message("["+string(i)+","+string(j)+"] w/ "+string(wallno)+" conns: "+debug+" => "+connlist[0]+connlist[1]+connlist[2]+connlist[3]);
     }
 }//*/
 
