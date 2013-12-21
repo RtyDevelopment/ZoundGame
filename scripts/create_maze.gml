@@ -29,31 +29,31 @@ for (var i=0; i<argument0; i++) { //x
         connlist[2] = "-"; // S
         connlist[3] = "-"; // W
         //Check environment
-        if (string_char_at(ds_grid_get(grid, i-1, j), 3)=="0" || i==0) { //If above is wall or border; else above is conn
+        if (string_char_at(ds_grid_get(grid, i, j-1), 3)=="0" || j==0) { //If above is wall or border; else above is conn
             maxconn--;
-            connlist[0] = "1";
-        } else {
-            minconn++;
-            setconn++; //Add existent connection
             connlist[0] = "0";
-        }
-        if (i==argument0) {  //Check if at bottom; when true max available =-1;
-            maxconn--;
-            connspace--;
-            connlist[2] = "1";
-        }
-        if (string_char_at(ds_grid_get(grid, i, j-1), 2)=="0" || j==0) { //If left is wall or border; else left is conn
-            maxconn--;
-            connlist[3] = "1";
         } else {
             minconn++;
             setconn++; //Add existent connection
-            connlist[3] = "0";
+            connlist[0] = "1";
         }
-        if (j==argument1) {  //Check if at right; when true max available =-1;
+        if (j==argument1) {  //Check if at bottom; when true max available =-1;
             maxconn--;
             connspace--;
-            connlist[1] = "1";
+            connlist[2] = "0";
+        }
+        if (string_char_at(ds_grid_get(grid, i-1, j), 2)=="0" || i==0) { //If left is wall or border; else left is conn
+            maxconn--;
+            connlist[3] = "0";
+        } else {
+            minconn++;
+            setconn++; //Add existent connection
+            connlist[3] = "1";
+        }
+        if (i==argument0) {  //Check if at right; when true max available =-1;
+            maxconn--;
+            connspace--;
+            connlist[1] = "0";
         }
         //Set chances according to available connections
         if (minconn<=1 && maxconn>=1) chance1 = argument2; else chance1 = 0;
