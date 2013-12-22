@@ -76,11 +76,6 @@ for (var i=0; i<argument0; i++) { //x
         wallno = choose_weighted(1, chance1, 2, chance2, 3, chance3, 4, chance4);
         newconn = wallno-setconn; //Set the amount of new connections (subtract existent from total)
         
-        deblist[0] = connlist[0];
-        deblist[1] = connlist[1];
-        deblist[2] = connlist[2];
-        deblist[3] = connlist[3];
-        
         for (var k=0; k<newconn; k++) {
             if (connlist[1]=="-") chance1 = 1; else chance1 = 0;
             if (connlist[2]=="-") chance2 = 1; else chance2 = 0;
@@ -90,13 +85,6 @@ for (var i=0; i<argument0; i++) { //x
         if (connlist[1]=="-") connlist[1] = "0";
         if (connlist[2]=="-") connlist[2] = "0";
         ds_grid_set(grid, i, j, connlist[0]+connlist[1]+connlist[2]+connlist[3]);
-        
-        for (var k=0; k<4; k++) {
-            if (deblist[k]!="-" && deblist[k]!=connlist[k]) {
-                show_debug_message("[REPORT] {"+string(i)+","+string(j)+"} on index "+string(k)+": "+deblist[k]+" => "+connlist[k]+" ("+deblist[0]+deblist[1]+deblist[2]+deblist[3]+" => "+connlist[0]+connlist[1]+connlist[2]+connlist[3]+")");
-                faults+=1;
-            }
-        }
     }
 }
 //ds_grid_destroy(grid);
