@@ -194,12 +194,12 @@ for (var i=0; i&lt;mazewidth; i++) {
             <kind>1</kind>
             <string>ds_grid_destroy(maze);
 
-w = real(string_digits(get_string("Width: ","10")));
-h = real(string_digits(get_string("Height: ","10")));
-ch1 = real(string_digits(get_string("Chance1: ","25")));
-ch2 = real(string_digits(get_string("Chance2: ","25")));
-ch3 = real(string_digits(get_string("Chance3: ","25")));
-ch4 = real(string_digits(get_string("Chance4: ","25")));
+w = real(string_digits(get_string("Width: ",string(w))));
+h = real(string_digits(get_string("Height: ",string(h))));
+ch1 = real(string_digits(get_string("Chance1: ",string(ch1))));
+ch2 = real(string_digits(get_string("Chance2: ",string(ch2))));
+ch3 = real(string_digits(get_string("Chance3: ",string(ch3))));
+ch4 = real(string_digits(get_string("Chance4: ",string(ch4))));
 
 maze = create_maze(w, h, ch1, ch2, ch3, ch4);
 </string>
