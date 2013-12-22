@@ -122,7 +122,7 @@ draw_rectangle(0, 0, mazewidth*gridsize-1, mazeheight*gridsize-1, 0);
 if (mouse_x&gt;=0 &amp;&amp; mouse_x&lt;mazewidth*gridsize &amp;&amp; mouse_y&gt;=0 &amp;&amp; mouse_y&lt;mazeheight*gridsize) {
     mx = floor(mouse_x/gridsize);
     my = floor(mouse_y/gridsize);
-    draw_text(mazewidth*gridsize, mazeheight*gridsize, "X: "+string(mx)+" Y:"+string(my)+"#"+ds_grid_get(maze, mx, my));
+    draw_text(0, mazeheight*gridsize, "X: "+string(mx)+" Y:"+string(my)+"#"+ds_grid_get(maze, mx, my));
     draw_set_color(c_dkgray);
     draw_rectangle(mx*gridsize, my*gridsize, (mx+1)*gridsize-1, (my+1)*gridsize-1, 0);
 }
