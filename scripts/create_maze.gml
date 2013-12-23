@@ -12,7 +12,7 @@ NESW
 1=connection
 0=wall
 */
-var grid, minconn, maxconn, setconn, connspace, wallno, newconn, connlist, pilc;//, pillarxlist, pillarylist;
+var grid, minconn, maxconn, setconn, connspace, wallno, newconn, connlist;//, listx1, listy1;
 
 grid = ds_grid_create(argument0, argument1);
 
@@ -89,8 +89,8 @@ for (var i=0; i<argument0; i++) { //x
     }
 }
 
-ds_list_clear(pillarxlist);
-ds_list_clear(pillarylist);
+ds_list_clear(listx1);
+ds_list_clear(listy1);
 
 for (var i=1; i<argument0; i++) { //x
     for (var j=1; j<argument1; j++) { //y
@@ -102,8 +102,8 @@ for (var i=1; i<argument0; i++) { //x
                 if (string_char_at(LO, 1) == "1" && string_char_at(LO, 2) == "1") {
                     RO = ds_grid_get(grid, i, j);
                     if (string_char_at(RO, 1) == "1" && string_char_at(RO, 4) == "1") {
-                        ds_list_add(pillarxlist, i);
-                        ds_list_add(pillarylist, j);
+                        ds_list_add(listx1, i);
+                        ds_list_add(listy1, j);
                     }
                 }
             }
@@ -111,34 +111,34 @@ for (var i=1; i<argument0; i++) { //x
     }
 }
 
-ds_list_clear(linelistx);
-ds_list_clear(linelisty);
+ds_list_clear(listy2);
+ds_list_clear(listy2);
 ds_list_clear(dirlist);
 
-for (var i=0; i<ds_list_size(pillarxlist); i++) { //cur
-    curx = ds_list_find_value(pillarxlist, i);
-    cury = ds_list_find_value(pillarylist, i);
-    for (var j=0; j<ds_list_size(pillarxlist); j++) { //search
-        searchx = ds_list_find_value(pillarxlist, j);
-        searchy = ds_list_find_value(pillarylist, j);
-        if (curx+1==searchx && cury==searchy) {
-            ds_list_add(linelistx, curx);
-            ds_list_add(linelisty, cury);
+for (var i=0; i<ds_list_size(listx1); i++) { //cur
+    selfx = ds_list_find_value(listx1, i);
+    selfy = ds_list_find_value(listy1, i);
+    for (var j=0; j<ds_list_size(listx1); j++) { //search
+        searchx = ds_list_find_value(listx1, j);
+        searchy = ds_list_find_value(listy1, j);
+        if (selfx+1==searchx && selfy==searchy) {
+            ds_list_add(listy2, selfx);
+            ds_list_add(listy2, selfy);
             ds_list_add(dirlist, 0);
-            ds_grid_set(grid, curx, cury, string_set_at(ds_grid_get(grid, curx, cury), 1, "0"));
-            ds_grid_set(grid, curx, cury-1, string_set_at(ds_grid_get(grid, curx, cury-1), 3, "0"));
+            ds_grid_set(grid, selfx, selfy, string_set_at(ds_grid_get(grid, selfx, selfy), 1, "0"));
+            ds_grid_set(grid, selfx, selfy-1, string_set_at(ds_grid_get(grid, selfx, selfy-1), 3, "0"));
             break;
         }
     }
-    for (var j=0; j<ds_list_size(pillarxlist); j++) { //search
-        searchx = ds_list_find_value(pillarxlist, j);
-        searchy = ds_list_find_value(pillarylist, j);
-        if (curx==searchx && cury+1==searchy) {
-            ds_list_add(linelistx, curx);
-            ds_list_add(linelisty, cury);
+    for (var j=0; j<ds_list_size(listx1); j++) { //search
+        searchx = ds_list_find_value(listx1, j);
+        searchy = ds_list_find_value(listy1, j);
+        if (selfx==searchx && selfy+1==searchy) {
+            ds_list_add(listy2, selfx);
+            ds_list_add(listy2, selfy);
             ds_list_add(dirlist, 1);
-            ds_grid_set(grid, curx, cury, string_set_at(ds_grid_get(grid, curx, cury), 4, "0"));
-            ds_grid_set(grid, curx-1, cury, string_set_at(ds_grid_get(grid, curx-1, cury), 2, "0"));
+            ds_grid_set(grid, selfx, selfy, string_set_at(ds_grid_get(grid, selfx, selfy), 4, "0"));
+            ds_grid_set(grid, selfx-1, selfy, string_set_at(ds_grid_get(grid, selfx-1, selfy), 2, "0"));
             break;
         }
     }
@@ -146,42 +146,36 @@ for (var i=0; i<ds_list_size(pillarxlist); i++) { //cur
 
 ds_list_clear(emptylistx);
 ds_list_clear(emptylisty);
-ds_list_clear(emptylistval);
 
 for (var i=0; i<argument0; i++) { //x
     for (var j=0; j<argument1; j++) { //y
         if (ds_grid_get(grid, i, j)=="0000") {
             ds_list_add(emptylistx, i);
             ds_list_add(emptylisty, j);
-            ds_list_add(emptylistval, 1);
         }
     }
 }
 
 for (var i=0; i<ds_list_size(emptylistx); i++) { //cur
-    curx = ds_list_find_value(emptylistx, i);
-    cury = ds_list_find_value(emptylisty, i);
+    selfx = ds_list_find_value(emptylistx, i);
+    selfy = ds_list_find_value(emptylisty, i);
     for (var j=0; j<ds_list_size(emptylistx); j++) { //search
         searchx = ds_list_find_value(emptylistx, j);
         searchy = ds_list_find_value(emptylisty, j);
-        if (curx+1==searchx && cury==searchy) {
+        if (selfx+1==searchx && selfy==searchy) {
             ds_grid_set(grid, searchx, searchy, string_set_at(ds_grid_get(grid, searchx, searchy), 4, "1"));
-            ds_grid_set(grid, curx, cury, string_set_at(ds_grid_get(grid, curx, cury), 2, "1"));
-            //ds_list_replace(emptylistval, 
-            checkfaults = false;
+            ds_grid_set(grid, selfx, selfy, string_set_at(ds_grid_get(grid, selfx, selfy), 2, "1"));
             break;
         }
     }
-    curx = ds_list_find_value(emptylistx, i);
-    cury = ds_list_find_value(emptylisty, i);
+    selfx = ds_list_find_value(emptylistx, i);
+    selfy = ds_list_find_value(emptylisty, i);
     for (var j=0; j<ds_list_size(emptylistx); j++) { //search
         searchx = ds_list_find_value(emptylistx, j);
         searchy = ds_list_find_value(emptylisty, j);
-        if (curx==searchx && cury+1==searchy) {
+        if (selfx==searchx && selfy+1==searchy) {
             ds_grid_set(grid, searchx, searchy, string_set_at(ds_grid_get(grid, searchx, searchy), 1, "1"));
-            ds_grid_set(grid, curx, cury, string_set_at(ds_grid_get(grid, curx, cury), 3, "1"));
-            //ds_list_replace(emptylistval, 
-            checkfaults = false;
+            ds_grid_set(grid, selfx, selfy, string_set_at(ds_grid_get(grid, selfx, selfy), 3, "1"));
             break;
         }
     }
@@ -206,27 +200,27 @@ while (ds_list_empty(unsetx)==false || first==true) {
         ds_grid_set(grid, selfx, selfy, string_set_at(self_, wallindex, "1"));
         switch (wallindex) {
             case 1: //north
-                sidex = selfx;
-                sidey = selfy-1;
+                searchx = selfx;
+                searchy = selfy-1;
                 wallindex = 3;
                 break;
             case 2: //east
-                sidex = selfx+1;
-                sidey = selfy;
+                searchx = selfx+1;
+                searchy = selfy;
                 wallindex = 4;
                 break;
             case 3: //south
-                sidex = selfx;
-                sidey = selfy+1;
+                searchx = selfx;
+                searchy = selfy+1;
                 wallindex = 1;
                 break;
             case 4: //west
-                sidex = selfx-1;
-                sidey = selfy;
+                searchx = selfx-1;
+                searchy = selfy;
                 wallindex = 2;
                 break;
         }
-        ds_grid_set(grid, sidex, sidey, string_set_at(ds_grid_get(grid, sidex, sidey), wallindex, "1"));
+        ds_grid_set(grid, searchx, searchy, string_set_at(ds_grid_get(grid, searchx, searchy), wallindex, "1"));
     }
     ds_list_clear(connectx);
     ds_list_clear(connecty);
@@ -255,26 +249,26 @@ while (ds_list_empty(unsetx)==false || first==true) {
                 //define adjectent x and y
                 switch (i) {
                     case 1: //north
-                        sidex = selfx;
-                        sidey = selfy-1;
+                        searchx = selfx;
+                        searchy = selfy-1;
                         break;
                     case 2: //east
-                        sidex = selfx+1;
-                        sidey = selfy;
+                        searchx = selfx+1;
+                        searchy = selfy;
                         break;
                     case 3: //south
-                        sidex = selfx;
-                        sidey = selfy+1;
+                        searchx = selfx;
+                        searchy = selfy+1;
                         break;
                     case 4: //west
-                        sidex = selfx-1;
-                        sidey = selfy;
+                        searchx = selfx-1;
+                        searchy = selfy;
                         break;
                 }
                 //if side is not in queue and not in set, add to queue (last)
-                if (in_list_double(sidex, sidey, connectx, connecty)==-1 && in_list_double(sidex, sidey, queuex, queuey)==-1) {
-                    ds_list_add(queuex, sidex);
-                    ds_list_add(queuey, sidey);
+                if (in_list_double(searchx, searchy, connectx, connecty)==-1 && in_list_double(searchx, searchy, queuex, queuey)==-1) {
+                    ds_list_add(queuex, searchx);
+                    ds_list_add(queuey, searchy);
                 }
             }
         }
