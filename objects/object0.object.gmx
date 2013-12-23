@@ -27,29 +27,10 @@
             <kind>1</kind>
             <string>w = 10;
 h = 10;
-ch1 = 0.25;
-ch2 = 0.25;
-ch3 = 0.25;
-ch4 = 0.25;
 
-pillarxlist = ds_list_create();
-pillarylist = ds_list_create();
-
-linelistx = ds_list_create();
-linelisty = ds_list_create();
-dirlist = ds_list_create();
-
-emptylistx = ds_list_create();
-emptylisty = ds_list_create();
-emptylistval = ds_list_create();
-
-connectx = ds_list_create();
-connecty = ds_list_create();
-
-faults = 0;
 checkfaults = false;
 
-maze = create_maze(w, h, ch1, ch2, ch3, ch4);
+maze = create_maze(w, h);
 gridsize = 25;
 walldist = 5;
 </string>
@@ -76,31 +57,8 @@ walldist = 5;
             <kind>1</kind>
             <string>if (checkfaults==true) {
     ds_grid_destroy(maze);
-    maze = create_maze(w, h, ch1, ch2, ch3, ch4);
+    maze = create_maze(w, h);
 }
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="7" enumb="3">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>show_debug_message("Faults: "+string(faults));
 </string>
           </argument>
         </arguments>
@@ -184,28 +142,6 @@ for (var i=0; i&lt;mazewidth; i++) {
         }
     }
 }
-draw_set_color(c_red);
-for (var i=0; i&lt;ds_list_size(pillarxlist); i++) {
-    draw_circle(ds_list_find_value(pillarxlist, i)*gridsize, ds_list_find_value(pillarylist, i)*gridsize, floor(walldist/2), false);
-}
-
-for (var i=0; i&lt;ds_list_size(linelistx); i++) {
-    if (ds_list_find_value(dirlist, i)==0) {
-        draw_line(ds_list_find_value(linelistx, i)*gridsize, ds_list_find_value(linelisty, i)*gridsize, (ds_list_find_value(linelistx, i)+1)*gridsize, ds_list_find_value(linelisty, i)*gridsize);
-    } else {
-        draw_line(ds_list_find_value(linelistx, i)*gridsize, ds_list_find_value(linelisty, i)*gridsize, ds_list_find_value(linelistx, i)*gridsize, (ds_list_find_value(linelisty, i)+1)*gridsize);
-    }
-}
-
-draw_set_color(c_yellow);
-for (var i=0; i&lt;ds_list_size(emptylistx); i++) {
-    draw_circle((ds_list_find_value(emptylistx, i)+0.5)*gridsize, (ds_list_find_value(emptylisty, i)+0.5)*gridsize, floor(walldist/2), false);
-}
-
-draw_set_color(c_blue);
-for (var i=0; i&lt;ds_list_size(connectx); i++) {
-    draw_circle((ds_list_find_value(connectx, i)+0.5)*gridsize, (ds_list_find_value(connecty, i)+0.5)*gridsize, floor(walldist/2)+1, true);
-}
 </string>
           </argument>
         </arguments>
@@ -232,12 +168,8 @@ for (var i=0; i&lt;ds_list_size(connectx); i++) {
 
 w = real(string_digits(get_string("Width: ",string(w))));
 h = real(string_digits(get_string("Height: ",string(h))));
-ch1 = real(string_digits(get_string("Chance1: ",string(ch1))));
-ch2 = real(string_digits(get_string("Chance2: ",string(ch2))));
-ch3 = real(string_digits(get_string("Chance3: ",string(ch3))));
-ch4 = real(string_digits(get_string("Chance4: ",string(ch4))));
 
-maze = create_maze(w, h, ch1, ch2, ch3, ch4);
+maze = create_maze(w, h);
 </string>
           </argument>
         </arguments>
