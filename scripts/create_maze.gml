@@ -202,7 +202,6 @@ while (ds_list_empty(queuex)==false) {
     for (var i=1; i<=4; i++) {
         //if side is adjectent
         if (string_char_at(ds_grid_get(grid, selfx, selfy), i)=="1") {
-            show_debug_message("[REPORT] {"+string(selfx)+","+string(selfy)+"} side: "+string(i)+" = true");
             //define adjectent x and y
             switch (i) {
                 case 1: //north
