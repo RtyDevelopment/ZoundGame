@@ -195,7 +195,7 @@ for (var i=0; i&lt;ds_list_size(linelistx); i++) {
 
 draw_set_color(c_yellow);
 for (var i=0; i&lt;ds_list_size(emptylistx); i++) {
-    draw_circle(ds_list_find_value(emptylistx, i)*gridsize, ds_list_find_value(emptylisty, i)*gridsize, floor(walldist/2), false);
+    draw_circle((ds_list_find_value(emptylistx, i)+0.5)*gridsize, (ds_list_find_value(emptylisty, i)+0.5)*gridsize, floor(walldist/2), false);
 }
 </string>
           </argument>
