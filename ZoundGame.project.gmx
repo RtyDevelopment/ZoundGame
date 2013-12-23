@@ -13,7 +13,6 @@
     <script>scripts\create_maze.gml</script>
     <script>scripts\get_decimals.gml</script>
     <script>scripts\string_set_at.gml</script>
-    <script>scripts\maze_breadth_first_search.gml</script>
     <script>scripts\in_list_double.gml</script>
   </scripts>
   <objects name="objects">

@@ -158,21 +158,88 @@ for (var i=0; i<argument0; i++) { //x
     }
 }
 
-/*for (var i=0; i<ds_list_size(emptylistx); i++) { //cur
+for (var i=0; i<ds_list_size(emptylistx); i++) { //cur
     curx = ds_list_find_value(emptylistx, i);
     cury = ds_list_find_value(emptylisty, i);
     for (var j=0; j<ds_list_size(emptylistx); j++) { //search
         searchx = ds_list_find_value(emptylistx, j);
         searchy = ds_list_find_value(emptylisty, j);
         if (curx+1==searchx && cury==searchy) {
-            ds_grid_
-            
+            ds_grid_set(grid, searchx, searchy, string_set_at(ds_grid_get(grid, searchx, searchy), 4, "1"));
+            ds_grid_set(grid, curx, cury, string_set_at(ds_grid_get(grid, curx, cury), 2, "1"));
+            //ds_list_replace(emptylistval, 
+            checkfaults = false;
+            break;
+        }
+    }
     curx = ds_list_find_value(emptylistx, i);
     cury = ds_list_find_value(emptylisty, i);
     for (var j=0; j<ds_list_size(emptylistx); j++) { //search
         searchx = ds_list_find_value(emptylistx, j);
         searchy = ds_list_find_value(emptylisty, j);
         if (curx==searchx && cury+1==searchy) {
-*/            
+            ds_grid_set(grid, searchx, searchy, string_set_at(ds_grid_get(grid, searchx, searchy), 1, "1"));
+            ds_grid_set(grid, curx, cury, string_set_at(ds_grid_get(grid, curx, cury), 3, "1"));
+            //ds_list_replace(emptylistval, 
+            checkfaults = false;
+            break;
+        }
+    }
+}
+
+ds_list_clear(connectx);
+ds_list_clear(connecty);
+queuex = ds_list_create();
+queuey = ds_list_create();
+ds_list_add(queuex, 0);
+ds_list_add(queuey, 0);
+
+while (ds_list_empty(queuex)==false) {
+    selfx = ds_list_find_value(queuex, 0);
+    selfy = ds_list_find_value(queuey, 0);
+    
+    //for each side
+    for (var i=1; i<=4; i++) {
+        //if side is adjectent
+        if (string_char_at(ds_grid_get(grid, selfx, selfy), i)=="1") {
+            show_debug_message("[REPORT] {"+string(selfx)+","+string(selfy)+"} side: "+string(i)+" = true");
+            //define adjectent x and y
+            switch (i) {
+                case 1: //north
+                    sidex = selfx;
+                    sidey = selfy-1;
+                    break;
+                case 2: //east
+                    sidex = selfx+1;
+                    sidey = selfy;
+                    break;
+                case 3: //south
+                    sidex = selfx;
+                    sidey = selfy+1;
+                    break;
+                case 4: //west
+                    sidex = selfx-1;
+                    sidey = selfy;
+                    break;
+            }
+            //if side is not in queue and not in set, add to queue (last)
+            if (in_list_double(sidex, sidey, connectx, connecty)==-1 && in_list_double(sidex, sidey, queuex, queuey)==-1) {
+                ds_list_add(queuex, sidex);
+                ds_list_add(queuey, sidey);
+            }
+        }
+    }
+    
+    //add self to set
+    ds_list_add(connectx, selfx);
+    ds_list_add(connecty, selfy);
+    
+    //remove self from queue (first)
+    ds_list_delete(queuex, 0);
+    ds_list_delete(queuey, 0);
+}
+
+ds_list_destroy(queuex);
+ds_list_destroy(queuey);
 
 return grid;

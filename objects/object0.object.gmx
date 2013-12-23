@@ -43,6 +43,9 @@ emptylistx = ds_list_create();
 emptylisty = ds_list_create();
 emptylistval = ds_list_create();
 
+connectx = ds_list_create();
+connecty = ds_list_create();
+
 faults = 0;
 checkfaults = false;
 
@@ -197,6 +200,11 @@ for (var i=0; i&lt;ds_list_size(linelistx); i++) {
 draw_set_color(c_yellow);
 for (var i=0; i&lt;ds_list_size(emptylistx); i++) {
     draw_circle((ds_list_find_value(emptylistx, i)+0.5)*gridsize, (ds_list_find_value(emptylisty, i)+0.5)*gridsize, floor(walldist/2), false);
+}
+
+draw_set_color(c_blue);
+for (var i=0; i&lt;ds_list_size(connectx); i++) {
+    draw_circle((ds_list_find_value(connectx, i)+0.5)*gridsize, (ds_list_find_value(connecty, i)+0.5)*gridsize, floor(walldist/2)+1, true);
 }
 </string>
           </argument>
