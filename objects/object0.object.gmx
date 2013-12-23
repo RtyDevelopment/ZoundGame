@@ -41,6 +41,7 @@ dirlist = ds_list_create();
 
 emptylistx = ds_list_create();
 emptylisty = ds_list_create();
+emptylistval = ds_list_create();
 
 faults = 0;
 checkfaults = false;
