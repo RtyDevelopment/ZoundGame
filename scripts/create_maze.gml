@@ -187,58 +187,113 @@ for (var i=0; i<ds_list_size(emptylistx); i++) { //cur
     }
 }
 
-ds_list_clear(connectx);
-ds_list_clear(connecty);
-queuex = ds_list_create();
-queuey = ds_list_create();
-ds_list_add(queuex, 0);
-ds_list_add(queuey, 0);
 
-while (ds_list_empty(queuex)==false) {
-    selfx = ds_list_find_value(queuex, 0);
-    selfy = ds_list_find_value(queuey, 0);
+unsetx = ds_list_create();
+unsety = ds_list_create();
+first = true;
+
+while (ds_list_empty(unsetx)==false || first==true) {
+    if (first==false) {
+        index = floor(random(ds_list_size(unsetx)));
+        selfx = ds_list_find_value(unsetx, index);
+        selfy = ds_list_find_value(unsety, index);
+        self_ = ds_grid_get(grid, selfx, selfy);
+        if (string_char_at(self_, 1)=="0") chance1 = 1; else chance1 = 0;
+        if (string_char_at(self_, 2)=="0") chance2 = 1; else chance2 = 0;
+        if (string_char_at(self_, 3)=="0") chance3 = 1; else chance3 = 0;
+        if (string_char_at(self_, 4)=="0") chance4 = 1; else chance4 = 0;
+        wallindex = choose_weighted(1, chance1, 2, chance2, 3, chance3, 4, chance4);
+        ds_grid_set(grid, selfx, selfy, string_set_at(self_, wallindex, "1"));
+        switch (wallindex) {
+            case 1: //north
+                sidex = selfx;
+                sidey = selfy-1;
+                wallindex = 3;
+                break;
+            case 2: //east
+                sidex = selfx+1;
+                sidey = selfy;
+                wallindex = 4;
+                break;
+            case 3: //south
+                sidex = selfx;
+                sidey = selfy+1;
+                wallindex = 1;
+                break;
+            case 4: //west
+                sidex = selfx-1;
+                sidey = selfy;
+                wallindex = 2;
+                break;
+        }
+        ds_grid_set(grid, sidex, sidey, string_set_at(ds_grid_get(grid, sidex, sidey), wallindex, "1"));
+    }
+    ds_list_clear(connectx);
+    ds_list_clear(connecty);
+    queuex = ds_list_create();
+    queuey = ds_list_create();
+    ds_list_add(queuex, 0);
+    ds_list_add(queuey, 0);
     
-    //for each side
-    for (var i=1; i<=4; i++) {
-        //if side is adjectent
-        if (string_char_at(ds_grid_get(grid, selfx, selfy), i)=="1") {
-            //define adjectent x and y
-            switch (i) {
-                case 1: //north
-                    sidex = selfx;
-                    sidey = selfy-1;
-                    break;
-                case 2: //east
-                    sidex = selfx+1;
-                    sidey = selfy;
-                    break;
-                case 3: //south
-                    sidex = selfx;
-                    sidey = selfy+1;
-                    break;
-                case 4: //west
-                    sidex = selfx-1;
-                    sidey = selfy;
-                    break;
-            }
-            //if side is not in queue and not in set, add to queue (last)
-            if (in_list_double(sidex, sidey, connectx, connecty)==-1 && in_list_double(sidex, sidey, queuex, queuey)==-1) {
-                ds_list_add(queuex, sidex);
-                ds_list_add(queuey, sidey);
-            }
+    ds_list_clear(unsetx);
+    ds_list_clear(unsety);
+    for (var i=0; i<argument0; i++) {
+        for (var j=0; j<argument1; j++) {
+            ds_list_add(unsetx, i);
+            ds_list_add(unsety, j);
         }
     }
     
-    //add self to set
-    ds_list_add(connectx, selfx);
-    ds_list_add(connecty, selfy);
+    while (ds_list_empty(queuex)==false) {
+        selfx = ds_list_find_value(queuex, 0);
+        selfy = ds_list_find_value(queuey, 0);
+        
+        //for each side
+        for (var i=1; i<=4; i++) {
+            //if side is adjectent
+            if (string_char_at(ds_grid_get(grid, selfx, selfy), i)=="1") {
+                //define adjectent x and y
+                switch (i) {
+                    case 1: //north
+                        sidex = selfx;
+                        sidey = selfy-1;
+                        break;
+                    case 2: //east
+                        sidex = selfx+1;
+                        sidey = selfy;
+                        break;
+                    case 3: //south
+                        sidex = selfx;
+                        sidey = selfy+1;
+                        break;
+                    case 4: //west
+                        sidex = selfx-1;
+                        sidey = selfy;
+                        break;
+                }
+                //if side is not in queue and not in set, add to queue (last)
+                if (in_list_double(sidex, sidey, connectx, connecty)==-1 && in_list_double(sidex, sidey, queuex, queuey)==-1) {
+                    ds_list_add(queuex, sidex);
+                    ds_list_add(queuey, sidey);
+                }
+            }
+        }
+        
+        //add self to set and remove from unchecked
+        ds_list_add(connectx, selfx);
+        ds_list_add(connecty, selfy);
+        index = in_list_double(selfx, selfy, unsetx, unsety);
+        ds_list_delete(unsetx, index);
+        ds_list_delete(unsety, index);
+        
+        //remove self from queue (first)
+        ds_list_delete(queuex, 0);
+        ds_list_delete(queuey, 0);
+    }
     
-    //remove self from queue (first)
-    ds_list_delete(queuex, 0);
-    ds_list_delete(queuey, 0);
+    ds_list_destroy(queuex);
+    ds_list_destroy(queuey);
+    first = false;
 }
-
-ds_list_destroy(queuex);
-ds_list_destroy(queuey);
 
 return grid;
