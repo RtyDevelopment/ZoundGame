@@ -32,6 +32,16 @@ ch2 = 0.25;
 ch3 = 0.25;
 ch4 = 0.25;
 
+pillarxlist = ds_list_create();
+pillarylist = ds_list_create();
+
+linelistx = ds_list_create();
+linelisty = ds_list_create();
+dirlist = ds_list_create();
+
+emptylistx = ds_list_create();
+emptylisty = ds_list_create();
+
 faults = 0;
 checkfaults = false;
 
@@ -169,6 +179,23 @@ for (var i=0; i&lt;mazewidth; i++) {
             draw_line(i*gridsize, (j+1)*gridsize-walldist, i*gridsize+walldist, (j+1)*gridsize-walldist);
         }
     }
+}
+draw_set_color(c_red);
+for (var i=0; i&lt;ds_list_size(pillarxlist); i++) {
+    draw_circle(ds_list_find_value(pillarxlist, i)*gridsize, ds_list_find_value(pillarylist, i)*gridsize, floor(walldist/2), false);
+}
+
+for (var i=0; i&lt;ds_list_size(linelistx); i++) {
+    if (ds_list_find_value(dirlist, i)==0) {
+        draw_line(ds_list_find_value(linelistx, i)*gridsize, ds_list_find_value(linelisty, i)*gridsize, (ds_list_find_value(linelistx, i)+1)*gridsize, ds_list_find_value(linelisty, i)*gridsize);
+    } else {
+        draw_line(ds_list_find_value(linelistx, i)*gridsize, ds_list_find_value(linelisty, i)*gridsize, ds_list_find_value(linelistx, i)*gridsize, (ds_list_find_value(linelisty, i)+1)*gridsize);
+    }
+}
+
+draw_set_color(c_yellow);
+for (var i=0; i&lt;ds_list_size(emptylistx); i++) {
+    draw_circle(ds_list_find_value(emptylistx, i)*gridsize, ds_list_find_value(emptylisty, i)*gridsize, floor(walldist/2), false);
 }
 </string>
           </argument>

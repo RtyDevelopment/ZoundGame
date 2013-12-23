@@ -12,7 +12,8 @@ NESW
 1=connection
 0=wall
 */
-var grid, minconn, maxconn, setconn, connspace, wallno, newconn, connlist;
+var grid, minconn, maxconn, setconn, connspace, wallno, newconn, connlist, pilc;//, pillarxlist, pillarylist;
+
 grid = ds_grid_create(argument0, argument1);
 
 for (var i=0; i<argument0; i++) { //x
@@ -87,6 +88,97 @@ for (var i=0; i<argument0; i++) { //x
         ds_grid_set(grid, i, j, connlist[0]+connlist[1]+connlist[2]+connlist[3]);
     }
 }
-//ds_grid_destroy(grid);
+
+ds_list_clear(pillarxlist);
+ds_list_clear(pillarylist);
+
+for (var i=1; i<argument0; i++) { //x
+    for (var j=1; j<argument1; j++) { //y
+        LB = ds_grid_get(grid, i-1, j-1);
+        if (string_char_at(LB, 2) == "1" && string_char_at(LB, 3) == "1") {
+            RB = ds_grid_get(grid, i, j-1);
+            if (string_char_at(RB, 3) == "1" && string_char_at(RB, 4) == "1") {
+                LO = ds_grid_get(grid, i-1, j);
+                if (string_char_at(LO, 1) == "1" && string_char_at(LO, 2) == "1") {
+                    RO = ds_grid_get(grid, i, j);
+                    if (string_char_at(RO, 1) == "1" && string_char_at(RO, 4) == "1") {
+                        ds_list_add(pillarxlist, i);
+                        ds_list_add(pillarylist, j);
+                        show_debug_message("[PILLAR] "+string(ds_list_size(pillarxlist)-1)+"{"+string(i)+","+string(j)+"}");
+                    }
+                }
+            }
+        }               
+    }
+}
+
+ds_list_clear(linelistx);
+ds_list_clear(linelisty);
+ds_list_clear(dirlist);
+
+for (var i=0; i<ds_list_size(pillarxlist); i++) { //cur
+    curx = ds_list_find_value(pillarxlist, i);
+    cury = ds_list_find_value(pillarylist, i);
+    for (var j=0; j<ds_list_size(pillarxlist); j++) { //search
+    searchx = ds_list_find_value(pillarxlist, j);
+    searchy = ds_list_find_value(pillarylist, j);
+        if (curx+1==searchx && cury==searchy) {
+            ds_list_add(linelistx, curx);
+            ds_list_add(linelisty, cury);
+            ds_list_add(dirlist, 0);
+            gridchr = ds_grid_get(grid, curx, cury);
+            gridchr1 = "0";
+            gridchr2 = string_char_at(gridchr, 2);
+            gridchr3 = string_char_at(gridchr, 3);
+            gridchr4 = string_char_at(gridchr, 4);
+            gridchr = gridchr1+gridchr2+gridchr3+gridchr4;
+            ds_grid_set(grid, curx, cury, gridchr);
+            gridchr = ds_grid_get(grid, curx, cury-1);
+            gridchr1 = string_char_at(gridchr, 1);
+            gridchr2 = string_char_at(gridchr, 2);
+            gridchr3 = "0"
+            gridchr4 = string_char_at(gridchr, 4);
+            gridchr = gridchr1+gridchr2+gridchr3+gridchr4;
+            ds_grid_set(grid, curx, cury-1, gridchr);
+            break;
+        }
+    }
+    for (var j=0; j<ds_list_size(pillarxlist); j++) { //search
+    searchx = ds_list_find_value(pillarxlist, j);
+    searchy = ds_list_find_value(pillarylist, j);
+        if (curx==searchx && cury+1==searchy) {
+            ds_list_add(linelistx, curx);
+            ds_list_add(linelisty, cury);
+            ds_list_add(dirlist, 1);
+            gridchr = ds_grid_get(grid, curx, cury);
+            gridchr1 = string_char_at(gridchr, 1);
+            gridchr2 = string_char_at(gridchr, 2);
+            gridchr3 = string_char_at(gridchr, 3);
+            gridchr4 = "0";
+            gridchr = gridchr1+gridchr2+gridchr3+gridchr4;
+            ds_grid_set(grid, curx, cury, gridchr);
+            gridchr = ds_grid_get(grid, curx-1, cury);
+            gridchr1 = string_char_at(gridchr, 1);
+            gridchr2 = "0"
+            gridchr3 = string_char_at(gridchr, 3);
+            gridchr4 = string_char_at(gridchr, 4);
+            gridchr = gridchr1+gridchr2+gridchr3+gridchr4;
+            ds_grid_set(grid, curx-1, cury, gridchr);
+            break;
+        }
+    }
+}
+
+ds_list_clear(emptylistx);
+ds_list_clear(emptylisty);
+
+for (var i=0; i<argument0; i++) { //x
+    for (var j=0; j<argument1; j++) { //y
+        if (ds_grid_get(grid, i, j)=="0000") {
+            ds_list_add(emptylistx, i);
+            ds_list_add(emptylisty, j);
+        }
+    }
+}
 
 return grid;
