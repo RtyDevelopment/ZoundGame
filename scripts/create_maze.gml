@@ -180,10 +180,10 @@ while (ds_list_empty(listx2)==false || first==true) {
         selfx = ds_list_find_value(listx2, index);
         selfy = ds_list_find_value(listy2, index);
         self_ = ds_grid_get(grid, selfx, selfy);
-        if (string_char_at(self_, 1)=="0") chance1 = 1; else chance1 = 0;
-        if (string_char_at(self_, 2)=="0") chance2 = 1; else chance2 = 0;
-        if (string_char_at(self_, 3)=="0") chance3 = 1; else chance3 = 0;
-        if (string_char_at(self_, 4)=="0") chance4 = 1; else chance4 = 0;
+        if (string_char_at(self_, 1)=="0" && selfy!=0) chance1 = 1; else chance1 = 0;
+        if (string_char_at(self_, 2)=="0" && selfx!=argument0-1) chance2 = 1; else chance2 = 0;
+        if (string_char_at(self_, 3)=="0" && selfy!=argument1-1) chance3 = 1; else chance3 = 0;
+        if (string_char_at(self_, 4)=="0" && selfx!=0) chance4 = 1; else chance4 = 0;
         index = choose_weighted(1, chance1, 2, chance2, 3, chance3, 4, chance4);
         ds_grid_set(grid, selfx, selfy, string_set_at(self_, index, "1"));
         switch (index) {
