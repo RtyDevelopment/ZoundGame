@@ -32,37 +32,37 @@ for (var i=0; i<argument0; i++) { //x
         
         //Check environment
         if (j==0) { //If above is wall or border; else above is conn
-            maxconn--;
+            if (minconn!=maxconn) maxconn--;
             connlist[0] = "0";
         } else {
             if (string_char_at(ds_grid_get(grid, i, j-1), 3)=="0") {
-                maxconn--;
+                if (minconn!=maxconn) maxconn--;
                 connlist[0] = "0";
             } else {
-                minconn++;
+                if (minconn!=maxconn) minconn++;
                 setconn++; //Add existent connection
                 connlist[0] = "1";
             }
         }
         if (j==argument1-1) {  //Check if at bottom; when true max available =-1;
-            maxconn--;
+            if (minconn==maxconn) minconn--; maxconn--;
             connlist[2] = "0";
         }
         if (i==0) { //If left is wall or border; else left is conn
-            maxconn--;
+            if (minconn!=maxconn) maxconn--;
             connlist[3] = "0";
         } else {
             if (string_char_at(ds_grid_get(grid, i-1, j), 2)=="0") {
-                maxconn--;
+                if (minconn!=maxconn) maxconn--;
                 connlist[3] = "0";
             } else {
-                minconn++;
+                if (minconn!=maxconn) minconn++;
                 setconn++; //Add existent connection
                 connlist[3] = "1";
             }
         }
         if (i==argument0-1) {  //Check if at right; when true max available =-1;
-            maxconn--;
+            if (minconn==maxconn) minconn--; maxconn--;
             connlist[1] = "0";
         }
         
@@ -281,5 +281,6 @@ ds_list_destroy(listx1);
 ds_list_destroy(listy1);
 ds_list_destroy(listx2);
 ds_list_destroy(listy2);
+//*/
 
 return grid;
