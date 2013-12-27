@@ -12,7 +12,7 @@ NESW
 1=connection
 0=wall
 */
-var grid, minconn, maxconn, setconn, connspace, wallno, newconn, connlist;//, listx1, listy1;
+var grid, listx1, listy1, listx2, listy2, minconn, maxconn, setconn, wallno, connlist, index, first, selfx, selfy, searchx, searchy;
 
 grid = ds_grid_create(argument0, argument1);
 listx1 = ds_list_create();
@@ -176,9 +176,8 @@ first = true;
 
 while (ds_list_empty(listx2)==false || first==true) {
     if (first==false) {
-        index = floor(random(ds_list_size(listx2)));
-        selfx = ds_list_find_value(listx2, index);
-        selfy = ds_list_find_value(listy2, index);
+        selfx = ds_list_find_value(listx2, 0);
+        selfy = ds_list_find_value(listy2, 0);
         self_ = ds_grid_get(grid, selfx, selfy);
         if (string_char_at(self_, 1)=="0" && selfy!=0) chance1 = 1; else chance1 = 0;
         if (string_char_at(self_, 2)=="0" && selfx!=argument0-1) chance2 = 1; else chance2 = 0;
@@ -209,7 +208,7 @@ while (ds_list_empty(listx2)==false || first==true) {
                 break;
         }
         ds_grid_set(grid, searchx, searchy, string_set_at(ds_grid_get(grid, searchx, searchy), index, "1"));
-    }//*/
+    }
     
     ds_list_clear(listx1);
     ds_list_clear(listy1);
@@ -218,10 +217,17 @@ while (ds_list_empty(listx2)==false || first==true) {
     
     ds_list_clear(listx2);
     ds_list_clear(listy2);
-    for (var i=0; i<argument0; i++) {
-        for (var j=0; j<argument1; j++) {
-            ds_list_add(listx2, i);
-            ds_list_add(listy2, j);
+    for (var i=0; i<argument1+argument0; i++) {
+        if (i<argument1) {
+            for (var j=0; j<argument0 && j<=i; j++) {
+                ds_list_add(listx2, j);
+                ds_list_add(listy2, i-j);
+            }
+        } else {
+            for (var j=1; j<argument1 && j<argument0+argument1-i; j++) {
+                ds_list_add(listx2, i-argument1+j);
+                ds_list_add(listy2, argument1-j);
+            }
         }
     }
     
