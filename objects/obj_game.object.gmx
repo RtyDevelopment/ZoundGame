@@ -27,9 +27,71 @@
             <kind>1</kind>
             <string>w = 10;
 h = 10;
-maze = create_maze(w, h);
 gridsize = 25;
-walldist = 5;
+maze = create_maze(w, h);
+surf = 0;
+
+direction = 0;
+zdirection = 0;
+
+d3d_start();
+d3d_set_hidden(true);
+d3d_set_lighting(false);
+d3d_set_culling(false);
+//d3d_set_fog(true,c_black,10,300);
+texture_set_interpolation(true);
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="3" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>var xx,yy,cx,cy;
+xx = window_mouse_get_x();
+yy = window_mouse_get_y();
+cx = round(window_get_width()/2);
+cy = round(window_get_height()/2);
+direction = (direction-(xx-cx)/10) mod 360;
+zdirection = max(-89,min(89,zdirection-(yy-cy)/10));
+window_mouse_set(cx,cy);
+
+if (keyboard_check(vk_alt)==true &amp;&amp; keyboard_check(vk_f4)==true || keyboard_check(vk_escape)) game_end();
+
+if (keyboard_check(ord("W"))==true) {
+    x += lengthdir_x(3, direction);
+    y += lengthdir_y(3, direction);
+}
+
+if (keyboard_check(ord("S"))==true) {
+    x += lengthdir_x(3, direction+180);
+    y += lengthdir_y(3, direction+180);
+}
+if (keyboard_check(ord("A"))==true) {
+    x += lengthdir_x(3, direction+90);
+    y += lengthdir_y(3, direction+90);
+}
+if (keyboard_check(ord("D"))==true) {
+    x += lengthdir_x(3, direction+270);
+    y += lengthdir_y(3, direction+270);
+}
+
+direction = direction mod 360;
 </string>
           </argument>
         </arguments>
@@ -52,20 +114,37 @@ walldist = 5;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>maze_draw_map(maze,0,0,w*gridsize,h*gridsize,0.6,c_white,3,c_white,3);
+            <string>draw_set_color(c_black);
+if (surface_exists(surf)==false) {
+    d3d_end();
+    surf = surface_create(w*gridsize, h*gridsize);
+    surface_set_target(surf);
+    draw_set_color(c_navy);
+    draw_rectangle(0, 0, 250, 250, 0);
+    maze_draw_map(maze,0,0,250,250,0.6,c_white,3,c_white,3);
+    draw_set_blend_mode_ext(bm_src_alpha, bm_one);
+    draw_circle_color(125, 125, 175, c_dkgray, c_black, 0);
+    draw_set_blend_mode(bm_normal);
+    surface_reset_target();
+    d3d_start();
+}
 
-/*{
-  // stelt de projectie in
-  d3d_set_projection(x,y,10, x+cos(direction*pi/180),y-sin(direction*pi/180),10, 0,0,1);
-  // stelt de kleur en transparantie in
-  draw_set_alpha(1);
-  draw_set_color(c_white);
-  // tekent de vloer en het plafond 
-  d3d_draw_floor(0,0,0,room_width,room_height,0,
-                   background_get_texture(texture_floor),32,32);
-  d3d_draw_floor(0,0,32,room_width,room_height,32,
-                   background_get_texture(texture_ceiling),24,24);
-}*/
+d3d_set_projection_euler(x,y,10,direction,zdirection,0,0);
+draw_set_alpha(1);
+draw_set_color(c_black);
+d3d_draw_floor(0,0,0,room_width,room_height,0,-1,1,1);
+
+d3d_transform_set_identity()
+//d3d_set_lighting(false)
+d3d_transform_add_rotation_x((0-zdirection)/2+25);
+d3d_transform_add_rotation_z(270+direction);
+d3d_transform_add_scaling(1/64,1/64,1/64);
+d3d_transform_add_translation(x+lengthdir_x(5,direction), y+lengthdir_y(5,direction), 5);
+draw_surface(surf, 0-surface_get_width(surf)/2, 0-surface_get_height(surf)/2);
+draw_set_color(c_red);
+draw_circle(x/room_width*250-125, y/room_height*250-125, 10, 1);
+//d3d_set_lighting(true)
+d3d_transform_set_identity();
 </string>
           </argument>
         </arguments>
