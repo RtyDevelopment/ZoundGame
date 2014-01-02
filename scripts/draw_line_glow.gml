@@ -1,5 +1,4 @@
 ///draw_line_glow(x1,y1,x2,y2,w,r,color_line,color_glow)
-/*
 var i, col, alpha, dir, x1, y1, x2, y2;
 dir = point_direction(argument2,argument3,argument0,argument1);
 alpha = draw_get_alpha();
@@ -17,13 +16,4 @@ draw_set_alpha(alpha);
 draw_set_color(argument6);
 draw_line_width(argument0+lengthdir_x(argument4/2, dir), argument1+lengthdir_y(argument4/2, dir), argument2-lengthdir_x(argument4/2, dir), argument3-lengthdir_y(argument4/2, dir), argument4);
 draw_set_color(col);
-//*/
-//*
-var i, j, col;
-i = argument7;
-j = argument5;
-col = draw_get_color();
-draw_set_color(argument6);
-draw_line_width(argument0, argument1, argument2, argument3, argument4);
-draw_set_color(col);
-//*/
+

@@ -1,4 +1,4 @@
-//choose_weighted(item1, chance1, item2, chance2, etc.)
+///choose_weighted(item1,chance1,item2,chance2,etc.)
 var chancesum, multiplier, result, sum;
 chancesum = 0;
 multiplier = 0;
