@@ -52,55 +52,19 @@ walldist = 5;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>var mazewidth, mazeheight, mx, my;
-mazewidth = ds_grid_width(maze);
-mazeheight = ds_grid_height(maze);
+            <string>maze_draw_map(maze,0,0,w*gridsize,h*gridsize,c_white,3,c_white,3);
 
-draw_set_color(c_black);
-draw_rectangle(0, 0, mazewidth*gridsize-1, mazeheight*gridsize-1, 0);
-
-for (var i=0; i&lt;mazewidth; i++) {
-    for (var j=0; j&lt;mazeheight; j++) {
-        draw_set_color(c_dkgray);
-        //draw_rectangle(i*gridsize+walldist, j*gridsize+walldist, (i+1)*gridsize-walldist, (j+1)*gridsize-walldist, 0);
-        draw_set_color(c_white);
-        if (string_char_at(ds_grid_get(maze, i, j), 1)=="0") {
-            draw_line_glow(i*gridsize+walldist, j*gridsize+walldist, (i+1)*gridsize-walldist, j*gridsize+walldist, 3, 3);
-        } else {
-            draw_set_color(c_dkgray);
-            //draw_rectangle(i*gridsize+walldist, j*gridsize, (i+1)*gridsize-walldist, j*gridsize+walldist, 0);
-            draw_set_color(c_white);
-            draw_line_glow(i*gridsize+walldist, j*gridsize, i*gridsize+walldist, j*gridsize+walldist, 3, 3);
-            draw_line_glow((i+1)*gridsize-walldist, j*gridsize, (i+1)*gridsize-walldist, j*gridsize+walldist, 3, 3);
-        }
-        if (string_char_at(ds_grid_get(maze, i, j), 2)=="0") {
-            draw_line_glow((i+1)*gridsize-walldist, j*gridsize+walldist, (i+1)*gridsize-walldist, (j+1)*gridsize-walldist, 3, 3);
-        } else {
-            draw_set_color(c_dkgray);
-            //draw_rectangle((i+1)*gridsize-walldist, j*gridsize+walldist, (i+1)*gridsize, (j+1)*gridsize-walldist, 0);
-            draw_set_color(c_white);
-            draw_line_glow((i+1)*gridsize-walldist, j*gridsize+walldist, (i+1)*gridsize, j*gridsize+walldist, 3, 3);
-            draw_line_glow((i+1)*gridsize-walldist, (j+1)*gridsize-walldist, (i+1)*gridsize, (j+1)*gridsize-walldist, 3, 3);
-        }
-        if (string_char_at(ds_grid_get(maze, i, j), 3)=="0") {
-            draw_line_glow(i*gridsize+walldist, (j+1)*gridsize-walldist, (i+1)*gridsize-walldist, (j+1)*gridsize-walldist, 3, 3);
-        } else {
-            draw_set_color(c_dkgray);
-            //draw_rectangle(i*gridsize+walldist, (j+1)*gridsize-walldist, (i+1)*gridsize-walldist, (j+1)*gridsize, 0);
-            draw_set_color(c_white);
-            draw_line_glow(i*gridsize+walldist, (j+1)*gridsize-walldist, i*gridsize+walldist, (j+1)*gridsize, 3, 3);
-            draw_line_glow((i+1)*gridsize-walldist, (j+1)*gridsize-walldist, (i+1)*gridsize-walldist, (j+1)*gridsize, 3, 3);
-        }
-        if (string_char_at(ds_grid_get(maze, i, j), 4)=="0") {
-            draw_line_glow(i*gridsize+walldist, j*gridsize+walldist, i*gridsize+walldist, (j+1)*gridsize-walldist, 3, 3);
-        } else {
-            draw_set_color(c_dkgray);
-            //draw_rectangle(i*gridsize, j*gridsize+walldist, i*gridsize+walldist, (j+1)*gridsize-walldist, 0);
-            draw_set_color(c_white);
-            draw_line_glow(i*gridsize, j*gridsize+walldist, i*gridsize+walldist, j*gridsize+walldist, 3, 3);
-            draw_line_glow(i*gridsize, (j+1)*gridsize-walldist, i*gridsize+walldist, (j+1)*gridsize-walldist, 3, 3);
-        }
-    }
+{
+  // stelt de projectie in
+  d3d_set_projection(x,y,10, x+cos(direction*pi/180),y-sin(direction*pi/180),10, 0,0,1);
+  // stelt de kleur en transparantie in
+  draw_set_alpha(1);
+  draw_set_color(c_white);
+  // tekent de vloer en het plafond 
+  d3d_draw_floor(0,0,0,room_width,room_height,0,
+                   background_get_texture(texture_floor),32,32);
+  d3d_draw_floor(0,0,32,room_width,room_height,32,
+                   background_get_texture(texture_ceiling),24,24);
 }
 </string>
           </argument>
