@@ -52,9 +52,9 @@ walldist = 5;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>maze_draw_map(maze,0,0,w*gridsize,h*gridsize,c_white,3,c_white,3);
+            <string>maze_draw_map(maze,0,0,w*gridsize,h*gridsize,0.6,c_white,3,c_white,3);
 
-{
+/*{
   // stelt de projectie in
   d3d_set_projection(x,y,10, x+cos(direction*pi/180),y-sin(direction*pi/180),10, 0,0,1);
   // stelt de kleur en transparantie in
@@ -65,7 +65,7 @@ walldist = 5;
                    background_get_texture(texture_floor),32,32);
   d3d_draw_floor(0,0,32,room_width,room_height,32,
                    background_get_texture(texture_ceiling),24,24);
-}
+}*/
 </string>
           </argument>
         </arguments>
