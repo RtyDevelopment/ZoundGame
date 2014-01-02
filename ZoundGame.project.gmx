@@ -14,6 +14,7 @@
     <script>scripts\get_decimals.gml</script>
     <script>scripts\string_set_at.gml</script>
     <script>scripts\in_list_double.gml</script>
+    <script>scripts\draw_line_glow.gml</script>
   </scripts>
   <objects name="objects">
     <object>objects\object0</object>

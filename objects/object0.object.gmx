@@ -27,38 +27,9 @@
             <kind>1</kind>
             <string>w = 10;
 h = 10;
-
-checkfaults = false;
-
 maze = create_maze(w, h);
 gridsize = 25;
 walldist = 5;
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="3" enumb="0">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>if (checkfaults==true) {
-    ds_grid_destroy(maze);
-    maze = create_maze(w, h);
-}
 </string>
           </argument>
         </arguments>
@@ -85,114 +56,52 @@ walldist = 5;
 mazewidth = ds_grid_width(maze);
 mazeheight = ds_grid_height(maze);
 
-draw_set_color(c_ltgray);
-draw_rectangle(0, 0, room_width, room_height, 0);
-
 draw_set_color(c_black);
 draw_rectangle(0, 0, mazewidth*gridsize-1, mazeheight*gridsize-1, 0);
-
-if (mouse_x&gt;=0 &amp;&amp; mouse_x&lt;mazewidth*gridsize &amp;&amp; mouse_y&gt;=0 &amp;&amp; mouse_y&lt;mazeheight*gridsize) {
-    mx = floor(mouse_x/gridsize);
-    my = floor(mouse_y/gridsize);
-    draw_text(0, mazeheight*gridsize, "X: "+string(mx)+" Y:"+string(my)+"#"+ds_grid_get(maze, mx, my));
-    draw_set_color(c_dkgray);
-    draw_rectangle(mx*gridsize, my*gridsize, (mx+1)*gridsize-1, (my+1)*gridsize-1, 0);
-}
 
 for (var i=0; i&lt;mazewidth; i++) {
     for (var j=0; j&lt;mazeheight; j++) {
         draw_set_color(c_dkgray);
-        draw_rectangle(i*gridsize+walldist, j*gridsize+walldist, (i+1)*gridsize-walldist, (j+1)*gridsize-walldist, 0);
+        //draw_rectangle(i*gridsize+walldist, j*gridsize+walldist, (i+1)*gridsize-walldist, (j+1)*gridsize-walldist, 0);
         draw_set_color(c_white);
         if (string_char_at(ds_grid_get(maze, i, j), 1)=="0") {
-            draw_line(i*gridsize+walldist, j*gridsize+walldist, (i+1)*gridsize-walldist, j*gridsize+walldist);
+            draw_line_glow(i*gridsize+walldist, j*gridsize+walldist, (i+1)*gridsize-walldist, j*gridsize+walldist, 3, 3);
         } else {
             draw_set_color(c_dkgray);
-            draw_rectangle(i*gridsize+walldist, j*gridsize, (i+1)*gridsize-walldist, j*gridsize+walldist, 0);
+            //draw_rectangle(i*gridsize+walldist, j*gridsize, (i+1)*gridsize-walldist, j*gridsize+walldist, 0);
             draw_set_color(c_white);
-            draw_line(i*gridsize+walldist, j*gridsize, i*gridsize+walldist, j*gridsize+walldist);
-            draw_line((i+1)*gridsize-walldist, j*gridsize, (i+1)*gridsize-walldist, j*gridsize+walldist);
+            draw_line_glow(i*gridsize+walldist, j*gridsize, i*gridsize+walldist, j*gridsize+walldist, 3, 3);
+            draw_line_glow((i+1)*gridsize-walldist, j*gridsize, (i+1)*gridsize-walldist, j*gridsize+walldist, 3, 3);
         }
         if (string_char_at(ds_grid_get(maze, i, j), 2)=="0") {
-            draw_line((i+1)*gridsize-walldist, j*gridsize+walldist, (i+1)*gridsize-walldist, (j+1)*gridsize-walldist);
+            draw_line_glow((i+1)*gridsize-walldist, j*gridsize+walldist, (i+1)*gridsize-walldist, (j+1)*gridsize-walldist, 3, 3);
         } else {
             draw_set_color(c_dkgray);
-            draw_rectangle((i+1)*gridsize-walldist, j*gridsize+walldist, (i+1)*gridsize, (j+1)*gridsize-walldist, 0);
+            //draw_rectangle((i+1)*gridsize-walldist, j*gridsize+walldist, (i+1)*gridsize, (j+1)*gridsize-walldist, 0);
             draw_set_color(c_white);
-            draw_line((i+1)*gridsize-walldist, j*gridsize+walldist, (i+1)*gridsize, j*gridsize+walldist);
-            draw_line((i+1)*gridsize-walldist, (j+1)*gridsize-walldist, (i+1)*gridsize, (j+1)*gridsize-walldist);
+            draw_line_glow((i+1)*gridsize-walldist, j*gridsize+walldist, (i+1)*gridsize, j*gridsize+walldist, 3, 3);
+            draw_line_glow((i+1)*gridsize-walldist, (j+1)*gridsize-walldist, (i+1)*gridsize, (j+1)*gridsize-walldist, 3, 3);
         }
         if (string_char_at(ds_grid_get(maze, i, j), 3)=="0") {
-            draw_line(i*gridsize+walldist, (j+1)*gridsize-walldist, (i+1)*gridsize-walldist, (j+1)*gridsize-walldist);
+            draw_line_glow(i*gridsize+walldist, (j+1)*gridsize-walldist, (i+1)*gridsize-walldist, (j+1)*gridsize-walldist, 3, 3);
         } else {
             draw_set_color(c_dkgray);
-            draw_rectangle(i*gridsize+walldist, (j+1)*gridsize-walldist, (i+1)*gridsize-walldist, (j+1)*gridsize, 0);
+            //draw_rectangle(i*gridsize+walldist, (j+1)*gridsize-walldist, (i+1)*gridsize-walldist, (j+1)*gridsize, 0);
             draw_set_color(c_white);
-            draw_line(i*gridsize+walldist, (j+1)*gridsize-walldist, i*gridsize+walldist, (j+1)*gridsize);
-            draw_line((i+1)*gridsize-walldist, (j+1)*gridsize-walldist, (i+1)*gridsize-walldist, (j+1)*gridsize);
+            draw_line_glow(i*gridsize+walldist, (j+1)*gridsize-walldist, i*gridsize+walldist, (j+1)*gridsize, 3, 3);
+            draw_line_glow((i+1)*gridsize-walldist, (j+1)*gridsize-walldist, (i+1)*gridsize-walldist, (j+1)*gridsize, 3, 3);
         }
         if (string_char_at(ds_grid_get(maze, i, j), 4)=="0") {
-            draw_line(i*gridsize+walldist, j*gridsize+walldist, i*gridsize+walldist, (j+1)*gridsize-walldist);
+            draw_line_glow(i*gridsize+walldist, j*gridsize+walldist, i*gridsize+walldist, (j+1)*gridsize-walldist, 3, 3);
         } else {
             draw_set_color(c_dkgray);
-            draw_rectangle(i*gridsize, j*gridsize+walldist, i*gridsize+walldist, (j+1)*gridsize-walldist, 0);
+            //draw_rectangle(i*gridsize, j*gridsize+walldist, i*gridsize+walldist, (j+1)*gridsize-walldist, 0);
             draw_set_color(c_white);
-            draw_line(i*gridsize, j*gridsize+walldist, i*gridsize+walldist, j*gridsize+walldist);
-            draw_line(i*gridsize, (j+1)*gridsize-walldist, i*gridsize+walldist, (j+1)*gridsize-walldist);
+            draw_line_glow(i*gridsize, j*gridsize+walldist, i*gridsize+walldist, j*gridsize+walldist, 3, 3);
+            draw_line_glow(i*gridsize, (j+1)*gridsize-walldist, i*gridsize+walldist, (j+1)*gridsize-walldist, 3, 3);
         }
     }
 }
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="10" enumb="32">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>ds_grid_destroy(maze);
-
-w = real(string_digits(get_string("Width: ",string(w))));
-h = real(string_digits(get_string("Height: ",string(h))));
-
-maze = create_maze(w, h);
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="10" enumb="13">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>checkfaults^=true;
 </string>
           </argument>
         </arguments>
