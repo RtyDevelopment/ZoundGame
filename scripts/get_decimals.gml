@@ -1,3 +1,4 @@
+///get_decimals(real)
 var int, check, decloc;
 int = string(argument0);
 check = true;
