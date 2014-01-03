@@ -27,9 +27,14 @@
             <kind>1</kind>
             <string>w = 10;
 h = 10;
-gridsize = 25;
+d3dsize = 10;
 maze = create_maze(w, h);
-surf = 0;
+surf = -1;
+col1 = -1;
+col2 = -1;
+
+x = d3dsize/2;
+y = d3dsize/2;
 
 direction = 0;
 zdirection = 0;
@@ -74,21 +79,21 @@ window_mouse_set(cx,cy);
 if (keyboard_check(vk_alt)==true &amp;&amp; keyboard_check(vk_f4)==true || keyboard_check(vk_escape)) game_end();
 
 if (keyboard_check(ord("W"))==true) {
-    x += lengthdir_x(3, direction);
-    y += lengthdir_y(3, direction);
+    x += lengthdir_x(0.3, direction);
+    y += lengthdir_y(0.3, direction);
 }
 
 if (keyboard_check(ord("S"))==true) {
-    x += lengthdir_x(3, direction+180);
-    y += lengthdir_y(3, direction+180);
+    x += lengthdir_x(0.3, direction+180);
+    y += lengthdir_y(0.3, direction+180);
 }
 if (keyboard_check(ord("A"))==true) {
-    x += lengthdir_x(3, direction+90);
-    y += lengthdir_y(3, direction+90);
+    x += lengthdir_x(0.3, direction+90);
+    y += lengthdir_y(0.3, direction+90);
 }
 if (keyboard_check(ord("D"))==true) {
-    x += lengthdir_x(3, direction+270);
-    y += lengthdir_y(3, direction+270);
+    x += lengthdir_x(0.3, direction+270);
+    y += lengthdir_y(0.3, direction+270);
 }
 
 direction = direction mod 360;
@@ -117,32 +122,51 @@ direction = direction mod 360;
             <string>draw_set_color(c_black);
 if (surface_exists(surf)==false) {
     d3d_end();
-    surf = surface_create(w*gridsize, h*gridsize);
+    surf = surface_create(w*25, h*25);
     surface_set_target(surf);
     draw_set_color(c_navy);
-    draw_rectangle(0, 0, 250, 250, 0);
-    maze_draw_map(maze,0,0,250,250,0.6,c_white,3,c_white,3);
+    draw_rectangle(0, 0, w*25, h*25, 0);
+    maze_draw_map(maze,0,0,w*25,h*25,0.6,c_white,3,c_white,3);
     draw_set_blend_mode_ext(bm_src_alpha, bm_one);
-    draw_circle_color(125, 125, 175, c_dkgray, c_black, 0);
+    draw_circle_color(h*25/2, h*25/2, h*25*0.7, c_dkgray, c_black, 0);
     draw_set_blend_mode(bm_normal);
     surface_reset_target();
     d3d_start();
 }
+if (surface_exists(col1)==false) {
+    d3d_end();
+    col1 = surface_create(1, 1);
+    surface_set_target(col1);
+    draw_point_color(0, 0, c_aqua);
+    surface_reset_target();
+    d3d_start();
+}
+if (surface_exists(col2)==false) {
+    d3d_end();
+    col2 = surface_create(1, 1);
+    surface_set_target(col2);
+    draw_point_color(0, 0, c_black);
+    surface_reset_target();
+    d3d_start();
+}
 
-d3d_set_projection_euler(x,y,10,direction,zdirection,0,0);
+d3d_set_projection_euler(x,y,0.65*d3dsize,direction,zdirection,0,0);
 draw_set_alpha(1);
 draw_set_color(c_black);
-d3d_draw_floor(0,0,0,room_width,room_height,0,-1,1,1);
+d3d_draw_floor(0,0,0,w*d3dsize,h*d3dsize,0,-1,1,1);
+draw_set_color(c_white);
+maze_draw_d3d(maze,0,0,0,w*d3dsize,h*d3dsize,d3dsize,surface_get_texture(col1), surface_get_texture(col2), 0.6);
 
 d3d_transform_set_identity()
 //d3d_set_lighting(false)
 d3d_transform_add_rotation_x((0-zdirection)/2+25);
 d3d_transform_add_rotation_z(270+direction);
-d3d_transform_add_scaling(1/64,1/64,1/64);
-d3d_transform_add_translation(x+lengthdir_x(5,direction), y+lengthdir_y(5,direction), 5);
+var scale = 1/(power(2, d3dsize*0.6));
+d3d_transform_add_scaling(scale, scale, scale);
+d3d_transform_add_translation(x+lengthdir_x(0.5*d3dsize,direction), y+lengthdir_y(0.5*d3dsize,direction), 0.25*d3dsize);
 draw_surface(surf, 0-surface_get_width(surf)/2, 0-surface_get_height(surf)/2);
 draw_set_color(c_red);
-draw_circle(x/room_width*250-125, y/room_height*250-125, 10, 1);
+draw_circle(x/(w*d3dsize)*250-125, y/(h*d3dsize)*250-125, 3, 0);
 //d3d_set_lighting(true)
 d3d_transform_set_identity();
 </string>

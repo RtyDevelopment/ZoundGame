@@ -16,7 +16,9 @@
     <script>scripts\in_list_double.gml</script>
     <script>scripts\draw_line_glow.gml</script>
     <script>scripts\maze_draw_map.gml</script>
+    <script>scripts\maze_draw_d3d.gml</script>
     <script>scripts\d3d_set_projection_euler.gml</script>
+    <script>scripts\draw_circle_glow.gml</script>
   </scripts>
   <objects name="objects">
     <object>objects\obj_game</object>
