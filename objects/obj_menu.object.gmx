@@ -35,6 +35,8 @@ ds_list_add(_y, irandom(room_height));
 ds_list_add(_l, irandom_range(50, 100));
 ds_list_add(_t, 1);
 n = irandom_range(5, 40);
+
+
 </string>
           </argument>
         </arguments>
