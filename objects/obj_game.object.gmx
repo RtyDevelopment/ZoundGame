@@ -146,6 +146,7 @@ if (os_get_config()=="Home") {
           <argument>
             <kind>1</kind>
             <string>draw_set_color(c_white);
+draw_set_alpha(1);
 d3d_end();
 if (surface_exists(surf)==false) {
     surf = surface_create(w*surfsize, h*surfsize);
