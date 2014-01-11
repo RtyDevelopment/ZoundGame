@@ -57,50 +57,46 @@ if (os_get_config()=="OEM") {
 
 name = "Steve";
 port = 43520;
-//key = "2349872398479832749873249862354678687234987235896734985678934659872305434598743895789374569734658726983657298698619835031758990135098237580873752908235780613809"
 key = "";
 for (var i=0; i&lt;160; i++) key += string(irandom(9));
 
 selfip = "?";
 selfhash = string(random(100000)*random(100000))+string(random(100000));
 
-client_key = ds_list_create();
-client_ip = ds_list_create();
-client_name = ds_list_create();
-client_req = ds_list_create();
-client_del = ds_list_create();
+//Serverlists
+own_key = ds_list_create();
+own_ip = ds_list_create();
+own_port = ds_list_create();
+own_name = ds_list_create();
+own_req = ds_list_create();
+
+lan_key = ds_list_create();
+lan_ip = ds_list_create();
+lan_port = ds_list_create();
+lan_name = ds_list_create();
+lan_req = ds_list_create();
 
 //NetworkStuff
-//IP detection server
-selfserver = -1;
-selfport = round(random_range(7, 60)*1000);
-selfbuffer = buffer_create(128, buffer_fixed, 1);
-while (selfserver&lt;0) {
-    selfport++;
-    selfserver = network_create_server(network_socket_udp, selfport, 32);
-}
+//Buffer
+netbuffer = buffer_create(1, buffer_grow, 1);
 
-//LAN detection:
-//listening device
-listendevm = true;
-listenserver = network_create_server(network_socket_udp, 6510, 32);
-if (listenserver&lt;0) {
-    listendevm = false;
-    listenserver = network_create_socket(network_socket_udp);
-    var package = buffer_create(200, buffer_fixed, 1);
-    buffer_seek(package, buffer_seek_start, 0);
-    buffer_write(package, buffer_string, key);
-    buffer_write(package, buffer_string, string_copy(name, 1, 40));
-    network_send_udp(listenserver, "127.0.0.1", 6510, package, buffer_tell(package));
-}
-
-//broadcasting server
-bcbuffer = buffer_create(200, buffer_fixed, 1);
-bcserver = -1;
-bcserverport = 6510;
-while (bcserver&lt;0) {
-    bcserverport++;
-    bcserver = network_create_server(network_socket_udp, bcserverport, 32);
+//UDP listening device
+udplocalmaster = true;
+udpport = 6510;
+udpsocket = network_create_socket(network_socket_udp);
+udpserver = network_create_server(network_socket_udp, udpport, 32);
+if (udpserver&lt;0) {
+    udplocalmaster = false;
+    while (udpserver&lt;0) {
+        udpport++;
+        switch (udpport) {
+            case 6511: name = "Joe"; break;
+            case 6512: name = "John"; break;
+            case 6513: name = "David"; break;
+            default: name = "James no. "+string(udpport-6513); break;
+        }
+        udpserver = network_create_server(network_socket_udp, udpport, 32);
+    }
 }
 
 // Setup a timer so we can broadcast the server IP out to local clients looking...
@@ -128,16 +124,21 @@ alarm[0]=5;
           <argument>
             <kind>1</kind>
             <string>/// Broadcast our location occasionally. Clients pick this up and can then display servers to the user. 
+netbuffer_reset(netbuffer, MSG_LANSEND, udpport, key);
+buffer_write(netbuffer, buffer_string, key);
+buffer_write(netbuffer, buffer_string, name);
+buffer_write(netbuffer, buffer_u16, port);
+network_send_broadcast(udpsocket, 6510, netbuffer, buffer_tell(netbuffer));
 
-buffer_seek(bcbuffer, buffer_seek_start, 0);
-buffer_write(bcbuffer, buffer_string, key);
-buffer_write(bcbuffer, buffer_string, string_copy(name, 1, 40));
-network_send_broadcast(bcserver, 6510, bcbuffer, buffer_tell(bcbuffer));
+if (udplocalmaster==false) {
+    netbuffer_reset(netbuffer, MSG_LANREQUEST, udpport, key);
+    network_send_udp(udpsocket, "127.0.0.1", 6510, netbuffer, buffer_tell(netbuffer));
+}
 
 if (selfip=="?") {
-    buffer_seek(selfbuffer, buffer_seek_start, 0);
-    buffer_write(selfbuffer, buffer_string, md5_string_unicode(selfhash));
-    network_send_broadcast(selfserver, selfport, selfbuffer, buffer_tell(selfbuffer));
+    netbuffer_reset(netbuffer, MSG_GETIP, udpport, key);
+    buffer_write(netbuffer, buffer_string, md5_string_unicode(selfhash));
+    network_send_broadcast(udpsocket, udpport, netbuffer, buffer_tell(netbuffer));
 }
 
 // Broadcast once a second...
@@ -191,37 +192,77 @@ if (keyboard_check_pressed(vk_backspace)==true) ipstr = string_delete(ipstr, str
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// UDP server code - Detect servers "broadcast"
+            <string>///Message recieved
 var recvip = ds_map_find_value(async_load, "ip");
-if (recvip=="127.0.0.1" || recvip==selfip) {
-    if (listendevm==true) {
-        //broadcast another client on device to network
-    }
-} else {
-    if (selfip!="?") {
-        if (ds_map_find_value(async_load, "id")==listenserver) {
-            
+var recvdevice = ds_map_find_value(async_load, "id");
+var recvbuffer = ds_map_find_value(async_load, "buffer");
+buffer_seek(recvbuffer, buffer_seek_start, 0);
+var recvmsg = buffer_read(recvbuffer, buffer_u8);
+var recvport = buffer_read(recvbuffer, buffer_u16);
+var recvkey = buffer_read(recvbuffer, buffer_string);
+
+if (recvdevice==udpserver) {
+    switch (recvmsg) {
+        case MSG_PING:
+            netbuffer_reset(netbuffer, MSG_PONG, udpport, key);
+            buffer_write(netbuffer, buffer_u8, buffer_read(recvbuffer, buffer_u8));
+            network_send_udp(udpsocket, recvip, recvport, netbuffer, buffer_tell(netbuffer));
+            break;
+        case MSG_PONG:
+            //pass
+            break;
+        case MSG_GETIP:
+            if (buffer_read(recvbuffer, buffer_string)==md5_string_unicode(selfhash)) selfip = recvip;
+            break;
+        case MSG_LANSEND:
             var recvkey = buffer_read(ds_map_find_value(async_load, "buffer"), buffer_string);
             var recvname = buffer_read(ds_map_find_value(async_load, "buffer"), buffer_string);
-                
-            // Add to our list...if we don't already have it!
-            if (ds_list_find_index(client_key, recvkey)&lt;0 &amp;&amp; key!=recvkey) {
-                ds_list_add(client_key, recvkey);
-                ds_list_add(client_ip, recvip);
-                ds_list_add(client_name, recvname);
-                ds_list_add(client_req, 0);
-                ds_list_add(client_del, 0);
+            var recvgameport = buffer_read(ds_map_find_value(async_load, "buffer"), buffer_u16);
+            if (ds_list_find_index(lan_key, recvkey)&lt;0 &amp;&amp; key!=recvkey) {
+                ds_list_add(lan_key, recvkey);
+                ds_list_add(lan_ip, recvip);
+                ds_list_add(lan_port, recvgameport);
+                ds_list_add(lan_name, recvname);
+                ds_list_add(lan_req, 0);
                 show_debug_message("New server found at: "+recvip+"   called: "+recvname);
-            }    
-        } 
-    } else {
-        if (ds_map_find_value(async_load, "id")==selfserver) {
-            if (buffer_read(ds_map_find_value(async_load, "buffer"), buffer_string)==md5_string_unicode(selfhash)) {
-                selfip = ds_map_find_value(async_load, "ip");
-                network_destroy(selfserver);
-                buffer_delete(selfbuffer);
+            }  
+            break;
+        case MSG_LANREQUEST:
+            var lantransfer_key, lantransfer_ip, lantransfer_port, lantransfer_name;
+            lantransfer_key = ds_list_create();
+            ds_list_copy(lantransfer_key, lan_key);
+            lantransfer_ip = ds_list_create();
+            ds_list_copy(lantransfer_ip, lan_ip);
+            lantransfer_port = ds_list_create();
+            ds_list_copy(lantransfer_port, lan_port);
+            lantransfer_name = ds_list_create();
+            ds_list_copy(lantransfer_name, lan_name);
+            ds_list_add(lantransfer_key, key);
+            ds_list_add(lantransfer_ip, selfip);
+            ds_list_add(lantransfer_port, port);
+            ds_list_add(lantransfer_name, name);
+            for (var i=0; i&lt;ds_list_size(lantransfer_key); i++) {
+                if (ds_list_find_value(lantransfer_key, i)==recvkey) {
+                    ds_list_delete(lantransfer_key, i);
+                    ds_list_delete(lantransfer_ip, i);
+                    ds_list_delete(lantransfer_port, i);
+                    ds_list_delete(lantransfer_name, i);
+                    break;
+                }
             }
-        }
+            netbuffer_reset(netbuffer, MSG_LANTRANSFER, udpport, key);
+            buffer_write(netbuffer, buffer_string, ds_list_write(lantransfer_key));
+            buffer_write(netbuffer, buffer_string, ds_list_write(lantransfer_ip));
+            buffer_write(netbuffer, buffer_string, ds_list_write(lantransfer_port));
+            buffer_write(netbuffer, buffer_string, ds_list_write(lantransfer_name));
+            network_send_udp(udpsocket, recvip, recvport, netbuffer, buffer_tell(netbuffer));
+            break;
+        case MSG_LANTRANSFER:
+            ds_list_read(lan_key, buffer_read(recvbuffer, buffer_string));
+            ds_list_read(lan_ip, buffer_read(recvbuffer, buffer_string));
+            ds_list_read(lan_port, buffer_read(recvbuffer, buffer_string));
+            ds_list_read(lan_name, buffer_read(recvbuffer, buffer_string));
+            break;
     }
 }
 </string>
@@ -246,7 +287,8 @@ if (recvip=="127.0.0.1" || recvip==selfip) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>//Draw background
+            <string>var i;
+//Draw background
 for (i=0; i&lt;ds_list_size(_x); i+=1) {
     if (ds_list_find_value(_t, i)&gt;=ds_list_find_value(_l, i)) {
         ds_list_delete(_x, i);
@@ -283,19 +325,34 @@ if (menu==1) {
     draw_text(40, 40, "IP: "+ipstr);
     draw_set_color(c_dkgray);
     draw_text(40, 60, "Own address: "+selfip);
-    //Draw players w/in network
-    for (i=0; i&lt;ds_list_size(client_name); i++) {
+    //Draw players predefined
+    for (i=0; i&lt;ds_list_size(own_key); i++) {
         draw_set_color(c_white);
         draw_rectangle(30, 90+50*i, width-30, 140+50*i, 0);
         draw_set_color(c_black);
         draw_rectangle(30, 90+50*i, width-30, 140+50*i, 1);
-        switch (ds_list_find_value(client_req, i)) {
+        switch (ds_list_find_value(own_req, i)) {
             case 1: draw_set_color(c_green); break;//Request sent
             case 2: draw_set_color(c_yellow); break;//Request rec
         }
-        draw_text(40, 105+50*i, ds_list_find_value(client_name, i));
+        draw_text(40, 105+50*i, ds_list_find_value(own_name, i));
         draw_set_color(c_dkgray);
-        draw_text(40, 125+50*i, ds_list_find_value(client_ip, i));
+        draw_text(40, 125+50*i, ds_list_find_value(own_ip, i)+":"+string(ds_list_find_value(own_port, i)));
+    }
+    //Draw players in network
+    var prelength = 50*ds_list_size(own_key);
+    for (i=0; i&lt;ds_list_size(lan_key); i++) {
+        draw_set_color(c_white);
+        draw_rectangle(30, 90+50*i+prelength, width-30, 140+50*i+prelength, 0);
+        draw_set_color(c_black);
+        draw_rectangle(30, 90+50*i+prelength, width-30, 140+50*i+prelength, 1);
+        switch (ds_list_find_value(own_req, i)) {
+            case 1: draw_set_color(c_green); break;//Request sent
+            case 2: draw_set_color(c_yellow); break;//Request rec
+        }
+        draw_text(40, 105+50*i+prelength, ds_list_find_value(lan_name, i));
+        draw_set_color(c_dkgray);
+        draw_text(40, 125+50*i+prelength, ds_list_find_value(lan_ip, i)+":"+string(ds_list_find_value(lan_port, i)));
     }
 }
 </string>

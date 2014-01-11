@@ -23,6 +23,7 @@
     <script>scripts\draw_circle_glow.gml</script>
     <script>scripts\maze_coll_x.gml</script>
     <script>scripts\maze_coll_y.gml</script>
+    <script>scripts\netbuffer_reset.gml</script>
   </scripts>
   <objects name="objects">
     <object>objects\obj_menu</object>
@@ -32,6 +33,17 @@
     <room>rooms\rm_menu</room>
     <room>rooms\rm_game</room>
   </rooms>
+  <constants number="9">
+    <constant name="NET_BROADCAST">0</constant>
+    <constant name="NET_TCP">1</constant>
+    <constant name="NET_UDP">2</constant>
+    <constant name="MSG_PING">0</constant>
+    <constant name="MSG_PONG">1</constant>
+    <constant name="MSG_GETIP">2</constant>
+    <constant name="MSG_LANSEND">3</constant>
+    <constant name="MSG_LANREQUEST">4</constant>
+    <constant name="MSG_LANTRANSFER">5</constant>
+  </constants>
   <help>
     <rtf>help.rtf</rtf>
   </help>
