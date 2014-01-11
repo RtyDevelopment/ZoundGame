@@ -4,7 +4,7 @@
   <solid>0</solid>
   <visible>-1</visible>
   <depth>1</depth>
-  <persistent>0</persistent>
+  <persistent>-1</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
@@ -27,6 +27,7 @@
             <kind>1</kind>
             <string>randomize();
 
+//Menu background
 _x = ds_list_create();
 _y = ds_list_create();
 _l = ds_list_create();
@@ -38,6 +39,7 @@ ds_list_add(_l, irandom_range(50, 100));
 ds_list_add(_t, 1);
 n = irandom_range(5, 40);
 
+//Menu vars
 if (view_enabled==true) {
     global.scrwidth = view_wview[0];
     global.scrheight = view_hview[0];
@@ -45,6 +47,8 @@ if (view_enabled==true) {
     global.scrwidth = room_width;
     global.scrheight = room_height;
 }
+
+lastmenu = -1;
 
 if (os_get_config()=="OEM") {
     global.networkmenu = true;
@@ -54,12 +58,65 @@ if (os_get_config()=="OEM") {
     menu = 0;
 }
 
+//Self vars (to be changed to file)
 global.name = "Steve";
 global.port = 43520;
 global.key = "";
 for (var i=0; i&lt;160; i++) global.key += string(irandom(9));
 
+//To execute
 instance_create(0, 0, obj_network);
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="3" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>if (menu==1) global.networkmenu = true; else global.networkmenu = false;
+if (lastmenu!=menu) {
+    var i=0;
+    repeat (instance_count) {
+        with (instance_find(all, i)) {
+            if (object_index==obj_menu || object_index==obj_network) i++; else instance_destroy();
+        }
+    }
+    if (os_get_config()!="OEM"){
+        switch (menu) {
+            case 0:
+                with (instance_create(global.scrwidth/2-100, global.scrheight/5*2, obj_execonpress)) {
+                    sprite = spr_button;
+                    text = "start";
+                }
+                with (instance_create(global.scrwidth/2-100, global.scrheight/5*3, obj_execonpress)) {
+                    sprite = spr_button;
+                    text = "options";
+                }
+                break;
+            case 1:
+                with (instance_create(global.scrwidth-150, global.scrheight-75, obj_execonpress)) {
+                    sprite = spr_back;
+                }
+                break;
+        }
+    }
+    lastmenu = menu;
+}
 </string>
           </argument>
         </arguments>

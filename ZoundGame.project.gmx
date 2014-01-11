@@ -6,7 +6,10 @@
   </Configs>
   <NewExtensions/>
   <sounds name="sound"/>
-  <sprites name="sprites"/>
+  <sprites name="sprites">
+    <sprite>sprites\spr_back</sprite>
+    <sprite>sprites\spr_button</sprite>
+  </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
   <scripts name="scripts">
@@ -23,11 +26,13 @@
     <script>scripts\maze_coll_x.gml</script>
     <script>scripts\maze_coll_y.gml</script>
     <script>scripts\netbuffer_reset.gml</script>
+    <script>scripts\fade.gml</script>
   </scripts>
   <objects name="objects">
     <object>objects\obj_network</object>
     <object>objects\obj_game</object>
     <object>objects\obj_menu</object>
+    <object>objects\obj_execonpress</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\rm_game</room>
