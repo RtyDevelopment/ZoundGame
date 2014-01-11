@@ -44,7 +44,7 @@ view_object[0] = noone;
 view_visible[0] = true;
 view_enabled = true;
 
-if (os_get_config()=="Home") {
+if (os_get_config()!="OEM") {
     zdirection = 0;
     d3d_start();
     d3d_set_hidden(true);
@@ -77,7 +77,7 @@ if (os_get_config()=="Home") {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (os_get_config()=="Home") {
+            <string>if (os_get_config()!="OEM") {
     var xx,yy,cx,cy;
     xx = window_mouse_get_x();
     yy = window_mouse_get_y();
@@ -90,7 +90,7 @@ if (os_get_config()=="Home") {
 
 if (keyboard_check(vk_alt)==true &amp;&amp; keyboard_check(vk_f4)==true || keyboard_check(vk_escape)) game_end();
 
-if (os_get_config()=="Home") {
+if (os_get_config()!="OEM") {
     if (keyboard_check(ord("W"))==true) {
         x += lengthdir_x(1/16*gridsize, direction);
         y += lengthdir_y(1/16*gridsize, direction);
@@ -172,7 +172,7 @@ if (surface_exists(col2)==false) {
     surface_reset_target();
 }
 
-if (os_get_config()=="Home") {
+if (os_get_config()!="OEM") {
     d3d_start();
     d3d_set_projection_euler(x,y,0.65*gridsize,direction,zdirection,0,0);
     draw_set_alpha(1);

@@ -3,7 +3,6 @@
   <Configs name="configs">
     <Config>Configs\Default</Config>
     <Config>Configs\OEM</Config>
-    <Config>Configs\Home</Config>
   </Configs>
   <NewExtensions/>
   <sounds name="sound"/>
