@@ -255,11 +255,15 @@ if (pressedimg==true) mouse = 1;
           <argument>
             <kind>1</kind>
             <string>///Draw event
+draw_set_color(c_white);
+draw_set_alpha(1);
 draw_sprite(sprite, mouse, x, y);
 ///
 switch (sprite) {
     case spr_button:
-        draw_text(x+75, y+50, text);
+        draw_set_color(c_black);
+        draw_set_alpha(1);
+        draw_text(x+75, y+20, text);
         break;
 }
 </string>

@@ -37,16 +37,17 @@
   <rooms name="rooms">
     <room>rooms\rm_game</room>
   </rooms>
-  <constants number="9">
+  <constants number="10">
     <constant name="NET_BROADCAST">0</constant>
     <constant name="NET_TCP">1</constant>
     <constant name="NET_UDP">2</constant>
     <constant name="MSG_PING">0</constant>
     <constant name="MSG_PONG">1</constant>
     <constant name="MSG_GETIP">2</constant>
-    <constant name="MSG_LANSEND">3</constant>
-    <constant name="MSG_LANREQUEST">4</constant>
-    <constant name="MSG_LANTRANSFER">5</constant>
+    <constant name="MSG_INFO">3</constant>
+    <constant name="MSG_INFOREQUEST">4</constant>
+    <constant name="MSG_LANREQUEST">5</constant>
+    <constant name="MSG_LANTRANSFER">6</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>
