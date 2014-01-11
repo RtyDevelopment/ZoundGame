@@ -71,7 +71,9 @@ if (udpserver&lt;0) {
     }
 }
 //Game
-udpserver = network_create_server(network_socket_udp, global.port, 32);
+gameport = global.port;
+gamesocket = ds_list_create();
+gameserver = network_create_server(network_socket_tcp, global.port, 32);
 
 alarm[0]=5;
 </string>
@@ -144,7 +146,7 @@ alarm[0]=room_speed;
     }
     if (keyboard_check_pressed(vk_backspace)==true) ipstr = string_delete(ipstr, string_length(ipstr), 1);
     if (keyboard_check_released(vk_enter)==true) {
-        var ip, port;
+        var ip, port, socket;
         var tellswitch = 0;
         for (var i=1; i&lt;=string_length(ipstr); i++) {
             var char = string_char_at(ipstr, i);
@@ -154,8 +156,12 @@ alarm[0]=room_speed;
         }
         if (port=="") port = 43520;
         ip = network_resolve(ip);
+        socket = network_create_socket(network_socket_tcp);
+        ds_list_add(gamesocket, socket);
+        network_connect(socket, ip, port);
         netbuffer_reset(netbuffer, MSG_INFOREQUEST, udpport, global.key);
-        network_send_udp(udpsocket, ip, real(port), netbuffer, buffer_tell(netbuffer));
+        buffer_write(netbuffer, buffer_string, string(socket));
+        network_send_packet(socket, netbuffer, buffer_tell(netbuffer));
         ipstr = "";
     }
 }
@@ -242,6 +248,7 @@ switch (recvmsg) {
                 ds_list_add(own_req, 0);
                 show_debug_message("New server added at: "+recvip+"   called: "+recvname);
             }
+            network_destroy(real(buffer_read(recvbuffer, buffer_string)));
         }
         break;
     case MSG_LANREQUEST:
