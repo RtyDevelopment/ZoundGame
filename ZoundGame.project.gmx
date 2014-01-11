@@ -26,11 +26,11 @@
     <script>scripts\netbuffer_reset.gml</script>
   </scripts>
   <objects name="objects">
-    <object>objects\obj_menu</object>
+    <object>objects\obj_network</object>
     <object>objects\obj_game</object>
+    <object>objects\obj_menu</object>
   </objects>
   <rooms name="rooms">
-    <room>rooms\rm_menu</room>
     <room>rooms\rm_game</room>
   </rooms>
   <constants number="9">
