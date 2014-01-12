@@ -27,6 +27,7 @@
     <script>scripts\maze_coll_y.gml</script>
     <script>scripts\netbuffer_reset.gml</script>
     <script>scripts\fade.gml</script>
+    <script>scripts\netcommand.gml</script>
   </scripts>
   <objects name="objects">
     <object>objects\obj_network</object>
@@ -37,10 +38,7 @@
   <rooms name="rooms">
     <room>rooms\rm_game</room>
   </rooms>
-  <constants number="10">
-    <constant name="NET_BROADCAST">0</constant>
-    <constant name="NET_TCP">1</constant>
-    <constant name="NET_UDP">2</constant>
+  <constants number="7">
     <constant name="MSG_PING">0</constant>
     <constant name="MSG_PONG">1</constant>
     <constant name="MSG_GETIP">2</constant>

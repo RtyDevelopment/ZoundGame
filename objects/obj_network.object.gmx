@@ -28,8 +28,9 @@
             <string>keyboard_string = "";
 ipstr = ""
 
-selfip = "?";
-selfhash = string(random(100000)*random(100000))+string(random(100000));
+publicip = "?";
+lanip = "?";
+hash = string(random(100000)*random(100000))+string(random(100000));
 
 //Serverlists
 own_key = ds_list_create();
@@ -46,6 +47,14 @@ lan_req = ds_list_create();
 
 //Commands
 netcommands = ds_list_create();
+netcommands_arg0 = ds_list_create();
+netcommands_arg1 = ds_list_create();
+netcommands_arg2 = ds_list_create();
+netcommands_arg3 = ds_list_create();
+netcommands_arg4 = ds_list_create();
+
+//Pingtimerlist
+pingmap = ds_map_create();
 
 //NetworkStuff
 //Buffer
@@ -109,13 +118,17 @@ if (udplocalmaster==false) {
     network_send_udp(udpsocket, "127.0.0.1", 6510, netbuffer, buffer_tell(netbuffer));
 }
 
-if (selfip=="?") {
+if (lanip=="?") {
     netbuffer_reset(netbuffer, MSG_GETIP, udpport, global.key);
-    buffer_write(netbuffer, buffer_string, md5_string_unicode(selfhash));
+    buffer_write(netbuffer, buffer_string, md5_string_unicode(hash));
     network_send_broadcast(udpsocket, udpport, netbuffer, buffer_tell(netbuffer));
 }
 
-alarm[0]=room_speed;
+if (publicip=="?") {
+    http_get("http://gmhtml5host.net46.net/getip.php?msg="+string(MSG_GETIP)+"&amp;hash="+md5_string_unicode(hash));
+}
+
+alarm[0]=room_speed*3;
 </string>
           </argument>
         </arguments>
@@ -145,7 +158,8 @@ alarm[0]=room_speed;
     }
     if (keyboard_check_pressed(vk_backspace)==true) ipstr = string_delete(ipstr, string_length(ipstr), 1);
     if (keyboard_check_released(vk_enter)==true) {
-        var ip, port, socket;
+        var ip = "";
+        var port = "";
         var tellswitch = 0;
         for (var i=1; i&lt;=string_length(ipstr); i++) {
             var char = string_char_at(ipstr, i);
@@ -155,7 +169,7 @@ alarm[0]=room_speed;
         }
         if (port=="") port = 43520;
         ip = network_resolve(ip);
-        socket = network_create_socket(network_socket_tcp);
+        var socket = network_create_socket(network_socket_tcp);
         network_connect(socket, ip, port);
         netbuffer_reset(netbuffer, MSG_INFOREQUEST, udpport, global.key);
         buffer_write(netbuffer, buffer_string, string(socket));
@@ -163,16 +177,21 @@ alarm[0]=room_speed;
         ipstr = "";
     }
 }
-/*if (ds_list_size(netcommands)&gt;0) {
+//*
+if (ds_list_size(netcommands)&gt;0) {
     repeat (ds_list_size(netcommands)) {
         switch (ds_list_find_value(netcommands, 0)) {
+            case MSG_PING:
+                
+                break;
             case MSG_INFOREQUEST:
                 
                 break;
         }
         ds_list_delete(netcommands, 0);
+        ds_list_delete(netcommands_arg0, 0);
     }
-}*/
+}//*/
 </string>
           </argument>
         </arguments>
@@ -213,7 +232,7 @@ switch (recvmsg) {
         //pass
         break;
     case MSG_GETIP:
-        if (buffer_read(recvbuffer, buffer_string)==md5_string_unicode(selfhash)) selfip = recvip;
+        if (buffer_read(recvbuffer, buffer_string)==md5_string_unicode(hash)) lanip = recvip;
         break;
     case MSG_INFOREQUEST:
         netbuffer_reset(netbuffer, MSG_INFO, udpport, global.key);
@@ -292,6 +311,60 @@ switch (recvmsg) {
         </arguments>
       </action>
     </event>
+    <event eventtype="7" enumb="62">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>var recvresultstring = ds_map_find_value(async_load, "result");
+var recvresultno = 0;
+var newlinechr = false;
+
+var recvurl = ds_map_find_value(async_load, "url");
+var recvdevice = ds_map_find_value(async_load, "id");
+var recvresult;
+var recvmsg = "";
+
+recvresult[0] = "";
+for (var i=1; i&lt;=string_length(recvresultstring); i++) {
+    var char = string_char_at(recvresultstring, i);
+    if (char==chr(10)) {
+        if (newlinechr==true) break;
+        newlinechr = true;
+        recvresultno++;
+        recvresult[recvresultno] = "";
+    } else {
+        newlinechr = false;
+        if (recvresultno==0) recvmsg += char; else recvresult[recvresultno-1] += char;
+    }
+}
+recvmsg = real(recvmsg);
+for (var i=0; i&lt;recvresultno; i++) {
+    if (recvresult[i]==string_digits(recvresult[i])) recvresult[i] = real(recvresult[i]);
+}
+
+switch (recvmsg) {
+    case MSG_GETIP:
+        if (recvresult[0]==md5_string_unicode(hash)) publicip = recvresult[1];
+        break;
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
     <event eventtype="8" enumb="0">
       <action>
         <libid>1</libid>
@@ -319,7 +392,7 @@ switch (recvmsg) {
     draw_set_valign(fa_middle);
     draw_text(40, 40, "IP: "+ipstr);
     draw_set_color(c_dkgray);
-    draw_text(40, 60, "Own address: "+selfip);
+    draw_text(40, 60, "Own address: "+publicip+" ("+lanip+")");
     //Draw players predefined
     for (var i=0; i&lt;ds_list_size(own_key); i++) {
         draw_set_color(c_white);

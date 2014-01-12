@@ -185,9 +185,7 @@ for (i=0; i&lt;ds_list_size(_x); i+=1) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>instance_create(0, 0, obj_game);
-global.networkmenu = false;
-//room_goto_next();
+            <string>if (global.networkmenu==false) instance_create(0, 0, obj_game);
 </string>
           </argument>
         </arguments>
