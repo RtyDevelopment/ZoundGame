@@ -25,9 +25,15 @@
     <script>scripts\draw_circle_glow.gml</script>
     <script>scripts\maze_coll_x.gml</script>
     <script>scripts\maze_coll_y.gml</script>
-    <script>scripts\netbuffer_reset.gml</script>
     <script>scripts\fade.gml</script>
+    <script>scripts\net_string_to_dslist.gml</script>
+    <script>scripts\net_buffer_to_dslist.gml</script>
     <script>scripts\netcommand.gml</script>
+    <script>scripts\net_receive.gml</script>
+    <script>scripts\net_connect.gml</script>
+    <script>scripts\net_disconnect.gml</script>
+    <script>scripts\net_send.gml</script>
+    <script>scripts\net_push.gml</script>
   </scripts>
   <objects name="objects">
     <object>objects\obj_network</object>
@@ -38,7 +44,7 @@
   <rooms name="rooms">
     <room>rooms\rm_game</room>
   </rooms>
-  <constants number="7">
+  <constants number="14">
     <constant name="MSG_PING">0</constant>
     <constant name="MSG_PONG">1</constant>
     <constant name="MSG_GETIP">2</constant>
@@ -46,6 +52,13 @@
     <constant name="MSG_INFOREQUEST">4</constant>
     <constant name="MSG_LANREQUEST">5</constant>
     <constant name="MSG_LANTRANSFER">6</constant>
+    <constant name="MSG_DISCONN">7</constant>
+    <constant name="MSG_CONN">8</constant>
+    <constant name="MSG_CONNACCEPT">9</constant>
+    <constant name="NET_BROADCAST">0</constant>
+    <constant name="NET_UDP">1</constant>
+    <constant name="NET_TCP">2</constant>
+    <constant name="NET_HTTP">3</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>

@@ -53,18 +53,27 @@ netcommands_arg2 = ds_list_create();
 netcommands_arg3 = ds_list_create();
 netcommands_arg4 = ds_list_create();
 
-//Pingtimerlist
-pingmap = ds_map_create();
 
 //NetworkStuff
-//Buffer
-netbuffer = buffer_create(1, buffer_grow, 1);
+//OutputBuffer
+datalist = ds_list_create();
+//InputBuffer
+receivelist = ds_list_create();
 
-//UDP devices
+//Connections
+netsockets = ds_list_create();
+netsockets_id = ds_list_create();
+netsockets_ip = ds_list_create();
+netsockets_port = ds_list_create();
+netsockets_type = ds_list_create();
+netsockets_acc = ds_list_create();
+
+//Unset sockets
+netsockets_unknown = ds_map_create();
+
 //LAN
 udplocalmaster = true;
 udpport = 6510;
-udpsocket = network_create_socket(network_socket_udp);
 udpserver = network_create_server(network_socket_udp, udpport, 32);
 if (udpserver&lt;0) {
     udplocalmaster = false;
@@ -80,8 +89,8 @@ if (udpserver&lt;0) {
     }
 }
 //Game
-gameport = global.port;
-gameserver = network_create_server(network_socket_tcp, global.port, 32);
+tcpport = global.port;
+tcpserver = network_create_server(network_socket_tcp, tcpport, 32);
 
 alarm[0]=5;
 </string>
@@ -106,26 +115,28 @@ alarm[0]=5;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>netbuffer_reset(netbuffer, MSG_INFO, udpport, global.key);
-buffer_write(netbuffer, buffer_bool, 1);
-buffer_write(netbuffer, buffer_string, global.key);
-buffer_write(netbuffer, buffer_string, global.name);
-buffer_write(netbuffer, buffer_u16, global.port);
-network_send_broadcast(udpsocket, 6510, netbuffer, buffer_tell(netbuffer));
+            <string>
+ds_list_clear(datalist);
+ds_list_add(datalist, 1);
+ds_list_add(datalist, global.name);
+ds_list_add(datalist, global.port);
+net_push(NET_BROADCAST, -1, 6510, MSG_INFO, datalist, udpport, global.key);
 
 if (udplocalmaster==false) {
-    netbuffer_reset(netbuffer, MSG_LANREQUEST, udpport, global.key);
-    network_send_udp(udpsocket, "127.0.0.1", 6510, netbuffer, buffer_tell(netbuffer));
+    ds_list_clear(datalist);
+    net_push(NET_UDP, "127.0.0.1", 6510, MSG_LANREQUEST, datalist, udpport, global.key);
 }
 
 if (lanip=="?") {
-    netbuffer_reset(netbuffer, MSG_GETIP, udpport, global.key);
-    buffer_write(netbuffer, buffer_string, md5_string_unicode(hash));
-    network_send_broadcast(udpsocket, udpport, netbuffer, buffer_tell(netbuffer));
+    ds_list_clear(datalist);
+    ds_list_add(datalist, md5_string_unicode(hash));
+    net_push(NET_BROADCAST, -1, udpport, MSG_GETIP, datalist, udpport, global.key);
 }
 
 if (publicip=="?") {
-    http_get("http://gmhtml5host.net46.net/getip.php?msg="+string(MSG_GETIP)+"&amp;hash="+md5_string_unicode(hash));
+    ds_list_clear(datalist);
+    ds_list_add(datalist, md5_string_unicode(hash));
+    net_push(NET_HTTP, "http://gmhtml5host.net46.net/gmnet.php", -1, MSG_GETIP, datalist, udpport, global.key);
 }
 
 alarm[0]=room_speed*3;
@@ -168,16 +179,14 @@ alarm[0]=room_speed*3;
             }
         }
         if (port=="") port = 43520;
-        ip = network_resolve(ip);
-        var socket = network_create_socket(network_socket_tcp);
-        network_connect(socket, ip, port);
-        netbuffer_reset(netbuffer, MSG_INFOREQUEST, udpport, global.key);
-        buffer_write(netbuffer, buffer_string, string(socket));
-        network_send_packet(socket, netbuffer, buffer_tell(netbuffer));
+        
+        ds_list_clear(datalist);
+        var _id = net_connect(NET_TCP, ip, port, global.key);
+        net_send(_id, MSG_INFOREQUEST, datalist, udpport, global.key);
         ipstr = "";
     }
 }
-//*
+/*
 if (ds_list_size(netcommands)&gt;0) {
     repeat (ds_list_size(netcommands)) {
         switch (ds_list_find_value(netcommands, 0)) {
@@ -191,7 +200,7 @@ if (ds_list_size(netcommands)&gt;0) {
         ds_list_delete(netcommands, 0);
         ds_list_delete(netcommands_arg0, 0);
     }
-}//*/
+}*/
 </string>
           </argument>
         </arguments>
@@ -208,104 +217,15 @@ if (ds_list_size(netcommands)&gt;0) {
         <exetype>2</exetype>
         <functionname></functionname>
         <codestring></codestring>
-        <whoName>self</whoName>
+        <whoName>other</whoName>
         <relative>0</relative>
         <isnot>0</isnot>
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>var recvip = ds_map_find_value(async_load, "ip");
-var recvdevice = ds_map_find_value(async_load, "id");
-var recvbuffer = ds_map_find_value(async_load, "buffer");
-buffer_seek(recvbuffer, buffer_seek_start, 0);
-var recvmsg = buffer_read(recvbuffer, buffer_u8);
-var recvport = buffer_read(recvbuffer, buffer_u16);
-var recvkey = buffer_read(recvbuffer, buffer_string);
-
-switch (recvmsg) {
-    case MSG_PING:
-        netbuffer_reset(netbuffer, MSG_PONG, udpport, global.key);
-        buffer_write(netbuffer, buffer_u8, buffer_read(recvbuffer, buffer_u8));
-        network_send_udp(udpsocket, recvip, recvport, netbuffer, buffer_tell(netbuffer));
-        break;
-    case MSG_PONG:
-        //pass
-        break;
-    case MSG_GETIP:
-        if (buffer_read(recvbuffer, buffer_string)==md5_string_unicode(hash)) lanip = recvip;
-        break;
-    case MSG_INFOREQUEST:
-        netbuffer_reset(netbuffer, MSG_INFO, udpport, global.key);
-        buffer_write(netbuffer, buffer_bool, 0);
-        buffer_write(netbuffer, buffer_string, global.key);
-        buffer_write(netbuffer, buffer_string, global.name);
-        buffer_write(netbuffer, buffer_u16, global.port);
-        network_send_udp(udpsocket, recvip, recvport, netbuffer, buffer_tell(netbuffer));
-        break;
-    case MSG_INFO:
-        var recvlan = buffer_read(recvbuffer, buffer_bool);
-        var recvkey = buffer_read(recvbuffer, buffer_string);
-        var recvname = buffer_read(recvbuffer, buffer_string);
-        var recvgameport = buffer_read(ds_map_find_value(async_load, "buffer"), buffer_u16);
-        if (recvlan==true) {
-            if (ds_list_find_index(lan_key, recvkey)&lt;0 &amp;&amp; global.key!=recvkey) {
-                ds_list_add(lan_key, recvkey);
-                ds_list_add(lan_ip, recvip);
-                ds_list_add(lan_port, recvgameport);
-                ds_list_add(lan_name, recvname);
-                ds_list_add(lan_req, 0);
-                show_debug_message("New server found at: "+recvip+"   called: "+recvname);
-            }
-        } else {
-            if (ds_list_find_index(own_key, recvkey)&lt;0 &amp;&amp; global.key!=recvkey) {
-                ds_list_add(own_key, recvkey);
-                ds_list_add(own_ip, recvip);
-                ds_list_add(own_port, recvgameport);
-                ds_list_add(own_name, recvname);
-                ds_list_add(own_req, 0);
-                show_debug_message("New server added at: "+recvip+"   called: "+recvname);
-            }
-            network_destroy(real(buffer_read(recvbuffer, buffer_string)));
-        }
-        break;
-    case MSG_LANREQUEST:
-        var lantransfer_key, lantransfer_ip, lantransfer_port, lantransfer_name;
-        lantransfer_key = ds_list_create();
-        ds_list_copy(lantransfer_key, lan_key);
-        lantransfer_ip = ds_list_create();
-        ds_list_copy(lantransfer_ip, lan_ip);
-        lantransfer_port = ds_list_create();
-        ds_list_copy(lantransfer_port, lan_port);
-        lantransfer_name = ds_list_create();
-        ds_list_copy(lantransfer_name, lan_name);
-        ds_list_add(lantransfer_key, global.key);
-        ds_list_add(lantransfer_ip, selfip);
-        ds_list_add(lantransfer_port, global.port);
-        ds_list_add(lantransfer_name, global.name);
-        for (var i=0; i&lt;ds_list_size(lantransfer_key); i++) {
-            if (ds_list_find_value(lantransfer_key, i)==recvkey) {
-                ds_list_delete(lantransfer_key, i);
-                ds_list_delete(lantransfer_ip, i);
-                ds_list_delete(lantransfer_port, i);
-                ds_list_delete(lantransfer_name, i);
-                break;
-            }
-        }
-        netbuffer_reset(netbuffer, MSG_LANTRANSFER, udpport, global.key);
-        buffer_write(netbuffer, buffer_string, ds_list_write(lantransfer_key));
-        buffer_write(netbuffer, buffer_string, ds_list_write(lantransfer_ip));
-        buffer_write(netbuffer, buffer_string, ds_list_write(lantransfer_port));
-        buffer_write(netbuffer, buffer_string, ds_list_write(lantransfer_name));
-        network_send_udp(udpsocket, recvip, recvport, netbuffer, buffer_tell(netbuffer));
-        break;
-    case MSG_LANTRANSFER:
-        ds_list_read(lan_key, buffer_read(recvbuffer, buffer_string));
-        ds_list_read(lan_ip, buffer_read(recvbuffer, buffer_string));
-        ds_list_read(lan_port, buffer_read(recvbuffer, buffer_string));
-        ds_list_read(lan_name, buffer_read(recvbuffer, buffer_string));
-        break;
-}
-
+            <string>ds_list_clear(receivelist);
+if (ds_map_find_value(async_load, "type")==network_type_data) net_buffer_to_dslist(ds_map_find_value(async_load, "buffer"), receivelist);
+net_receive(ds_map_find_value(async_load, "type"), receivelist);
 </string>
           </argument>
         </arguments>
@@ -328,38 +248,9 @@ switch (recvmsg) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>var recvresultstring = ds_map_find_value(async_load, "result");
-var recvresultno = 0;
-var newlinechr = false;
-
-var recvurl = ds_map_find_value(async_load, "url");
-var recvdevice = ds_map_find_value(async_load, "id");
-var recvresult;
-var recvmsg = "";
-
-recvresult[0] = "";
-for (var i=1; i&lt;=string_length(recvresultstring); i++) {
-    var char = string_char_at(recvresultstring, i);
-    if (char==chr(10)) {
-        if (newlinechr==true) break;
-        newlinechr = true;
-        recvresultno++;
-        recvresult[recvresultno] = "";
-    } else {
-        newlinechr = false;
-        if (recvresultno==0) recvmsg += char; else recvresult[recvresultno-1] += char;
-    }
-}
-recvmsg = real(recvmsg);
-for (var i=0; i&lt;recvresultno; i++) {
-    if (recvresult[i]==string_digits(recvresult[i])) recvresult[i] = real(recvresult[i]);
-}
-
-switch (recvmsg) {
-    case MSG_GETIP:
-        if (recvresult[0]==md5_string_unicode(hash)) publicip = recvresult[1];
-        break;
-}
+            <string>ds_list_clear(receivelist);
+net_string_to_dslist(ds_map_find_value(async_load, "result"), receivelist);
+net_receive(network_type_data, receivelist);
 </string>
           </argument>
         </arguments>
@@ -411,9 +302,9 @@ switch (recvmsg) {
     var prelength = 50*ds_list_size(own_key);
     for (var i=0; i&lt;ds_list_size(lan_key); i++) {
         draw_set_color(c_white);
-        draw_rectangle(30, 90+50*i+prelength, width-30, 140+50*i+prelength, 0);
+        draw_rectangle(30, 90+50*i+prelength, global.scrwidth-30, 140+50*i+prelength, 0);
         draw_set_color(c_black);
-        draw_rectangle(30, 90+50*i+prelength, width-30, 140+50*i+prelength, 1);
+        draw_rectangle(30, 90+50*i+prelength, global.scrwidth-30, 140+50*i+prelength, 1);
         switch (ds_list_find_value(own_req, i)) {
             case 1: draw_set_color(c_green); break;//Request sent
             case 2: draw_set_color(c_yellow); break;//Request rec
