@@ -37,10 +37,4 @@ switch (argument0) {
     case NET_HTTP:
         break;
 }
-pos = ds_list_find_index(netsockets_id, "-1");
-ds_list_delete(netsockets, pos);
-ds_list_delete(netsockets_id, pos);
-ds_list_delete(netsockets_ip, pos);
-ds_list_delete(netsockets_port, pos);
-ds_list_delete(netsockets_type, pos);
-ds_list_delete(netsockets_acc, pos);
+net_disconnect("-1");
