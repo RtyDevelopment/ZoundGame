@@ -113,11 +113,15 @@ switch (recvmsg) {
         
     case MSG_GETIP:
         ///CLIENT
-        if (ds_list_find_value(recvlist, 0)==md5_string_unicode(hash)) {
-            if (recvtype==NET_HTTP) {
+        if (recvtype==NET_HTTP) {
+            if (ds_list_find_value(recvlist, 0)==md5_string_unicode(pubhash) && pubhash!="-1") {
                 publicip = ds_list_find_value(recvlist, 1);
-            } else {
+                pubhash = "-1";
+            }
+        } else {
+            if (ds_list_find_value(recvlist, 0)==md5_string_unicode(lanhash) && lanhash!="-1") {
                 lanip = recvip;
+                lanhash = "-1";
             }
         }
         break;

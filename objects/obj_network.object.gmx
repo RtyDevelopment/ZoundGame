@@ -30,7 +30,11 @@ ipstr = ""
 
 publicip = "?";
 lanip = "?";
-hash = string(random(100000)*random(100000))+string(random(100000));
+
+pubhash = "-1";
+lanhash = "-1";
+
+//net_init(key, name, port);
 
 //Serverlists
 own_key = ds_list_create();
@@ -52,7 +56,6 @@ netcommands_arg1 = ds_list_create();
 netcommands_arg2 = ds_list_create();
 netcommands_arg3 = ds_list_create();
 netcommands_arg4 = ds_list_create();
-
 
 //NetworkStuff
 //OutputBuffer
@@ -92,54 +95,7 @@ if (udpserver&lt;0) {
 tcpport = global.port;
 tcpserver = network_create_server(network_socket_tcp, tcpport, 32);
 
-alarm[0]=5;
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="2" enumb="0">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>
-ds_list_clear(datalist);
-ds_list_add(datalist, 1);
-ds_list_add(datalist, global.name);
-ds_list_add(datalist, global.port);
-net_push(NET_BROADCAST, -1, 6510, MSG_INFO, datalist, udpport, global.key);
-
-if (udplocalmaster==false) {
-    ds_list_clear(datalist);
-    net_push(NET_UDP, "127.0.0.1", 6510, MSG_LANREQUEST, datalist, udpport, global.key);
-}
-
-if (lanip=="?") {
-    ds_list_clear(datalist);
-    ds_list_add(datalist, md5_string_unicode(hash));
-    net_push(NET_BROADCAST, -1, udpport, MSG_GETIP, datalist, udpport, global.key);
-}
-
-if (publicip=="?") {
-    ds_list_clear(datalist);
-    ds_list_add(datalist, md5_string_unicode(hash));
-    net_push(NET_HTTP, "http://gmhtml5host.net46.net/gmnet.php", -1, MSG_GETIP, datalist, udpport, global.key);
-}
-
-alarm[0]=room_speed*3;
+time = 0;
 </string>
           </argument>
         </arguments>
@@ -186,6 +142,32 @@ alarm[0]=room_speed*3;
         ipstr = "";
     }
 }
+//////////////////////////////////////
+if (time==0) {
+    ds_list_clear(datalist);
+    ds_list_add(datalist, 1);
+    ds_list_add(datalist, global.name);
+    ds_list_add(datalist, global.port);
+    net_push(NET_BROADCAST, -1, 6510, MSG_INFO, datalist, udpport, global.key);
+    if (udplocalmaster==false) {
+        ds_list_clear(datalist);
+        net_push(NET_UDP, "127.0.0.1", 6510, MSG_LANREQUEST, datalist, udpport, global.key);
+    }
+    if (lanip=="?") {
+        lanhash = string(random(100000)*random(100000))+string(random(100000));
+        ds_list_clear(datalist);
+        ds_list_add(datalist, md5_string_unicode(lanhash));
+        net_push(NET_BROADCAST, -1, udpport, MSG_GETIP, datalist, udpport, global.key);
+    }
+    if (publicip=="?") {
+        pubhash = string(random(100000)*random(100000))+string(random(100000));
+        ds_list_clear(datalist);
+        ds_list_add(datalist, md5_string_unicode(pubhash));
+        net_push(NET_HTTP, "http://gmhtml5host.net46.net/gmnet.php", -1, MSG_GETIP, datalist, udpport, global.key);
+    }
+    time = room_speed*3;
+}
+time--;
 /*
 if (ds_list_size(netcommands)&gt;0) {
     repeat (ds_list_size(netcommands)) {
@@ -201,6 +183,7 @@ if (ds_list_size(netcommands)&gt;0) {
         ds_list_delete(netcommands_arg0, 0);
     }
 }*/
+
 </string>
           </argument>
         </arguments>
