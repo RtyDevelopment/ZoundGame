@@ -9,6 +9,7 @@ ds_list_add(list, buffer_read(buffer, buffer_u8));
 ds_list_add(list, buffer_read(buffer, buffer_string));
 ds_list_add(list, buffer_read(buffer, buffer_s8));
 ds_list_add(list, buffer_read(buffer, buffer_u16));
+ds_list_add(list, buffer_read(buffer, buffer_u8));
 ds_list_add(list, buffer_read(buffer, buffer_u16));
 ds_list_add(list, buffer_read(buffer, buffer_string));
 

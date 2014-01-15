@@ -1,5 +1,10 @@
 ///net_init(name,key,port,connectiontype,interval);
-globalvar net_name, net_key, net_lanport, net_pubport, net_pubtype, net_interval, net_own_key, net_own_ip, net_own_port, net_own_name, net_own_req, net_lan_key, net_lan_ip, net_lan_port, net_lan_name, net_lan_req, net_commands, net_commands_arg0, net_commands_arg1, net_commands_arg2, net_commands_arg3, net_commands_arg4, net_sockets, net_sockets_id, net_sockets_ip, net_sockets_port, net_sockets_type, net_sockets_acc, net_sockets_unknown, net_landevicemaster, net_lanserver, net_pubserver, net_timer;
+globalvar net_name, net_key, net_lanport, net_pubport, net_pubtype, net_interval;
+globalvar net_own_key, net_own_ip, net_own_port, net_own_type, net_own_name, net_own_req, net_own_ping, net_own_lastping;
+globalvar net_lan_key, net_lan_ip, net_lan_port, net_lan_type, net_lan_name, net_lan_req, net_lan_ping, net_lan_lastping;
+globalvar net_commands, net_commands_arg0, net_commands_arg1, net_commands_arg2, net_commands_arg3, net_commands_arg4;
+globalvar net_sockets, net_sockets_id, net_sockets_ip, net_sockets_port, net_sockets_type, net_sockets_acc, net_sockets_unknown;
+globalvar net_devicemaster, net_lanserver, net_pubserver, net_timer;
 
 net_name = argument0;
 net_key = argument1;
@@ -12,14 +17,20 @@ net_interval = argument4;
 net_own_key = ds_list_create();
 net_own_ip = ds_list_create();
 net_own_port = ds_list_create();
+net_own_type = ds_list_create();
 net_own_name = ds_list_create();
 net_own_req = ds_list_create();
+net_own_ping = ds_list_create();
+net_own_lastping = ds_list_create();
 
 net_lan_key = ds_list_create();
 net_lan_ip = ds_list_create();
 net_lan_port = ds_list_create();
+net_lan_type = ds_list_create();
 net_lan_name = ds_list_create();
 net_lan_req = ds_list_create();
+net_lan_ping = ds_list_create();
+net_lan_lastping = ds_list_create();
 
 //Commands
 net_commands = ds_list_create();

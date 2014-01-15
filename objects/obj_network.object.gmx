@@ -103,6 +103,46 @@ if (timer==0) {
         net_push(NET_HTTP, "http://gmhtml5host.net46.net/gmnet.php", -1, MSG_GETIP, dataoutputlist);
     }
     timer = 90;
+    /*var l1, l2, l3, l4, l5, l6, l7, l8;
+    l1=string(ds_list_size(net_own_key));
+    l2=string(ds_list_size(net_own_ip));
+    l3=string(ds_list_size(net_own_port));
+    l4=string(ds_list_size(net_own_type));
+    l5=string(ds_list_size(net_own_name));
+    l6=string(ds_list_size(net_own_req));
+    l7=string(ds_list_size(net_own_ping));
+    l8=string(ds_list_size(net_own_lastping));
+    show_debug_message("own: "+l1+","+l2+","+l3+","+l4+","+l5+","+l6+","+l7+","+l8);
+    for(var i=0; i&lt;real(l1); i++) {
+        show_debug_message("-"+string(i)+"a: "+string(ds_list_find_value(net_own_key, i)));
+        show_debug_message("-"+string(i)+"b: "+string(ds_list_find_value(net_own_ip, i)));
+        show_debug_message("-"+string(i)+"c: "+string(ds_list_find_value(net_own_port, i)));
+        show_debug_message("-"+string(i)+"d: "+string(ds_list_find_value(net_own_type, i)));
+        show_debug_message("-"+string(i)+"e: "+string(ds_list_find_value(net_own_name, i)));
+        show_debug_message("-"+string(i)+"f: "+string(ds_list_find_value(net_own_req, i)));
+        show_debug_message("-"+string(i)+"g: "+string(ds_list_find_value(net_own_ping, i)));
+        show_debug_message("-"+string(i)+"h: "+string(ds_list_find_value(net_own_lastping, i)));
+    }
+    
+    l1=string(ds_list_size(net_lan_key));
+    l2=string(ds_list_size(net_lan_ip));
+    l3=string(ds_list_size(net_lan_port));
+    l4=string(ds_list_size(net_lan_type));
+    l5=string(ds_list_size(net_lan_name));
+    l6=string(ds_list_size(net_lan_req));
+    l7=string(ds_list_size(net_lan_ping));
+    l8=string(ds_list_size(net_lan_lastping));
+    show_debug_message("lan: "+l1+","+l2+","+l3+","+l4+","+l5+","+l6+","+l7+","+l8);
+    for(var i=0; i&lt;real(l1); i++) {
+        show_debug_message("-"+string(i)+"a: "+string(ds_list_find_value(net_lan_key, i)));
+        show_debug_message("-"+string(i)+"b: "+string(ds_list_find_value(net_lan_ip, i)));
+        show_debug_message("-"+string(i)+"c: "+string(ds_list_find_value(net_lan_port, i)));
+        show_debug_message("-"+string(i)+"d: "+string(ds_list_find_value(net_lan_type, i)));
+        show_debug_message("-"+string(i)+"e: "+string(ds_list_find_value(net_lan_name, i)));
+        show_debug_message("-"+string(i)+"f: "+string(ds_list_find_value(net_lan_req, i)));
+        show_debug_message("-"+string(i)+"g: "+string(ds_list_find_value(net_lan_ping, i)));
+        show_debug_message("-"+string(i)+"h: "+string(ds_list_find_value(net_lan_lastping, i)));
+    }*/
 }
 timer--;
 net_run();
@@ -199,7 +239,8 @@ if (recvmsgid!=1 &amp;&amp; recvmsgid!=-1) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>globalvar net_own_key, net_own_ip, net_own_port, net_own_name, net_own_req, net_lan_key, net_lan_ip, net_lan_port, net_lan_name, net_lan_req;
+            <string>globalvar net_own_key, net_own_ip, net_own_port, net_own_name, net_own_req, net_own_ping;
+globalvar net_lan_key, net_lan_ip, net_lan_port, net_lan_name, net_lan_req, net_lan_ping;
 
 if (global.networkmenu==true) {
     //Draw IP box
@@ -222,7 +263,7 @@ if (global.networkmenu==true) {
             case 1: draw_set_color(c_green); break;//Request sent
             case 2: draw_set_color(c_yellow); break;//Request rec
         }
-        draw_text(40, 105+50*i, ds_list_find_value(net_own_name, i));
+        draw_text(40, 105+50*i, ds_list_find_value(net_own_name, i)+" ("+string(ds_list_find_value(net_own_ping, i))+" ms)");
         draw_set_color(c_dkgray);
         draw_text(40, 125+50*i, ds_list_find_value(net_own_ip, i)+":"+string(ds_list_find_value(net_own_port, i)));
     }
@@ -237,7 +278,7 @@ if (global.networkmenu==true) {
             case 1: draw_set_color(c_green); break;//Request sent
             case 2: draw_set_color(c_yellow); break;//Request rec
         }
-        draw_text(40, 105+50*i+prelength, ds_list_find_value(net_lan_name, i));
+        draw_text(40, 105+50*i+prelength, ds_list_find_value(net_lan_name, i)+" ("+string(ds_list_find_value(net_lan_ping, i))+" ms)");
         draw_set_color(c_dkgray);
         draw_text(40, 125+50*i+prelength, ds_list_find_value(net_lan_ip, i)+":"+string(ds_list_find_value(net_lan_port, i)));
     }

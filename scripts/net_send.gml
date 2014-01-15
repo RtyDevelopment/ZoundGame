@@ -24,6 +24,7 @@ switch (conntype) {
         buffer_write(buffer, buffer_string, _id);
         buffer_write(buffer, buffer_s8, msgtype);
         buffer_write(buffer, buffer_u16, net_pubport);
+        buffer_write(buffer, buffer_u8, net_pubtype);
         buffer_write(buffer, buffer_u16, net_lanport);
         buffer_write(buffer, buffer_string, net_key);
         for (var i=0; i<ds_list_size(datalist); i++) {
@@ -31,7 +32,7 @@ switch (conntype) {
         }
         break;
     case NET_HTTP:
-        str_ = url+"?type="+string(conntype)+"&id="+_id+"&msg="+string(msgtype)+"&pubport="+string(net_pubport)+"&lanport="+string(net_lanport)+"&key="+net_key;
+        str_ = url+"?type="+string(conntype)+"&id="+_id+"&timer="+string(get_timer())+"&msg="+string(msgtype)+"&pubport="+string(net_pubport)+"&pubtype="+string(net_pubport)+"&lanport="+string(net_lanport)+"&key="+net_key;
         for (var i=0; i<ds_list_size(datalist); i++) {
             str_ += "&arg"+string(i)+"="+string(ds_list_find_value(datalist, i));
         }
