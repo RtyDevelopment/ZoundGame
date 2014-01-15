@@ -34,6 +34,8 @@
     <script>scripts\net_disconnect.gml</script>
     <script>scripts\net_send.gml</script>
     <script>scripts\net_push.gml</script>
+    <script>scripts\net_run.gml</script>
+    <script>scripts\net_init.gml</script>
   </scripts>
   <objects name="objects">
     <object>objects\obj_network</object>
@@ -45,16 +47,16 @@
     <room>rooms\rm_game</room>
   </rooms>
   <constants number="14">
-    <constant name="MSG_PING">0</constant>
-    <constant name="MSG_PONG">1</constant>
+    <constant name="MSG_PING">-1</constant>
+    <constant name="MSG_PONG">-2</constant>
     <constant name="MSG_GETIP">2</constant>
-    <constant name="MSG_INFO">3</constant>
-    <constant name="MSG_INFOREQUEST">4</constant>
-    <constant name="MSG_LANREQUEST">5</constant>
-    <constant name="MSG_LANTRANSFER">6</constant>
-    <constant name="MSG_DISCONN">7</constant>
-    <constant name="MSG_CONN">8</constant>
-    <constant name="MSG_CONNACCEPT">9</constant>
+    <constant name="MSG_INFO">-3</constant>
+    <constant name="MSG_INFOREQUEST">-4</constant>
+    <constant name="MSG_LANREQUEST">-5</constant>
+    <constant name="MSG_LANTRANSFER">-6</constant>
+    <constant name="MSG_DISCONN">-7</constant>
+    <constant name="MSG_CONN">-8</constant>
+    <constant name="MSG_CONNACCEPT">-9</constant>
     <constant name="NET_BROADCAST">0</constant>
     <constant name="NET_UDP">1</constant>
     <constant name="NET_TCP">2</constant>

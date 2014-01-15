@@ -34,68 +34,14 @@ lanip = "?";
 pubhash = "-1";
 lanhash = "-1";
 
-//net_init(key, name, port);
+net_init(global.name, global.key, global.port, network_socket_tcp, room_speed*3);
 
-//Serverlists
-own_key = ds_list_create();
-own_ip = ds_list_create();
-own_port = ds_list_create();
-own_name = ds_list_create();
-own_req = ds_list_create();
+timer = 0;
 
-lan_key = ds_list_create();
-lan_ip = ds_list_create();
-lan_port = ds_list_create();
-lan_name = ds_list_create();
-lan_req = ds_list_create();
-
-//Commands
-netcommands = ds_list_create();
-netcommands_arg0 = ds_list_create();
-netcommands_arg1 = ds_list_create();
-netcommands_arg2 = ds_list_create();
-netcommands_arg3 = ds_list_create();
-netcommands_arg4 = ds_list_create();
-
-//NetworkStuff
 //OutputBuffer
-datalist = ds_list_create();
+dataoutputlist = ds_list_create();
 //InputBuffer
-receivelist = ds_list_create();
-
-//Connections
-netsockets = ds_list_create();
-netsockets_id = ds_list_create();
-netsockets_ip = ds_list_create();
-netsockets_port = ds_list_create();
-netsockets_type = ds_list_create();
-netsockets_acc = ds_list_create();
-
-//Unset sockets
-netsockets_unknown = ds_map_create();
-
-//LAN
-udplocalmaster = true;
-udpport = 6510;
-udpserver = network_create_server(network_socket_udp, udpport, 32);
-if (udpserver&lt;0) {
-    udplocalmaster = false;
-    while (udpserver&lt;0) {
-        udpport++;
-        switch (udpport) {
-            case 6511: global.name = "Joe"; break;
-            case 6512: global.name = "John"; break;
-            case 6513: global.name = "David"; break;
-            default: global.name = "James no. "+string(udpport-6513); break;
-        }
-        udpserver = network_create_server(network_socket_udp, udpport, 32);
-    }
-}
-//Game
-tcpport = global.port;
-tcpserver = network_create_server(network_socket_tcp, tcpport, 32);
-
-time = 0;
+datainputlist = ds_list_create();
 </string>
           </argument>
         </arguments>
@@ -136,54 +82,30 @@ time = 0;
         }
         if (port=="") port = 43520;
         
-        ds_list_clear(datalist);
-        var _id = net_connect(NET_TCP, ip, port, global.key);
-        net_send(_id, MSG_INFOREQUEST, datalist, udpport, global.key);
+        ds_list_clear(dataoutputlist);
+        var _id = net_connect(NET_TCP, ip, port);
+        net_send(_id, MSG_INFOREQUEST, dataoutputlist);
         ipstr = "";
     }
 }
 //////////////////////////////////////
-if (time==0) {
-    ds_list_clear(datalist);
-    ds_list_add(datalist, 1);
-    ds_list_add(datalist, global.name);
-    ds_list_add(datalist, global.port);
-    net_push(NET_BROADCAST, -1, 6510, MSG_INFO, datalist, udpport, global.key);
-    if (udplocalmaster==false) {
-        ds_list_clear(datalist);
-        net_push(NET_UDP, "127.0.0.1", 6510, MSG_LANREQUEST, datalist, udpport, global.key);
-    }
+if (timer==0) {
     if (lanip=="?") {
         lanhash = string(random(100000)*random(100000))+string(random(100000));
-        ds_list_clear(datalist);
-        ds_list_add(datalist, md5_string_unicode(lanhash));
-        net_push(NET_BROADCAST, -1, udpport, MSG_GETIP, datalist, udpport, global.key);
+        ds_list_clear(dataoutputlist);
+        ds_list_add(dataoutputlist, md5_string_unicode(lanhash));
+        net_push(NET_BROADCAST, -1, global.net_lanport, MSG_GETIP, dataoutputlist);
     }
     if (publicip=="?") {
         pubhash = string(random(100000)*random(100000))+string(random(100000));
-        ds_list_clear(datalist);
-        ds_list_add(datalist, md5_string_unicode(pubhash));
-        net_push(NET_HTTP, "http://gmhtml5host.net46.net/gmnet.php", -1, MSG_GETIP, datalist, udpport, global.key);
+        ds_list_clear(dataoutputlist);
+        ds_list_add(dataoutputlist, md5_string_unicode(pubhash));
+        net_push(NET_HTTP, "http://gmhtml5host.net46.net/gmnet.php", -1, MSG_GETIP, dataoutputlist);
     }
-    time = room_speed*3;
+    timer = 90;
 }
-time--;
-/*
-if (ds_list_size(netcommands)&gt;0) {
-    repeat (ds_list_size(netcommands)) {
-        switch (ds_list_find_value(netcommands, 0)) {
-            case MSG_PING:
-                
-                break;
-            case MSG_INFOREQUEST:
-                
-                break;
-        }
-        ds_list_delete(netcommands, 0);
-        ds_list_delete(netcommands_arg0, 0);
-    }
-}*/
-
+timer--;
+net_run();
 </string>
           </argument>
         </arguments>
@@ -206,9 +128,20 @@ if (ds_list_size(netcommands)&gt;0) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>ds_list_clear(receivelist);
-if (ds_map_find_value(async_load, "type")==network_type_data) net_buffer_to_dslist(ds_map_find_value(async_load, "buffer"), receivelist);
-net_receive(ds_map_find_value(async_load, "type"), receivelist);
+            <string>ds_list_clear(datainputlist);
+if (ds_map_find_value(async_load, "type")==network_type_data) net_buffer_to_dslist(ds_map_find_value(async_load, "buffer"), datainputlist);
+var recvmsgid = net_receive(ds_map_find_value(async_load, "type"), datainputlist);
+
+if (recvmsgid!=1 &amp;&amp; recvmsgid!=-1) {
+    switch (recvmsgid) {
+        case MSG_GETIP:
+            if (ds_list_find_value(datainputlist, 0)==md5_string_unicode(lanhash) &amp;&amp; lanhash!="-1") {
+                lanip = ds_map_find_value(async_load, "ip");
+                lanhash = "-1";
+            }
+        break;
+    }
+}
 </string>
           </argument>
         </arguments>
@@ -231,9 +164,19 @@ net_receive(ds_map_find_value(async_load, "type"), receivelist);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>ds_list_clear(receivelist);
-net_string_to_dslist(ds_map_find_value(async_load, "result"), receivelist);
-net_receive(network_type_data, receivelist);
+            <string>ds_list_clear(datainputlist);
+net_string_to_dslist(ds_map_find_value(async_load, "result"), datainputlist);
+var recvmsgid = net_receive(network_type_data, datainputlist);
+if (recvmsgid!=1 &amp;&amp; recvmsgid!=-1) {
+    switch (recvmsgid) {
+        case MSG_GETIP:
+            if (ds_list_find_value(datainputlist, 0)==md5_string_unicode(pubhash) &amp;&amp; pubhash!="-1") {
+                publicip = ds_list_find_value(datainputlist, 1);
+                pubhash = "-1";
+            }
+        break;
+    }
+}
 </string>
           </argument>
         </arguments>
@@ -256,7 +199,9 @@ net_receive(network_type_data, receivelist);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (global.networkmenu==true) {
+            <string>globalvar net_own_key, net_own_ip, net_own_port, net_own_name, net_own_req, net_lan_key, net_lan_ip, net_lan_port, net_lan_name, net_lan_req;
+
+if (global.networkmenu==true) {
     //Draw IP box
     draw_set_alpha(0.6);
     draw_set_color(c_white);
@@ -268,33 +213,33 @@ net_receive(network_type_data, receivelist);
     draw_set_color(c_dkgray);
     draw_text(40, 60, "Own address: "+publicip+" ("+lanip+")");
     //Draw players predefined
-    for (var i=0; i&lt;ds_list_size(own_key); i++) {
+    for (var i=0; i&lt;ds_list_size(net_own_key); i++) {
         draw_set_color(c_white);
         draw_rectangle(30, 90+50*i, global.scrwidth-30, 140+50*i, 0);
         draw_set_color(c_black);
         draw_rectangle(30, 90+50*i, global.scrwidth-30, 140+50*i, 1);
-        switch (ds_list_find_value(own_req, i)) {
+        switch (ds_list_find_value(net_own_req, i)) {
             case 1: draw_set_color(c_green); break;//Request sent
             case 2: draw_set_color(c_yellow); break;//Request rec
         }
-        draw_text(40, 105+50*i, ds_list_find_value(own_name, i));
+        draw_text(40, 105+50*i, ds_list_find_value(net_own_name, i));
         draw_set_color(c_dkgray);
-        draw_text(40, 125+50*i, ds_list_find_value(own_ip, i)+":"+string(ds_list_find_value(own_port, i)));
+        draw_text(40, 125+50*i, ds_list_find_value(net_own_ip, i)+":"+string(ds_list_find_value(net_own_port, i)));
     }
     //Draw players in network
-    var prelength = 50*ds_list_size(own_key);
-    for (var i=0; i&lt;ds_list_size(lan_key); i++) {
+    var prelength = 50*ds_list_size(net_own_key);
+    for (var i=0; i&lt;ds_list_size(net_lan_key); i++) {
         draw_set_color(c_white);
         draw_rectangle(30, 90+50*i+prelength, global.scrwidth-30, 140+50*i+prelength, 0);
         draw_set_color(c_black);
         draw_rectangle(30, 90+50*i+prelength, global.scrwidth-30, 140+50*i+prelength, 1);
-        switch (ds_list_find_value(own_req, i)) {
+        switch (ds_list_find_value(net_lan_req, i)) {
             case 1: draw_set_color(c_green); break;//Request sent
             case 2: draw_set_color(c_yellow); break;//Request rec
         }
-        draw_text(40, 105+50*i+prelength, ds_list_find_value(lan_name, i));
+        draw_text(40, 105+50*i+prelength, ds_list_find_value(net_lan_name, i));
         draw_set_color(c_dkgray);
-        draw_text(40, 125+50*i+prelength, ds_list_find_value(lan_ip, i)+":"+string(ds_list_find_value(lan_port, i)));
+        draw_text(40, 125+50*i+prelength, ds_list_find_value(net_lan_ip, i)+":"+string(ds_list_find_value(net_lan_port, i)));
     }
 }
 </string>

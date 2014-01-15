@@ -1,11 +1,11 @@
 ///net_connect(conntype,url,port,key);
+globalvar net_key, net_sockets, net_sockets_id, net_sockets_ip, net_sockets_port, net_sockets_type, net_sockets_acc;
 var socket, conntype, url, port, key, _id;
 socket = -1;
 conntype = argument0;
 url = argument1;
 port = argument2;
-key = argument3;
-_id = sha1_string_unicode(string(get_timer())+key);
+_id = sha1_string_unicode(string(get_timer())+net_key);
 while (socket<0) {
     switch (argument0) {
         case NET_BROADCAST:
@@ -33,7 +33,7 @@ switch (argument0) {
     case NET_UDP:
     case NET_TCP:
         var buffer = ds_list_create();
-        net_send(_id, MSG_CONN, buffer, udpport, global.key);
+        net_send(_id, MSG_CONN, buffer);
         ds_list_destroy(buffer);
         break;
     case NET_BROADCAST:
