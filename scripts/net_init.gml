@@ -41,16 +41,17 @@ net_sockets_acc = ds_list_create();
 net_sockets_unknown = ds_map_create();
 
 //LAN
-net_landevicemaster = true;
+net_devicemaster = true;
 net_lanserver = network_create_server(network_socket_udp, net_lanport, 32);
 if (net_lanserver<0) {
-    net_landevicemaster = false;
+    net_devicemaster = false;
     while (net_lanserver<0) {
         net_lanport++;
         net_lanserver = network_create_server(network_socket_udp, net_lanport, 32);
     }
+} else {
+    //Public
+    net_pubserver = network_create_server(net_pubtype, net_pubport, 32);
 }
-//Public
-net_pubserver = network_create_server(net_pubtype, net_pubport, 32);
 
 net_timer = 0;

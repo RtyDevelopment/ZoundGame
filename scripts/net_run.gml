@@ -6,7 +6,7 @@ if (net_timer==0) {
     ds_list_add(outputlist, 1);
     ds_list_add(outputlist, net_name);
     net_push(NET_BROADCAST, -1, 6510, MSG_INFO, outputlist);
-    if (net_landevicemaster==false) {
+    if (net_devicemaster==false) {
         ds_list_clear(outputlist);
         net_push(NET_UDP, "127.0.0.1", 6510, MSG_LANREQUEST, outputlist);
     }
