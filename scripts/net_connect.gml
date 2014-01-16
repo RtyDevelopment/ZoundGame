@@ -22,12 +22,12 @@ while (socket<0) {
     }
 }
 
-ds_list_add(netsockets, socket);
-ds_list_add(netsockets_id, _id);
-ds_list_add(netsockets_ip, url);
-ds_list_add(netsockets_port, port);
-ds_list_add(netsockets_type, conntype);
-ds_list_add(netsockets_acc, false);
+ds_list_add(net_sockets, socket);
+ds_list_add(net_sockets_id, _id);
+ds_list_add(net_sockets_ip, url);
+ds_list_add(net_sockets_port, port);
+ds_list_add(net_sockets_type, conntype);
+ds_list_add(net_sockets_acc, false);
 
 switch (argument0) {
     case NET_UDP:
