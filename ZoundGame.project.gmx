@@ -42,6 +42,7 @@
     <object>objects\obj_game</object>
     <object>objects\obj_menu</object>
     <object>objects\obj_execonpress</object>
+    <object>objects\obj_gameobject</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\rm_game</room>
