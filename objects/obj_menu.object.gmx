@@ -48,15 +48,16 @@ if (view_enabled==true) {
     global.scrheight = room_height;
 }
 
-lastmenu = -1;
+
 
 if (os_get_config()=="OEM") {
     global.networkmenu = true;
     menu = 1;
 } else {
     global.networkmenu = false;
-    menu = 0;
+    menu = -1;
 }
+lastmenu = menu-1;
 
 //Self vars (to be changed to file)
 global.name = "Steve";
@@ -98,7 +99,7 @@ if (lastmenu!=menu) {
     }
     if (os_get_config()!="OEM"){
         switch (menu) {
-            case 0:
+            case -1:
                 with (instance_create(global.scrwidth/2-100, global.scrheight/5*2, obj_execonpress)) {
                     sprite = spr_button;
                     text = "start";
@@ -107,6 +108,9 @@ if (lastmenu!=menu) {
                     sprite = spr_button;
                     text = "options";
                 }
+                break;
+            case 0:
+                instance_create(0, 0, obj_game);
                 break;
             case 1:
                 with (instance_create(global.scrwidth-150, global.scrheight-75, obj_execonpress)) {
@@ -185,7 +189,9 @@ for (i=0; i&lt;ds_list_size(_x); i+=1) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (global.networkmenu==false) instance_create(0, 0, obj_game);
+            <string>if (global.networkmenu==false) {
+    obj_menu.menu = 0;
+}
 </string>
           </argument>
         </arguments>

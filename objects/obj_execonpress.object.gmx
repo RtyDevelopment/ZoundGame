@@ -200,7 +200,7 @@ if (hoverimg==true &amp;&amp; pressed==false) mouse = 2;
             <string>///Exec event
 switch (sprite) {
     case spr_back:
-        obj_menu.menu = 0;
+        obj_menu.menu = -1;
         break;
     case spr_button:
         if (text=="start") obj_menu.menu = 1;
