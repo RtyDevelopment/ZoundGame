@@ -97,27 +97,27 @@ if (lastmenu!=menu) {
             if (object_index==obj_menu || object_index==obj_network) i++; else instance_destroy();
         }
     }
-    if (os_get_config()!="OEM"){
-        switch (menu) {
-            case -1:
-                with (instance_create(global.scrwidth/2-100, global.scrheight/5*2, obj_execonpress)) {
-                    sprite = spr_button;
-                    text = "start";
-                }
-                with (instance_create(global.scrwidth/2-100, global.scrheight/5*3, obj_execonpress)) {
-                    sprite = spr_button;
-                    text = "options";
-                }
-                break;
-            case 0:
-                instance_create(0, 0, obj_game);
-                break;
-            case 1:
+    switch (menu) {
+        case -1:
+            with (instance_create(global.scrwidth/2-100, global.scrheight/5*2, obj_execonpress)) {
+                sprite = spr_button;
+                text = "start";
+            }
+            with (instance_create(global.scrwidth/2-100, global.scrheight/5*3, obj_execonpress)) {
+                sprite = spr_button;
+                text = "options";
+            }
+            break;
+        case 0:
+            instance_create(0, 0, obj_game);
+            break;
+        case 1:
+            if (os_get_config()!="OEM") {
                 with (instance_create(global.scrwidth-150, global.scrheight-75, obj_execonpress)) {
                     sprite = spr_back;
                 }
-                break;
-        }
+            }
+            break;
     }
     lastmenu = menu;
 }
@@ -172,7 +172,7 @@ for (i=0; i&lt;ds_list_size(_x); i+=1) {
         </arguments>
       </action>
     </event>
-    <event eventtype="10" enumb="13">
+    <event eventtype="10" enumb="16">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -189,9 +189,7 @@ for (i=0; i&lt;ds_list_size(_x); i+=1) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (global.networkmenu==false) {
-    obj_menu.menu = 0;
-}
+            <string>if (menu!=0) menu = 0;
 </string>
           </argument>
         </arguments>

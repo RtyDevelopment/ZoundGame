@@ -28,12 +28,14 @@
             <string>w = 10;
 h = 10;
 gridsize = 10;
-if (os_get_config()=="Default") surfsize = 25; else surfsize = 50;
+if (os_get_config()!="OEM") surfsize = 25; else surfsize = 50;
 maze = create_maze(w, h);
 surf = -1;
 col1 = -1;
 col2 = -1;
+wallperc = 0.2;
 
+gridperc = 1-wallperc*2;
 x = gridsize/2;
 y = gridsize/2;
 direction = 0;
@@ -89,6 +91,13 @@ if (os_get_config()!="OEM") {
 }
 
 if (keyboard_check(vk_alt)==true &amp;&amp; keyboard_check(vk_f4)==true || keyboard_check(vk_escape)) game_end();
+
+if (keyboard_check_pressed(vk_space)==true) {
+    with (instance_create(x, y, obj_gameobject)) {
+        type = 0;
+        direction = other.direction;
+    }
+}
 
 if (os_get_config()!="OEM") {
     if (keyboard_check(ord("W"))==true) {
@@ -153,7 +162,7 @@ if (surface_exists(surf)==false) {
     surface_set_target(surf);
     draw_set_color(c_navy);
     draw_rectangle(0, 0, w*surfsize, h*surfsize, 0);
-    maze_draw_map(maze,0,0,w*surfsize,h*surfsize,0.6,c_white,3,c_white,3);
+    maze_draw_map(maze,0,0,w*surfsize,h*surfsize,gridperc,c_white,3,c_white,3);
     draw_set_blend_mode_ext(bm_src_alpha, bm_one);
     draw_circle_color(h*surfsize/2, h*surfsize/2, h*surfsize*0.7, c_dkgray, c_black, 0);
     draw_set_blend_mode(bm_normal);
@@ -179,19 +188,33 @@ if (os_get_config()!="OEM") {
     draw_set_color(c_black);
     d3d_draw_floor(0,0,0,w*gridsize,h*gridsize,0,-1,1,1);
     draw_set_color(c_white);
-    maze_draw_d3d(maze,0,0,0,w*gridsize,h*gridsize,gridsize,surface_get_texture(surf), surface_get_texture(surf), 0.6);
+    maze_draw_d3d(maze,0,0,0,w*gridsize,h*gridsize,gridsize,surface_get_texture(surf), surface_get_texture(surf), gridperc);
     
     d3d_set_hidden(false);
     d3d_transform_set_identity()
     //d3d_set_lighting(false)
     d3d_transform_add_rotation_x((0-zdirection)/2+25);
     d3d_transform_add_rotation_z(270+direction);
+    
     var scale = 1/(power(2, gridsize*0.7));
     d3d_transform_add_scaling(scale, scale, scale);
     d3d_transform_add_translation(x+lengthdir_x(0.5*gridsize,direction), y+lengthdir_y(0.5*gridsize,direction), 0.25*gridsize);
     draw_surface(surf, 0-surface_get_width(surf)/2, 0-surface_get_height(surf)/2);
     draw_set_color(c_red);
     draw_circle(x/(w*gridsize)*(w*surfsize)-(w*surfsize)/2, y/(h*gridsize)*(h*surfsize)-(h*surfsize)/2, 0.1*surfsize, 0);
+    xlist = ds_list_create();
+    ylist = ds_list_create();
+    with (obj_gameobject) {
+        ds_list_add(other.xlist, x);
+        ds_list_add(other.ylist, y);
+    }
+    draw_set_color(c_white);
+    for (var i=0; i&lt;ds_list_size(xlist); i++) {
+        draw_circle(ds_list_find_value(xlist, i)/(w*gridsize)*(w*surfsize)-(w*surfsize)/2, ds_list_find_value(ylist, i)/(h*gridsize)*(h*surfsize)-(h*surfsize)/2, 0.1*surfsize, 0);
+    }
+    ds_list_destroy(xlist);
+    ds_list_destroy(ylist);
+    
     //d3d_set_lighting(true)
     d3d_transform_set_identity();
     d3d_set_hidden(true);
@@ -200,6 +223,18 @@ if (os_get_config()!="OEM") {
     draw_set_color(c_red);
     draw_circle(x/(w*gridsize)*(w*surfsize), y/(h*gridsize)*(h*surfsize), 0.1*surfsize, 0);
     draw_line(x/(w*gridsize)*(w*surfsize), y/(h*gridsize)*(h*surfsize), x/(w*gridsize)*(w*surfsize)+lengthdir_x(1/6*surfsize, direction), y/(h*gridsize)*(h*surfsize)+lengthdir_y(1/6*surfsize, direction));
+    xlist = ds_list_create();
+    ylist = ds_list_create();
+    with (obj_gameobject) {
+        ds_list_add(other.xlist, x);
+        ds_list_add(other.ylist, y);
+    }
+    draw_set_color(c_white);
+    for (var i=0; i&lt;ds_list_size(xlist); i++) {
+        draw_circle(ds_list_find_value(xlist, i)/(w*gridsize)*(w*surfsize), ds_list_find_value(ylist, i)/(h*gridsize)*(h*surfsize), 0.1*surfsize, 0);
+    }
+    ds_list_destroy(xlist);
+    ds_list_destroy(ylist);
 }
 </string>
           </argument>
