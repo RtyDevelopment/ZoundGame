@@ -58,6 +58,12 @@ start = true;
 switch (type) {
     case 0:
         //Ball
+    case 1:
+        //Bomb
+        if (os_get_config()!="OEM") {
+            z = 5;
+            z_vec = 0;
+        }
         i = -1;
         sx = x;
         sy = y;
@@ -91,13 +97,13 @@ if (start==false) exit;
 switch (type) {
     case 0:
         //Ball
+    case 1:
+        //Bomb
         var gridsize = obj_game.gridsize;
         if (i&gt;=room_speed || i=-1) {
             var wallperc = obj_game.wallperc;
             var gridperc = obj_game.gridperc;
             var maze = obj_game.maze;
-            //var xmodif = maze_coll_x(maze, x/gridsize+lengthdir_x(0.49, direction), y/gridsize+lengthdir_y(0.49, direction), gridperc, wallperc);
-            //var ymodif = maze_coll_y(maze, x/gridsize+lengthdir_x(0.49, direction), y/gridsize+lengthdir_y(0.49, direction), gridperc, wallperc);
             
             var xmodif = maze_coll_x(maze, floor(x/gridsize)+0.5+lengthdir_x(0.5-wallperc/2, direction), floor(y/gridsize)+0.5+lengthdir_y(0.5-wallperc/2, direction), gridperc, wallperc);
             var ymodif = maze_coll_y(maze, floor(x/gridsize)+0.5+lengthdir_x(0.5-wallperc/2, direction), floor(y/gridsize)+0.5+lengthdir_y(0.5-wallperc/2, direction), gridperc, wallperc);
@@ -114,6 +120,11 @@ switch (type) {
         var f = fade(0, gridsize, i/room_speed);
         x = sx+lengthdir_x(f, direction);
         y = sy+lengthdir_y(f, direction);
+        if (os_get_config()!="OEM") {
+            z_vec -= 0.01*gridsize;
+            if (z-0.1*gridsize&lt;=0) z_vec *= -1+0.01*gridsize;
+            z += z_vec;
+        }
         i++;
         break;
 }
@@ -148,7 +159,15 @@ switch (type) {
         if (os_get_config()!="OEM") {
             var gridsize = obj_game.gridsize;
             draw_set_color(c_white);
-            d3d_draw_ellipsoid(x-0.1*gridsize, y-0.1*gridsize, 0.4*gridsize, x+0.1*gridsize, y+0.1*gridsize, 0.6*gridsize, -1, 1, 1, 24);
+            d3d_draw_ellipsoid(x-0.1*gridsize, y-0.1*gridsize, z-0.1*gridsize, x+0.1*gridsize, y+0.1*gridsize, z+0.1*gridsize, -1, 1, 1, 24);
+        }
+        break;
+    case 1:
+        //Bomb
+        if (os_get_config()!="OEM") {
+            var gridsize = obj_game.gridsize;
+            draw_set_color(c_orange);
+            d3d_draw_ellipsoid(x-0.1*gridsize, y-0.1*gridsize, z-0.1*gridsize, x+0.1*gridsize, y+0.1*gridsize, z+0.1*gridsize, -1, 1, 1, 24);
         }
         break;
 }

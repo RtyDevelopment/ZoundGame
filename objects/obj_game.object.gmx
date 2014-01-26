@@ -99,6 +99,13 @@ if (keyboard_check_pressed(vk_space)==true) {
     }
 }
 
+if (mouse_check_button_pressed(mb_left)==true) {
+    with (instance_create(x, y, obj_gameobject)) {
+        type = 1;
+        direction = other.direction;
+    }
+}
+
 if (os_get_config()!="OEM") {
     if (keyboard_check(ord("W"))==true) {
         x += lengthdir_x(1/16*gridsize, direction);
