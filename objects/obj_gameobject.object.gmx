@@ -60,13 +60,13 @@ switch (type) {
         //Ball
     case 1:
         //Bomb
-        if (os_get_config()!="OEM") {
-            z = 5;
-            z_vec = 0;
-        }
-        i = -1;
-        sx = x;
-        sy = y;
+        spd = 0.05;
+        z = 5;
+        ///
+        calcspd = spd*obj_game.gridsize;
+        x_vec = lengthdir_x(calcspd, direction);
+        y_vec = lengthdir_y(calcspd, direction);
+        z_vec = zdirection/90*calcspd;
         break;
 }
 </string>
@@ -100,32 +100,35 @@ switch (type) {
     case 1:
         //Bomb
         var gridsize = obj_game.gridsize;
-        if (i&gt;=room_speed || i=-1) {
-            var wallperc = obj_game.wallperc;
-            var gridperc = obj_game.gridperc;
-            var maze = obj_game.maze;
-            
-            var xmodif = maze_coll_x(maze, floor(x/gridsize)+0.5+lengthdir_x(0.5-wallperc/2, direction), floor(y/gridsize)+0.5+lengthdir_y(0.5-wallperc/2, direction), gridperc, wallperc);
-            var ymodif = maze_coll_y(maze, floor(x/gridsize)+0.5+lengthdir_x(0.5-wallperc/2, direction), floor(y/gridsize)+0.5+lengthdir_y(0.5-wallperc/2, direction), gridperc, wallperc);
-            if (xmodif!=0 || ymodif!=0) {
-                //audio_play_sound(snd_floor, 1, 0);
-                instance_destroy();
-            } else {
-                //audio_play_sound(snd_wall, 1, 0);
-                i = 0;
-                sx = x;
-                sy = y;
-            }
+        var wallperc = obj_game.wallperc;
+        var gridperc = obj_game.gridperc;
+        var maze = obj_game.maze;
+        
+        //Friction/gravity
+        //x_vec -= 0.01*calcspd;
+        //y_vec -= 0.01*calcspd;
+        z_vec -= 0.1*calcspd;
+        
+        //Collision
+        var xmodif = maze_coll_x(maze, x/gridsize, y/gridsize, gridperc, wallperc);
+        if (xmodif!=0) {
+            x += xmodif*2;
+            x_vec *= -1;
         }
-        var f = fade(0, gridsize, i/room_speed);
-        x = sx+lengthdir_x(f, direction);
-        y = sy+lengthdir_y(f, direction);
-        if (os_get_config()!="OEM") {
-            z_vec -= 0.01*gridsize;
-            if (z-0.1*gridsize&lt;=0) z_vec *= -1+0.01*gridsize;
-            z += z_vec;
+        var ymodif = maze_coll_y(maze, x/gridsize, y/gridsize, gridperc, wallperc);
+        if (ymodif!=0) {
+            y += ymodif*2;
+            y_vec *= -1;
         }
-        i++;
+        var zmodif = (z-0.1*gridsize&lt;0)*(z-0.1*gridsize);
+        if (zmodif!=0) {
+            zmodif += zmodif*2;
+            z_vec *= -1+0.1*calcspd;
+        }
+        //Movement
+        x += x_vec;
+        y += y_vec;
+        z += z_vec;
         break;
 }
 </string>
