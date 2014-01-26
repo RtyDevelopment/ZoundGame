@@ -68,6 +68,10 @@ switch (type) {
         y_vec = lengthdir_y(calcspd, direction);
         z_vec = zdirection/90*calcspd;
         break;
+    case 2:
+        //Ripple animation
+        i = 0;
+        break;
 }
 </string>
           </argument>
@@ -112,24 +116,38 @@ switch (type) {
         //Collision
         var xmodif = maze_coll_x(maze, x/gridsize, y/gridsize, gridperc, wallperc);
         if (xmodif!=0) {
-            x += xmodif*2;
-            x_vec *= -1;
+            //x += xmodif*2;
+            //x_vec *= -1;
+            instance_destroy();
         }
         var ymodif = maze_coll_y(maze, x/gridsize, y/gridsize, gridperc, wallperc);
         if (ymodif!=0) {
-            y += ymodif*2;
-            y_vec *= -1;
+            //y += ymodif*2;
+            //y_vec *= -1;
+            instance_destroy();
         }
         var zmodif = (z-0.1*gridsize&lt;0)*(z-0.1*gridsize);
         if (zmodif!=0) {
             zmodif += zmodif*2;
             z_vec *= -1+0.1*calcspd;
+            if (os_get_config()!="OEM") {
+                with (instance_create(x, y, obj_gameobject)) {
+                    type = 2;
+                    z = 0;
+                    x_vec = 0;
+                    z_vec = 0;
+                }
+            }
         }
         //Movement
         x += x_vec;
         y += y_vec;
         z += z_vec;
         break;
+    case 2:
+        //Ripple animation
+        i++;
+        if (i&gt;=room_speed) instance_destroy();
 }
 </string>
           </argument>
@@ -172,6 +190,19 @@ switch (type) {
             draw_set_color(c_orange);
             d3d_draw_ellipsoid(x-0.1*gridsize, y-0.1*gridsize, z-0.1*gridsize, x+0.1*gridsize, y+0.1*gridsize, z+0.1*gridsize, -1, 1, 1, 24);
         }
+        break;
+    case 2:
+        /*//draw_set_alpha(1);
+        d3d_transform_set_identity();
+        d3d_transform_add_rotation_x(x_vec); //up/down
+        d3d_transform_add_rotation_z(z_vec); //left/right
+        d3d_transform_add_translation(x, y, z);
+        //draw_set_alpha((room_speed-i)/room_speed);
+        draw_circle_glow(0, 0, i/room_speed*obj_game.gridsize*0.7, min(i/5, 20), 5, c_white, c_white);
+        d3d_transform_set_identity();*/
+        var gridsize = obj_game.gridsize;
+        draw_set_color(c_red);
+        d3d_draw_cone(x-0.1*gridsize, y-0.1*gridsize, z-0.1*gridsize, x+0.1*gridsize, y+0.1*gridsize, z+0.1*gridsize, -1, 1, 1, 1, 24);
         break;
 }
 </string>
