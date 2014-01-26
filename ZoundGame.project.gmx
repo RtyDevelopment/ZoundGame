@@ -47,10 +47,11 @@
   <rooms name="rooms">
     <room>rooms\rm_game</room>
   </rooms>
-  <constants number="14">
+  <constants number="15">
+    <constant name="MSG_GETIP">2</constant>
+    <constant name="/////////"></constant>
     <constant name="MSG_PING">-1</constant>
     <constant name="MSG_PONG">-2</constant>
-    <constant name="MSG_GETIP">2</constant>
     <constant name="MSG_INFO">-3</constant>
     <constant name="MSG_INFOREQUEST">-4</constant>
     <constant name="MSG_LANREQUEST">-5</constant>

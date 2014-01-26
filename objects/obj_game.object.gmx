@@ -28,7 +28,7 @@
             <string>w = 10;
 h = 10;
 gridsize = 10;
-if (os_get_config()!="OEM") surfsize = 25; else surfsize = 50;
+surfsize = 50;
 maze = create_maze(w, h);
 surf = -1;
 col1 = -1;
