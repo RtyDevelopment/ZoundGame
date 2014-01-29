@@ -25,7 +25,10 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>w = 10;
+            <string>globalvar drawlines;
+drawlines = ds_list_create();
+
+w = 10;
 h = 10;
 gridsize = 10;
 surfsize = 50;
@@ -173,7 +176,15 @@ var cy = 50;
 draw_circle(cx, cy, 50, 1);
 draw_triangle(cx+lengthdir_x(10, direction+90), cy+lengthdir_y(10, direction+90), cx+lengthdir_x(10, direction-90), cy+lengthdir_y(10, direction-90), cx+lengthdir_x(50, direction), cy+lengthdir_y(50, direction), 0);
 draw_triangle(cx+lengthdir_x(10, direction+90), cy+lengthdir_y(10, direction+90), cx+lengthdir_x(10, direction-90), cy+lengthdir_y(10, direction-90), cx+lengthdir_x(30, direction+180), cy+lengthdir_y(30, direction+180), 0);
-    
+
+globalvar drawlines;
+for (var i=0; i&lt;ds_list_size(drawlines)/8; i++) {
+    draw_rectangle(cx-50, cy+50+i*100, cx+50, cy+50+(i+1)*100, 1);
+    draw_line(cx-50+ds_list_find_value(drawlines, i*8)  *100, cy+50+(i+ds_list_find_value(drawlines, i*8+1))*100, 
+              cx-50+ds_list_find_value(drawlines, i*8+2)*100, cy+50+(i+ds_list_find_value(drawlines, i*8+3))*100);
+    draw_line(cx-50+ds_list_find_value(drawlines, i*8+4)*100, cy+50+(i+ds_list_find_value(drawlines, i*8+5))*100, 
+              cx-50+ds_list_find_value(drawlines, i*8+6)*100, cy+50+(i+ds_list_find_value(drawlines, i*8+7))*100);
+}
 </string>
           </argument>
         </arguments>

@@ -26,6 +26,17 @@ y3 = argument5;
 x4 = argument6;
 y4 = argument7;
 segment = argument8;
+
+globalvar drawlines;
+ds_list_add(drawlines, x1);
+ds_list_add(drawlines, y1);
+ds_list_add(drawlines, x2);
+ds_list_add(drawlines, y2);
+ds_list_add(drawlines, x3);
+ds_list_add(drawlines, y3);
+ds_list_add(drawlines, x4);
+ds_list_add(drawlines, y4);
+
 ua = 0;
 ud = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
 if (ud != 0) {
