@@ -107,24 +107,37 @@ switch (type) {
         var wallperc = obj_game.wallperc;
         var gridperc = obj_game.gridperc;
         var maze = obj_game.maze;
+        var dir = point_direction(0, 0, x_vec, y_vec);
+        var threshold = 15;
         
         //Friction/gravity
-        //x_vec -= 0.01*calcspd;
-        //y_vec -= 0.01*calcspd;
+        //x_vec -= (0-(x_vec&lt;0))*(abs(x_vec)-0.01*calcspd);
+        //y_vec -= (0-(y_vec&lt;0))*(abs(y_vec)-0.01*calcspd);
         z_vec -= 0.1*calcspd;
         
         //Collision
-        var xmodif = maze_coll_x(maze, x/gridsize, y/gridsize, gridperc, wallperc);
-        if (xmodif!=0) {
-            //x += xmodif*2;
-            //x_vec *= -1;
-            instance_destroy();
+        var time = string_copy(string(current_time), 1, 6);
+        var val = abs((((dir mod 180)+90) mod 180)-90);
+        var xmodif = maze_coll_x(maze, x/gridsize, y/gridsize, gridperc, wallperc, 0);
+        if (xmodif!=0 &amp;&amp; val&lt;45) {
+            if (val&gt;threshold) {
+                x += xmodif*2;
+                x_vec *= -1;
+            } else {
+                show_debug_message("XCOL("+string(time)+") w/ "+string(val)+"/"+string(threshold)+" ["+string(frac(x/gridsize))+","+string(frac(y/gridsize))+"]:"+string(xmodif));
+                instance_destroy();
+            }
         }
-        var ymodif = maze_coll_y(maze, x/gridsize, y/gridsize, gridperc, wallperc);
-        if (ymodif!=0) {
-            //y += ymodif*2;
-            //y_vec *= -1;
-            instance_destroy();
+        val = 90-val;
+        var ymodif = maze_coll_y(maze, x/gridsize, y/gridsize, gridperc, wallperc, 0);
+        if (ymodif!=0 &amp;&amp; val&gt;45) {
+            if (val&gt;threshold) {
+                y += ymodif*2;
+                y_vec *= -1;
+            } else {
+                show_debug_message("YCOL("+string(time)+") w/ "+string(val)+"/"+string(threshold)+" ["+string(frac(x/gridsize))+","+string(frac(y/gridsize))+"]:"+string(ymodif));
+                instance_destroy();
+            }
         }
         var zmodif = (z-0.1*gridsize&lt;0)*(z-0.1*gridsize);
         if (zmodif!=0) {
@@ -192,14 +205,20 @@ switch (type) {
         }
         break;
     case 2:
-        /*//draw_set_alpha(1);
+        //draw_set_alpha(1);
+        d3d_end();
+        ripplesurf = surface_create(obj_game.gridsize*0.7, obj_game.gridsize*0.7);
+        surface_set_target(ripplesurf);
+        draw_circle_glow(obj_game.gridsize*0.7/2, obj_game.gridsize*0.7/2, i/room_speed*obj_game.gridsize*0.7, min(i/5, 20), 5, c_white, c_white);
+        surface_reset_target();
+        d3d_start();
         d3d_transform_set_identity();
         d3d_transform_add_rotation_x(x_vec); //up/down
         d3d_transform_add_rotation_z(z_vec); //left/right
         d3d_transform_add_translation(x, y, z);
-        //draw_set_alpha((room_speed-i)/room_speed);
-        draw_circle_glow(0, 0, i/room_speed*obj_game.gridsize*0.7, min(i/5, 20), 5, c_white, c_white);
-        d3d_transform_set_identity();*/
+        draw_surface_ext(ripplesurf, 0-obj_game.gridsize*0.7/2, 0-obj_game.gridsize*0.7/2, 1, 1, 0, c_white, (room_speed-i)/room_speed);
+        surface_free(ripplesurf);
+        d3d_transform_set_identity();//*/
         var gridsize = obj_game.gridsize;
         draw_set_color(c_red);
         d3d_draw_cone(x-0.1*gridsize, y-0.1*gridsize, z-0.1*gridsize, x+0.1*gridsize, y+0.1*gridsize, z+0.1*gridsize, -1, 1, 1, 1, 24);
@@ -208,6 +227,22 @@ switch (type) {
 </string>
           </argument>
         </arguments>
+      </action>
+    </event>
+    <event eventtype="10" enumb="40">
+      <action>
+        <libid>1</libid>
+        <id>203</id>
+        <kind>0</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>1</exetype>
+        <functionname>action_kill_object</functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
       </action>
     </event>
   </events>
