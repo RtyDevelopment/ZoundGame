@@ -185,7 +185,7 @@ for (var i=0; i&lt;ds_list_size(drawlines)/8; i++) {
               cx-50+ds_list_find_value(drawlines, i*8+2)*100, cy+50+(i+ds_list_find_value(drawlines, i*8+3))*100);
     draw_line(cx-50+ds_list_find_value(drawlines, i*8+4)*100, cy+50+(i+ds_list_find_value(drawlines, i*8+5))*100, 
               cx-50+ds_list_find_value(drawlines, i*8+6)*100, cy+50+(i+ds_list_find_value(drawlines, i*8+7))*100);
-    draw_circle(cx-50+ds_list_find_value(drawlines, i*8+6)*100, cy+50+(i+ds_list_find_value(drawlines, i*8+7))*100, 3, 1);
+    draw_circle(cx-50+ds_list_find_value(drawlines, i*8+6)*100, cy+50+(i+ds_list_find_value(drawlines, i*8+7))*100, 15, 1);
 }
 </string>
           </argument>
