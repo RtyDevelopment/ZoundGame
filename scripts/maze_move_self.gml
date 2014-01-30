@@ -111,17 +111,21 @@ if (cornerLU==2) {
     cornerx = wallperc;
     cornery = wallperc;
     tdir = point_direction(x_frac, y_frac, cornerx, cornery);
-    if (dir<tdir) {
-        show_debug_message(string(dir)+"<"+string(tdir)+": LU (R)");
+    mdir = dir;
+    if (mdir>0 && mdir<(tdir+180) mod 360) mdir+=360;
+    if (mdir<tdir) {
+        show_debug_message(string(mdir)+"<"+string(tdir)+": LU (R)");
         //Wall-RIGHT
-        if (line_isect(cornerx, 0, cornerx, cornery, x_frac-objrad, y_frac, xnew_frac-objrad, ynew_frac, true)!=0) {
+        if (line_isect(cornerx, 0, cornerx, cornery, x_frac, y_frac, xnew_frac, ynew_frac, true)!=0) {
+        //if (line_isect(cornerx, 0, cornerx, cornery, x_frac-objrad, y_frac, xnew_frac-objrad, ynew_frac, true)!=0);// {
             xmodif += wallperc-(xnew_frac-objrad);
             xinv ^= true;
         }
     } else {
-        show_debug_message(string(dir)+">"+string(tdir)+": LU (D)");
+        show_debug_message(string(mdir)+">"+string(tdir)+": LU (D)");
         //Wall-DOWN
-        if (line_isect(0, cornery, cornerx, cornery, x_frac, y_frac-objrad, xnew_frac, ynew_frac-objrad, true)!=0) {
+        if (line_isect(0, cornery, cornerx, cornery, x_frac, y_frac, xnew_frac, ynew_frac, true)!=0) {
+        //if (line_isect(0, cornery, cornerx, cornery, x_frac, y_frac-objrad, xnew_frac, ynew_frac-objrad, true)!=0);// {
             ymodif += wallperc-(ynew_frac-objrad);
             yinv ^= true;
         }
@@ -134,17 +138,21 @@ if (cornerRU==2) {
     cornerx = 1-wallperc;
     cornery = wallperc;
     tdir = point_direction(x_frac, y_frac, cornerx, cornery);
-    if (dir<tdir) {
-        show_debug_message(string(dir)+"<"+string(tdir)+": RU (D)");
+    mdir = dir;
+    if (mdir>0 && mdir<(tdir+180) mod 360) mdir+=360;
+    if (mdir<tdir) {
+        show_debug_message(string(mdir)+"<"+string(tdir)+": RU (D)");
         //Wall-DOWN
-        if (line_isect(cornerx, cornery, 1, cornery, x_frac, y_frac-objrad, xnew_frac, ynew_frac-objrad, true)!=0) {
+        if (line_isect(cornerx, cornery, 1, cornery, x_frac, y_frac, xnew_frac, ynew_frac, true)!=0) {
+        //if (line_isect(cornerx, cornery, 1, cornery, x_frac, y_frac-objrad, xnew_frac, ynew_frac-objrad, true)!=0);// {
             ymodif += wallperc-(ynew_frac-objrad);
             yinv ^= true;
         }
     } else {
-        show_debug_message(string(dir)+">"+string(tdir)+": RU (L)");
+        show_debug_message(string(mdir)+">"+string(tdir)+": RU (L)");
         //Wall-LEFT
-        if (line_isect(cornerx, 0, cornerx, cornery, x_frac+objrad, y_frac, xnew_frac+objrad, ynew_frac, true)!=0) {
+        if (line_isect(cornerx, 0, cornerx, cornery, x_frac, y_frac, xnew_frac, ynew_frac, true)!=0) {
+        //if (line_isect(cornerx, 0, cornerx, cornery, x_frac+objrad, y_frac, xnew_frac+objrad, ynew_frac, true)!=0);// {
             xmodif -= (xnew_frac+objrad)-(1-wallperc);
             xinv ^= true;
         }
@@ -157,17 +165,21 @@ if (cornerRD==2) {
     cornerx = 1-wallperc;
     cornery = 1-wallperc;
     tdir = point_direction(x_frac, y_frac, cornerx, cornery);
-    if (dir<tdir) {
-        show_debug_message(string(dir)+"<"+string(tdir)+": RD (L)");
+    mdir = dir;
+    if (mdir>0 && mdir<(tdir+180) mod 360) mdir+=360;
+    if (mdir<tdir) {
+        show_debug_message(string(mdir)+"<"+string(tdir)+": RD (L)");
         //Wall-LEFT
-        if (line_isect(cornerx, cornery, cornerx, 1, x_frac+objrad, y_frac, xnew_frac+objrad, ynew_frac, true)!=0) {
+        if (line_isect(cornerx, cornery, cornerx, 1, x_frac, y_frac, xnew_frac, ynew_frac, true)!=0) {
+        //if (line_isect(cornerx, cornery, cornerx, 1, x_frac+objrad, y_frac, xnew_frac+objrad, ynew_frac, true)!=0);// {
             xmodif -= (xnew_frac+objrad)-(1-wallperc);
             xinv ^= true;
         }
     } else {
-        show_debug_message(string(dir)+">"+string(tdir)+": RD (U)");
+        show_debug_message(string(mdir)+">"+string(tdir)+": RD (U)");
         //Wall-UP
-        if (line_isect(cornerx, cornery, 1, cornery, x_frac, y_frac+objrad, xnew_frac, ynew_frac+objrad, true)!=0) {
+        if (line_isect(cornerx, cornery, 1, cornery, x_frac, y_frac, xnew_frac, ynew_frac, true)!=0) {
+        //if (line_isect(cornerx, cornery, 1, cornery, x_frac, y_frac+objrad, xnew_frac, ynew_frac+objrad, true)!=0);// {
             ymodif -= (ynew_frac+objrad)-(1-wallperc);
             yinv ^= true;
         }
@@ -180,17 +192,21 @@ if (cornerLD==2) {
     cornerx = wallperc;
     cornery = 1-wallperc;
     tdir = point_direction(x_frac, y_frac, cornerx, cornery);
-    if (dir<tdir) {
-        show_debug_message(string(dir)+"<"+string(tdir)+": LD (U)");
+    mdir = dir;
+    if (mdir>0 && mdir<(tdir+180) mod 360) mdir+=360;
+    if (mdir<tdir) {
+        show_debug_message(string(mdir)+"<"+string(tdir)+": LD (U)");
         //Wall-UP
-        if (line_isect(0, cornery, cornerx, cornery, x_frac, y_frac+objrad, xnew_frac, ynew_frac+objrad, true)!=0) {
+        if (line_isect(0, cornery, cornerx, cornery, x_frac, y_frac, xnew_frac, ynew_frac, true)!=0) {
+        //if (line_isect(0, cornery, cornerx, cornery, x_frac, y_frac+objrad, xnew_frac, ynew_frac+objrad, true)!=0);// {
             ymodif -= (ynew_frac+objrad)-(1-wallperc);
             yinv ^= true;
         }
     } else {
-        show_debug_message(string(dir)+">"+string(tdir)+": LD (R)");
+        show_debug_message(string(mdir)+">"+string(tdir)+": LD (R)");
         //Wall-RIGHT
-        if (line_isect(cornerx, cornery, cornerx, 1, x_frac-objrad, y_frac, xnew_frac-objrad, ynew_frac, true)!=0) {
+        if (line_isect(cornerx, cornery, cornerx, 1, x_frac, y_frac, xnew_frac, ynew_frac, true)!=0) {
+        //if (line_isect(cornerx, cornery, cornerx, 1, x_frac-objrad, y_frac, xnew_frac-objrad, ynew_frac, true)!=0);// {
             xmodif += wallperc-(xnew_frac-objrad);
             xinv ^= true;
         }
