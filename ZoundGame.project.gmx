@@ -23,8 +23,6 @@
     <script>scripts\maze_draw_d3d.gml</script>
     <script>scripts\d3d_set_projection_euler.gml</script>
     <script>scripts\draw_circle_glow.gml</script>
-    <script>scripts\maze_coll_x.gml</script>
-    <script>scripts\maze_coll_y.gml</script>
     <script>scripts\fade.gml</script>
     <script>scripts\net_string_to_dslist.gml</script>
     <script>scripts\net_buffer_to_dslist.gml</script>
@@ -38,8 +36,6 @@
     <script>scripts\net_init.gml</script>
     <script>scripts\line_isect.gml</script>
     <script>scripts\maze_move_self.gml</script>
-    <script>scripts\_line_seg_dist_ltp.gml</script>
-    <script>scripts\line_seg_dist.gml</script>
   </scripts>
   <objects name="objects">
     <object>objects\obj_network</object>

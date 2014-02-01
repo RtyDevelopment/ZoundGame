@@ -25,10 +25,7 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>globalvar drawlines;
-drawlines = ds_list_create();
-
-w = 10;
+            <string>w = 10;
 h = 10;
 gridsize = 10;
 surfsize = 50;
@@ -82,7 +79,7 @@ if (os_get_config()!="OEM") {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>//if (os_get_config()!="OEM") {
+            <string>if (os_get_config()!="OEM") {
     var xx,yy,cx,cy;
     xx = window_mouse_get_x();
     yy = window_mouse_get_y();
@@ -91,7 +88,7 @@ if (os_get_config()!="OEM") {
     direction = (direction-(xx-cx)/10) mod 360;
     zdirection = max(-89,min(89,zdirection-(yy-cy)/10));
     window_mouse_set(cx,cy);
-//}
+}
 
 if (keyboard_check(vk_alt)==true &amp;&amp; keyboard_check(vk_f4)==true || keyboard_check(vk_escape)) game_end();
 
@@ -111,41 +108,28 @@ if (mouse_check_button_pressed(mb_left)==true) {
     }
 }
 
-//if (os_get_config()!="OEM") {
+if (os_get_config()!="OEM") {
     if (keyboard_check(ord("W"))==true) {
-        //x += lengthdir_x(1/16*gridsize, direction);
-        //y += lengthdir_y(1/16*gridsize, direction);
         maze_move_self(maze, x, y, direction, 1/16*gridsize, 0, gridsize, 0.6, 0.15);
     }
     if (keyboard_check(ord("S"))==true) {
-        //x += lengthdir_x(1/16*gridsize, direction+180);
-        //y += lengthdir_y(1/16*gridsize, direction+180);
         maze_move_self(maze, x, y, direction+180, 1/16*gridsize, 0, gridsize, 0.6, 0.15);
     }
     if (keyboard_check(ord("A"))==true) {
-        //x += lengthdir_x(1/16*gridsize, direction+90);
-        //y += lengthdir_y(1/16*gridsize, direction+90);
         maze_move_self(maze, x, y, direction+90, 1/16*gridsize, 0, gridsize, 0.6, 0.15);
     }
     if (keyboard_check(ord("D"))==true) {
-        //x += lengthdir_x(1/16*gridsize, direction+270);
-        //y += lengthdir_y(1/16*gridsize, direction+270);
         maze_move_self(maze, x, y, direction+270, 1/16*gridsize, 0, gridsize, 0.6, 0.15);
     }
-    //Collision checking
-    //x += maze_coll_x(maze, x/gridsize, y/gridsize, 0.6, 0.15, 1)*gridsize;
-    //y += maze_coll_y(maze, x/gridsize, y/gridsize, 0.6, 0.15, 1)*gridsize;
-/*} else {
+} else {
     if (keyboard_check_pressed(ord("W"))==true) {
         if (string_char_at(ds_grid_get(maze, floor(x/gridsize), floor(y/gridsize)), (((360-direction)/90+1) mod 4)+1) == "1") {
-            //x += lengthdir_x(gridsize, direction);
-            //y += lengthdir_y(gridsize, direction);
             maze_move_self(maze, x, y, direction, gridsize, 0, gridsize, 0.6, 0.15);
         }
     }
     if (keyboard_check_pressed(ord("A"))==true) direction += 90;
     if (keyboard_check_pressed(ord("D"))==true) direction -= 90;
-}*/
+}
 
 
 </string>
@@ -176,17 +160,6 @@ var cy = 50;
 draw_circle(cx, cy, 50, 1);
 draw_triangle(cx+lengthdir_x(10, direction+90), cy+lengthdir_y(10, direction+90), cx+lengthdir_x(10, direction-90), cy+lengthdir_y(10, direction-90), cx+lengthdir_x(50, direction), cy+lengthdir_y(50, direction), 0);
 draw_triangle(cx+lengthdir_x(10, direction+90), cy+lengthdir_y(10, direction+90), cx+lengthdir_x(10, direction-90), cy+lengthdir_y(10, direction-90), cx+lengthdir_x(30, direction+180), cy+lengthdir_y(30, direction+180), 0);
-
-globalvar drawlines;
-for (var i=0; i&lt;ds_list_size(drawlines)/8; i++) {
-    draw_set_color(c_green);
-    draw_rectangle(cx-50, cy+50+i*100, cx+50, cy+50+(i+1)*100, 1);
-    draw_line(cx-50+ds_list_find_value(drawlines, i*8)  *100, cy+50+(i+ds_list_find_value(drawlines, i*8+1))*100, 
-              cx-50+ds_list_find_value(drawlines, i*8+2)*100, cy+50+(i+ds_list_find_value(drawlines, i*8+3))*100);
-    draw_line(cx-50+ds_list_find_value(drawlines, i*8+4)*100, cy+50+(i+ds_list_find_value(drawlines, i*8+5))*100, 
-              cx-50+ds_list_find_value(drawlines, i*8+6)*100, cy+50+(i+ds_list_find_value(drawlines, i*8+7))*100);
-    draw_circle(cx-50+ds_list_find_value(drawlines, i*8+6)*100, cy+50+(i+ds_list_find_value(drawlines, i*8+7))*100, 15, 1);
-}
 </string>
           </argument>
         </arguments>
