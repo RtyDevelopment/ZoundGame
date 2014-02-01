@@ -116,6 +116,12 @@ switch (type) {
         var val = abs((((dir mod 180)+90) mod 180)-90);
         switch (maze_move_self(maze, x, y, dir, point_distance(0, 0, x_vec, y_vec), true, gridsize, gridperc, 0.15)) {
             case 1:
+                with (instance_create(x, y, obj_gameobject)) {
+                    type = 2;
+                    z = other.z;
+                    x_vec = 90;
+                    z_vec = 90;
+                }
                 if (val&lt;30) {
                     instance_destroy();
                 } else {
@@ -123,6 +129,12 @@ switch (type) {
                 }
                 break;
             case 2:
+                with (instance_create(x, y, obj_gameobject)) {
+                    type = 2;
+                    z = other.z;
+                    x_vec = 90;
+                    z_vec = 0;
+                }
                 val = 90-val; 
                 if (val&lt;30) {
                     instance_destroy();
@@ -176,6 +188,8 @@ switch (type) {
             <kind>1</kind>
             <string>///Draw event
 if (start==false) exit;
+draw_set_color(c_white);
+draw_set_alpha(1);
 ///
 switch (type) {
     case 0:
@@ -195,23 +209,17 @@ switch (type) {
         }
         break;
     case 2:
-        //draw_set_alpha(1);
-        //d3d_end();
-        ripplesurf = surface_create(obj_game.gridsize*0.7, obj_game.gridsize*0.7);
-        surface_set_target(ripplesurf);
-        draw_circle_glow(obj_game.gridsize*0.7/2, obj_game.gridsize*0.7/2, i/room_speed*obj_game.gridsize*0.7, min(i/5, 20), 5, c_white, c_white);
-        surface_reset_target();
-        //d3d_start();
+        var gridsize = obj_game.gridsize;
         d3d_transform_set_identity();
+        var scale = 1/8;
+        d3d_transform_add_scaling(scale, scale, scale);
         d3d_transform_add_rotation_x(x_vec); //up/down
         d3d_transform_add_rotation_z(z_vec); //left/right
-        d3d_transform_add_translation(x, y, z);
-        draw_surface_ext(ripplesurf, 0-obj_game.gridsize*0.7/2, 0-obj_game.gridsize*0.7/2, 1, 1, 0, c_white, (room_speed-i)/room_speed);
-        surface_free(ripplesurf);
-        d3d_transform_set_identity();//*/
-        var gridsize = obj_game.gridsize;
-        draw_set_color(c_red);
-        d3d_draw_cone(x-0.1*gridsize, y-0.1*gridsize, z-0.1*gridsize, x+0.1*gridsize, y+0.1*gridsize, z+0.1*gridsize, -1, 1, 1, 1, 24);
+        d3d_transform_add_translation(x, y, z+0.1);
+        draw_set_alpha(1-i/room_speed);
+        draw_circle_glow(0, 0, i/room_speed*gridsize*0.7*(1/scale), min(i/5, 20), 5, c_white, c_white);
+        //draw_circle(0,0,min(i/5, 20), true);
+        d3d_transform_set_identity();
         break;
 }
 </string>

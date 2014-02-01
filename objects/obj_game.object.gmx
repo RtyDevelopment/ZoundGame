@@ -154,7 +154,8 @@ if (os_get_config()!="OEM") {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>draw_set_color(c_green);
+            <string>draw_set_alpha(1);
+draw_set_color(c_green);
 var cx = room_width-50;
 var cy = 50;
 draw_circle(cx, cy, 50, 1);
@@ -208,15 +209,16 @@ if (surface_exists(col2)==false) {
     draw_point_color(0, 0, c_black);
     surface_reset_target();
 }
+draw_set_alpha(1);
+draw_set_color(c_black);
+draw_rectangle(0, 0, view_wview[view_current], view_hview[view_current], 0);
 
 if (os_get_config()!="OEM") {
     d3d_start();
     d3d_set_projection_euler(x,y,0.65*gridsize,direction,zdirection,0,0);
-    draw_set_alpha(1);
-    draw_set_color(c_black);
     d3d_draw_floor(0,0,-0.1,w*gridsize,h*gridsize,-0.1,-1,1,1);
     draw_set_color(c_white);
-    maze_draw_d3d(maze,0,0,0,w*gridsize,h*gridsize,gridsize,surface_get_texture(surf), surface_get_texture(surf), gridperc);
+    maze_draw_d3d(maze,0,0,0,w*gridsize,h*gridsize,gridsize,surface_get_texture(col2), surface_get_texture(col2), gridperc);
     
     d3d_set_hidden(false);
     d3d_transform_set_identity()
