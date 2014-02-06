@@ -115,15 +115,27 @@ switch (type) {
         var gridperc = obj_game.gridperc;
         var maze = obj_game.maze;
         var dir = point_direction(0, 0, x_vec, y_vec);
+        var spd = point_distance(0, 0, x_vec, y_vec);
         
         //Friction/gravity
+        //x_vec = lengthdir_x(spd*0.9, dir);
+        //y_vec = lengthdir_y(spd*0.9, dir);
         z_vec -= 0.1*calcspd;
         
         //Collision
         var val = abs((((dir mod 180)+90) mod 180)-90);
-        switch (maze_move_self(maze, x, y, dir, point_distance(0, 0, x_vec, y_vec), true, gridsize, gridperc, 0.15)) {
+        switch (maze_move_self(maze, x, y, dir, spd, true, gridsize, gridperc, 0.15)) {
             case 1:
-                with (instance_create(x, y, obj_gameobject)) {
+                var xdist_wall;
+                xdist_wall = frac(x/gridsize);
+                if (xdist_wall&lt;0.5) {
+                    xdist_wall = (wallperc-xdist_wall)*0.9;
+                    show_debug_message("BOUNCE: "+string(xdist_wall*gridsize+x));
+                } else {
+                    xdist_wall = (1-wallperc-xdist_wall)*0.9;
+                }
+                xdist_wall *= gridsize;
+                with (instance_create(x+xdist_wall, y, obj_gameobject)) {
                     type = 2;
                     z = other.z;
                     x_vec = 90;
@@ -136,7 +148,16 @@ switch (type) {
                 }
                 break;
             case 2:
-                with (instance_create(x, y, obj_gameobject)) {
+                var ydist_wall;
+                ydist_wall = frac(y/gridsize);
+                if (ydist_wall&lt;0.5) {
+                    ydist_wall = (wallperc-ydist_wall)*0.9;
+                    show_debug_message("BOUNCE: "+string(ydist_wall*gridsize+y));
+                } else {
+                    ydist_wall = (1-wallperc-ydist_wall)*0.9;
+                }
+                ydist_wall *= gridsize;
+                with (instance_create(x, y+ydist_wall, obj_gameobject)) {
                     type = 2;
                     z = other.z;
                     x_vec = 90;
@@ -148,19 +169,16 @@ switch (type) {
                 } else {
                     y_vec*=-1;
                 }
-                break
+                break;
         }
-        var zmodif = (z-0.1*gridsize&lt;0)*(z-0.1*gridsize);
-        if (zmodif!=0) {
-            zmodif += zmodif*2;
+        if (z+z_vec&lt;0) {
+            //z += z_vec;
             z_vec *= -1+0.1*calcspd;
-            if (os_get_config()!="OEM") {
-                with (instance_create(x, y, obj_gameobject)) {
-                    type = 2;
-                    z = 0;
-                    x_vec = 0;
-                    z_vec = 0;
-                }
+            with (instance_create(x, y, obj_gameobject)) {
+                type = 2;
+                z = 0;
+                x_vec = 0;
+                z_vec = 0;
             }
         }
         //Movement
@@ -221,7 +239,7 @@ switch (type) {
         }
         break;
     case 2:
-        if (draw_on==true) {
+        if (draw_on==true &amp;&amp; os_get_config()!="OEM") {
             var gridsize = obj_game.gridsize;
             d3d_transform_set_identity();
             var scale = 1/8;
