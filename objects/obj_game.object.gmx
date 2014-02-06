@@ -92,21 +92,9 @@ if (os_get_config()!="OEM") {
 
 if (keyboard_check(vk_alt)==true &amp;&amp; keyboard_check(vk_f4)==true || keyboard_check(vk_escape)) game_end();
 
-if (keyboard_check_pressed(vk_space)==true) {
-    with (instance_create(x, y, obj_gameobject)) {
-        type = 0;
-        direction = other.direction;
-        zdirection = other.zdirection;
-    }
-}
-
-if (mouse_check_button_pressed(mb_left)==true) {
-    with (instance_create(x, y, obj_gameobject)) {
-        type = 1;
-        direction = other.direction;
-        zdirection = other.zdirection;
-    }
-}
+var xold, yold;
+xold = x;
+yold = y;
 
 if (os_get_config()!="OEM") {
     if (keyboard_check(ord("W"))==true) {
@@ -131,7 +119,29 @@ if (os_get_config()!="OEM") {
     if (keyboard_check_pressed(ord("D"))==true) direction -= 90;
 }
 
+globalvar xto, yto, zto, xup, yup, zup, xx, yy, zz;
+var v_dist, v_dir;
+v_dist = point_distance(xold, yold, x, y);
+v_dir = point_direction(xold, yold, x, y);
+audio_listener_position(x, y, 0.65*gridsize);
+audio_listener_velocity(lengthdir_x(v_dist, v_dir), lengthdir_y(v_dist, v_dir), 0);
+audio_listener_orientation(xx+xto,yy+yto,zz+zto,xup,yup,zup);
 
+if (keyboard_check_pressed(vk_space)==true) {
+    with (instance_create(x, y, obj_gameobject)) {
+        type = 0;
+        direction = other.direction;
+        zdirection = other.zdirection;
+    }
+}
+
+if (mouse_check_button_pressed(mb_left)==true) {
+    with (instance_create(x, y, obj_gameobject)) {
+        type = 1;
+        direction = other.direction;
+        zdirection = other.zdirection;
+    }
+}
 </string>
           </argument>
         </arguments>

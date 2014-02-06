@@ -172,7 +172,7 @@ for (i=0; i&lt;ds_list_size(_x); i+=1) {
         </arguments>
       </action>
     </event>
-    <event eventtype="10" enumb="16">
+    <event eventtype="10" enumb="69">
       <action>
         <libid>1</libid>
         <id>603</id>

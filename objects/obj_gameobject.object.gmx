@@ -70,7 +70,14 @@ switch (type) {
         break;
     case 2:
         //Ripple animation
+        var gridsize = obj_game.gridsize;
+        sound_pos = audio_emitter_create();
+        audio_emitter_position(sound_pos, x, y, z);
+        audio_emitter_falloff(sound_pos, 1.5*gridsize, 5*gridsize, 1);
+        sound_index = audio_play_sound_on(sound_pos, snd_ball, 0, 0);
         i = 0;
+        sound_on = true;
+        draw_on = true;
         break;
 }
 </string>
@@ -162,7 +169,12 @@ switch (type) {
     case 2:
         //Ripple animation
         i++;
-        if (i&gt;=room_speed) instance_destroy();
+        if (draw_on==true &amp;&amp; i&gt;=room_speed) draw_on = false;
+        if (sound_on==true &amp;&amp; audio_is_playing(sound_index)==false) {
+            sound_on = false;
+            audio_emitter_free(sound_pos);
+        }
+        if (sound_on==false &amp;&amp; draw_on==false) instance_destroy();
 }
 </string>
           </argument>
@@ -209,17 +221,19 @@ switch (type) {
         }
         break;
     case 2:
-        var gridsize = obj_game.gridsize;
-        d3d_transform_set_identity();
-        var scale = 1/8;
-        d3d_transform_add_scaling(scale, scale, scale);
-        d3d_transform_add_rotation_x(x_vec); //up/down
-        d3d_transform_add_rotation_z(z_vec); //left/right
-        d3d_transform_add_translation(x, y, z+0.1);
-        draw_set_alpha(1-i/room_speed);
-        draw_circle_glow(0, 0, i/room_speed*gridsize*0.7*(1/scale), min(i/5, 20), 5, c_white, c_white);
-        //draw_circle(0,0,min(i/5, 20), true);
-        d3d_transform_set_identity();
+        if (draw_on==true) {
+            var gridsize = obj_game.gridsize;
+            d3d_transform_set_identity();
+            var scale = 1/8;
+            d3d_transform_add_scaling(scale, scale, scale);
+            d3d_transform_add_rotation_x(x_vec); //up/down
+            d3d_transform_add_rotation_z(z_vec); //left/right
+            d3d_transform_add_translation(x, y, z+0.1);
+            draw_set_alpha(1-i/room_speed);
+            draw_circle_glow(0, 0, i/room_speed*gridsize*0.7*(1/scale), min(i/5, 20), 5, c_white, c_white);
+            //draw_circle(0,0,min(i/5, 20), true);
+            d3d_transform_set_identity();
+        }
         break;
 }
 </string>
@@ -230,17 +244,33 @@ switch (type) {
     <event eventtype="10" enumb="40">
       <action>
         <libid>1</libid>
-        <id>203</id>
-        <kind>0</kind>
+        <id>603</id>
+        <kind>7</kind>
         <userelative>0</userelative>
         <isquestion>0</isquestion>
         <useapplyto>-1</useapplyto>
-        <exetype>1</exetype>
-        <functionname>action_kill_object</functionname>
+        <exetype>2</exetype>
+        <functionname></functionname>
         <codestring></codestring>
         <whoName>self</whoName>
         <relative>0</relative>
         <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>switch (type) {
+    case 2:
+        //Ripple animation
+        if (sound_on==true) {
+            audio_stop_sound(sound_index);
+            audio_emitter_free(sound_pos);
+        }
+}
+
+instance_destroy();
+</string>
+          </argument>
+        </arguments>
       </action>
     </event>
   </events>

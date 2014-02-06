@@ -5,7 +5,9 @@
     <Config>Configs\OEM</Config>
   </Configs>
   <NewExtensions/>
-  <sounds name="sound"/>
+  <sounds name="sound">
+    <sound>sound\snd_ball</sound>
+  </sounds>
   <sprites name="sprites">
     <sprite>sprites\spr_back</sprite>
     <sprite>sprites\spr_button</sprite>

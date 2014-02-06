@@ -1,5 +1,6 @@
 ///d3d_set_projection_euler(x,y,z,yaw,pitch,roll,distance)
-var cos_yaw, sin_yaw, cos_pitch, sin_pitch, cos_roll, sin_roll, xto, yto, zto, xup, yup, zup, xx, yy, zz;
+var cos_yaw, sin_yaw, cos_pitch, sin_pitch, cos_roll, sin_roll;
+globalvar xto, yto, zto, xup, yup, zup, xx, yy, zz;
 cos_yaw = cos(degtorad(argument3));
 sin_yaw = sin(degtorad(argument3));
 cos_pitch = cos(degtorad(argument4));
