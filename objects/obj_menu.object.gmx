@@ -27,6 +27,9 @@
             <kind>1</kind>
             <string>randomize();
 
+music = audio_play_sound(snd_music, 10, 1);
+audio_sound_gain(music, 0.6, 0);
+
 //Menu background
 _x = ds_list_create();
 _y = ds_list_create();
