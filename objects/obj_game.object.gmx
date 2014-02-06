@@ -210,12 +210,14 @@ if (surface_exists(surf)==false) {
 if (surface_exists(col1)==false) {
     col1 = surface_create(1, 1);
     surface_set_target(col1);
+    draw_set_alpha(1);
     draw_point_color(0, 0, c_aqua);
     surface_reset_target();
 }
 if (surface_exists(col2)==false) {
     col2 = surface_create(1, 1);
     surface_set_target(col2);
+    draw_set_alpha(1);
     draw_point_color(0, 0, c_black);
     surface_reset_target();
 }
@@ -227,6 +229,7 @@ if (os_get_config()!="OEM") {
     d3d_start();
     d3d_set_projection_euler(x,y,0.65*gridsize,direction,zdirection,0,0);
     d3d_draw_floor(0,0,-0.1,w*gridsize,h*gridsize,-0.1,-1,1,1);
+    d3d_draw_floor(0,0,gridsize,w*gridsize,h*gridsize,gridsize,-1,1,1);
     draw_set_color(c_white);
     maze_draw_d3d(maze,0,0,0,w*gridsize,h*gridsize,gridsize,surface_get_texture(col2), surface_get_texture(col2), gridperc);
     
