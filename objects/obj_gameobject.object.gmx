@@ -70,11 +70,19 @@ switch (type) {
         break;
     case 2:
         //Ripple animation
+        //SoundConstants
+        snd_list[0,0] = snd_ball;
+        snd_list[1,0] = snd_ball_inwall_0;
+        snd_list[1,1] = snd_ball_inwall_0;
+        snd_list[1,2] = snd_ball_inwall_0;
+        snd_list_length[0] = 0;
+        snd_list_length[1] = 2;
+        //Other
         var gridsize = obj_game.gridsize;
         sound_pos = audio_emitter_create();
         audio_emitter_position(sound_pos, x, y, z);
         audio_emitter_falloff(sound_pos, 1.5*gridsize, 5*gridsize, 1);
-        sound_index = audio_play_sound_on(sound_pos, snd_ball, 0, 0);
+        sound_index = audio_play_sound_on(sound_pos, snd_list[sndtype, irandom(snd_list_length[sndtype])], 0, 0);
         i = 0;
         sound_on = true;
         draw_on = true;
@@ -134,15 +142,23 @@ switch (type) {
                     xdist_wall = (1-wallperc-xdist_wall)*0.9;
                 }
                 xdist_wall *= gridsize;
-                with (instance_create(x+xdist_wall, y, obj_gameobject)) {
-                    type = 2;
-                    z = other.z;
-                    x_vec = 90;
-                    z_vec = 90;
-                }
                 if (val&lt;30) {
+                    with (instance_create(x+xdist_wall, y, obj_gameobject)) {
+                        type = 2;
+                        z = other.z;
+                        x_vec = 90;
+                        z_vec = 90;
+                        sndtype = 1;
+                    }
                     instance_destroy();
                 } else {
+                    with (instance_create(x+xdist_wall, y, obj_gameobject)) {
+                        type = 2;
+                        z = other.z;
+                        x_vec = 90;
+                        z_vec = 90;
+                        sndtype = 0;
+                    }
                     x_vec*=-1;
                 }
                 break;
@@ -155,16 +171,25 @@ switch (type) {
                     ydist_wall = (1-wallperc-ydist_wall)*0.9;
                 }
                 ydist_wall *= gridsize;
-                with (instance_create(x, y+ydist_wall, obj_gameobject)) {
-                    type = 2;
-                    z = other.z;
-                    x_vec = 90;
-                    z_vec = 0;
-                }
+                
                 val = 90-val; 
                 if (val&lt;30) {
+                    with (instance_create(x, y+ydist_wall, obj_gameobject)) {
+                        type = 2;
+                        z = other.z;
+                        x_vec = 90;
+                        z_vec = 0;
+                        sndtype = 1;
+                    }
                     instance_destroy();
                 } else {
+                    with (instance_create(x, y+ydist_wall, obj_gameobject)) {
+                        type = 2;
+                        z = other.z;
+                        x_vec = 90;
+                        z_vec = 0;
+                        sndtype = 0;
+                    }
                     y_vec*=-1;
                 }
                 break;
@@ -177,6 +202,7 @@ switch (type) {
                 z = 0;
                 x_vec = 0;
                 z_vec = 0;
+                sndtype = 0;
             }
         }
         //Movement
