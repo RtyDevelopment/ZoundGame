@@ -73,8 +73,8 @@ switch (type) {
         //SoundConstants
         snd_list[0,0] = snd_ball;
         snd_list[1,0] = snd_ball_inwall_0;
-        snd_list[1,1] = snd_ball_inwall_0;
-        snd_list[1,2] = snd_ball_inwall_0;
+        snd_list[1,1] = snd_ball_inwall_1;
+        snd_list[1,2] = snd_ball_inwall_2;
         snd_list_length[0] = 0;
         snd_list_length[1] = 2;
         //Other
