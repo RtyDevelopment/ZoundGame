@@ -130,7 +130,6 @@ switch (type) {
                 xdist_wall = frac(x/gridsize);
                 if (xdist_wall&lt;0.5) {
                     xdist_wall = (wallperc-xdist_wall)*0.9;
-                    show_debug_message("BOUNCE: "+string(xdist_wall*gridsize+x));
                 } else {
                     xdist_wall = (1-wallperc-xdist_wall)*0.9;
                 }
@@ -152,7 +151,6 @@ switch (type) {
                 ydist_wall = frac(y/gridsize);
                 if (ydist_wall&lt;0.5) {
                     ydist_wall = (wallperc-ydist_wall)*0.9;
-                    show_debug_message("BOUNCE: "+string(ydist_wall*gridsize+y));
                 } else {
                     ydist_wall = (1-wallperc-ydist_wall)*0.9;
                 }
