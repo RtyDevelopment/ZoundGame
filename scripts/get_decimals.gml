@@ -1,10 +1,11 @@
 ///get_decimals(real)
-var int, check, decloc;
-int = string(argument0);
-check = true;
-while (check==true) {
-    if (string_char_at(int, string_length(int))=="0") int = string_delete(int, string_length(int), 1); else check = false;
+var maxdigits, multiplier, calcno;
+maxdigits = 100;
+multiplier = 0;
+calcno = argument0*power(10, multiplier);
+while (round(calcno)!=calcno) {
+    if (multiplier>=maxdigits) return maxdigits;
+    multiplier++;
+    calcno = argument0*power(10, multiplier);
 }
-decloc = string_pos(".", int);
-if (decloc==0) return 0;
-return string_length(int)-decloc;
+return multiplier;
