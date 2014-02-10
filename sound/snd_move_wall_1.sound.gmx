@@ -2,7 +2,7 @@
 <sound>
   <kind>0</kind>
   <extension>.wav</extension>
-  <origname>Balletje_Lelijk_om_te_testen(Galm).wav</origname>
+  <origname>snd_move_wall_1.wav</origname>
   <effects>0</effects>
   <volume>
     <volume>1</volume>
@@ -22,11 +22,11 @@
     <type>0</type>
   </types>
   <bitDepths>
-    <bitDepth>8</bitDepth>
+    <bitDepth>16</bitDepth>
     <bitDepth>16</bitDepth>
   </bitDepths>
   <preload>-1</preload>
-  <data>snd_ball.wav</data>
+  <data>snd_move_wall_1.wav</data>
   <compressed>1</compressed>
   <streamed>0</streamed>
   <uncompressOnLoad>1</uncompressOnLoad>
