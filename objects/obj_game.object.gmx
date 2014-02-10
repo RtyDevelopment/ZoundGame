@@ -42,6 +42,8 @@ z = 0.65*gridsize;
 direction = 0;
 zdirection = 0;
 
+bumpsnd = false;
+
 globalvar xto, yto, zto, xup, yup, zup, xx, yy, zz;
 xx = x;
 yy = y;
@@ -110,24 +112,78 @@ var xold, yold;
 xold = x;
 yold = y;
 
+resetbump = true;
+
 if (os_get_config()!="OEM") {
     if (keyboard_check(ord("W"))==true) {
-        maze_move_self(maze, x, y, direction, 1/16*gridsize, 0, gridsize, 0.6, 0.15);
+        if (maze_move_self(maze, x, y, direction, 1/16*gridsize, 0, gridsize, 0.6, 0.15)!=0) {
+            if (bumpsnd==false) {
+            with (instance_create(x, y, obj_gameobject)) {
+                type = 3;
+                sndtype = 5;
+                z = other.z;
+            }
+            bumpsnd = true;
+            }
+            resetbump = false;
+        }
     }
     if (keyboard_check(ord("S"))==true) {
-        maze_move_self(maze, x, y, direction+180, 1/16*gridsize, 0, gridsize, 0.6, 0.15);
+        if (maze_move_self(maze, x, y, direction+180, 1/16*gridsize, 0, gridsize, 0.6, 0.15)!=0) {
+            if (bumpsnd==false) {
+            with (instance_create(x, y, obj_gameobject)) {
+                type = 3;
+                sndtype = 5;
+                z = other.z;
+            }
+            bumpsnd = true;
+            }
+            resetbump = false;
+        }
     }
     if (keyboard_check(ord("A"))==true) {
-        maze_move_self(maze, x, y, direction+90, 1/16*gridsize, 0, gridsize, 0.6, 0.15);
+        if (maze_move_self(maze, x, y, direction+90, 1/16*gridsize, 0, gridsize, 0.6, 0.15)!=0) {
+            if (bumpsnd==false) {
+            with (instance_create(x, y, obj_gameobject)) {
+                type = 3;
+                sndtype = 5;
+                z = other.z;
+            }
+            bumpsnd = true;
+            }
+            resetbump = false;
+        }
     }
     if (keyboard_check(ord("D"))==true) {
-        maze_move_self(maze, x, y, direction+270, 1/16*gridsize, 0, gridsize, 0.6, 0.15);
+        if (maze_move_self(maze, x, y, direction+270, 1/16*gridsize, 0, gridsize, 0.6, 0.15)!=0) {
+            if (bumpsnd==false) {
+            with (instance_create(x, y, obj_gameobject)) {
+                type = 3;
+                sndtype = 5;
+                z = other.z;
+            }
+            bumpsnd = true;
+            }
+            resetbump = false;
+        }
     }
 } else {
     if (keyboard_check_pressed(ord("W"))==true) {
-        if (string_char_at(ds_grid_get(maze, floor(x/gridsize), floor(y/gridsize)), (((360-direction)/90+1) mod 4)+1) == "1") {
-            maze_move_self(maze, x, y, direction, gridsize, 0, gridsize, 0.6, 0.15);
+        //if (string_char_at(ds_grid_get(maze, floor(x/gridsize), floor(y/gridsize)), (((360-direction)/90+1) mod 4)+1) == "1") {
+        if (maze_move_self(maze, x, y, direction, gridsize, 0, gridsize, 0.6, 0.15)!=0) {
+            if (bumpsnd==false) {
+            with (instance_create(x, y, obj_gameobject)) {
+                type = 3;
+                sndtype = 5;
+                z = other.z;
+            }
+            bumpsnd = true;
+            }
+            resetbump = false;
         }
+        x = (floor(x/gridsize)+0.5)*gridsize;
+        y = (floor(y/gridsize)+0.5)*gridsize;
+        //}
     }
     if (keyboard_check_pressed(ord("A"))==true) direction += 90;
     if (keyboard_check_pressed(ord("D"))==true) direction -= 90;
@@ -139,6 +195,8 @@ if (os_get_config()!="OEM") {
     yy = y;
 }
 
+if (resetbump==true) bumpsnd = false;
+
 globalvar xto, yto, zto, xup, yup, zup, xx, yy, zz;
 var v_dist, v_dir;
 v_dist = point_distance(xold, yold, x, y);
@@ -146,6 +204,14 @@ v_dir = point_direction(xold, yold, x, y);
 audio_listener_position(x, y, z);
 audio_listener_velocity(lengthdir_x(v_dist, v_dir), lengthdir_y(v_dist, v_dir), 0);
 audio_listener_orientation(xx+xto,yy+yto,zz+zto,xup,yup,zup);
+
+if (floor(xold/gridsize)!=floor(x/gridsize) || floor(yold/gridsize)!=floor(y/gridsize)) {
+    with (instance_create(x, y, obj_gameobject)) {
+        type = 3;
+        sndtype = 4;
+        z = other.z;
+    }
+}
 
 if (keyboard_check_pressed(vk_space)==true) {
     with (instance_create(x+lengthdir_x(0.5*gridsize, direction), y+lengthdir_y(0.5*gridsize, direction), obj_gameobject)) {

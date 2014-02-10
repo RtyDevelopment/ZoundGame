@@ -70,22 +70,40 @@ switch (type) {
         break;
     case 2:
         //Ripple animation
-        //SoundConstants
-        snd_list[0,0] = snd_ball;
-        snd_list[1,0] = snd_ball_inwall_0;
-        snd_list[1,1] = snd_ball_inwall_1;
-        snd_list[1,2] = snd_ball_inwall_2;
-        snd_list_length[0] = 0;
-        snd_list_length[1] = 2;
         //Other
+        i = 0;
+        sound_on = true;
+        draw_on = true;
+    case 3:
+        //Sound object
+        //SoundConstants
+        snd_list_length[5] = 2;
+        snd_list[5,2] = snd_move_wall_2; //Start at the end to not to have to recreate the array again
+        snd_list[5,1] = snd_move_wall_1;
+        snd_list[5,0] = snd_move_wall_0;
+        snd_list_length[4] = 3;
+        snd_list[4,3] = snd_move_step_3;
+        snd_list[4,2] = snd_move_step_2;
+        snd_list[4,1] = snd_move_step_1;
+        snd_list[4,0] = snd_move_step_0;
+        snd_list_length[3] = 1;
+        snd_list[3,1] = snd_ball_wall_1;
+        snd_list[3,0] = snd_ball_wall_0;
+        snd_list_length[2] = 0;
+        snd_list[2,0] = snd_ball_throw;
+        snd_list_length[1] = 2;
+        snd_list[1,2] = snd_ball_inwall_2;
+        snd_list[1,1] = snd_ball_inwall_1;
+        snd_list[1,0] = snd_ball_inwall_0;
+        snd_list_length[0] = 2;
+        snd_list[0,2] = snd_ball_floor_2;
+        snd_list[0,1] = snd_ball_floor_1;
+        snd_list[0,0] = snd_ball_floor_0;
         var gridsize = obj_game.gridsize;
         sound_pos = audio_emitter_create();
         audio_emitter_position(sound_pos, x, y, z);
         audio_emitter_falloff(sound_pos, 1.5*gridsize, 5*gridsize, 1);
         sound_index = audio_play_sound_on(sound_pos, snd_list[sndtype, irandom(snd_list_length[sndtype])], 0, 0);
-        i = 0;
-        sound_on = true;
-        draw_on = true;
         break;
 }
 </string>
@@ -157,7 +175,7 @@ switch (type) {
                         z = other.z;
                         x_vec = 90;
                         z_vec = 90;
-                        sndtype = 0;
+                        sndtype = 3;
                     }
                     x_vec*=-1;
                 }
@@ -188,7 +206,7 @@ switch (type) {
                         z = other.z;
                         x_vec = 90;
                         z_vec = 0;
-                        sndtype = 0;
+                        sndtype = 3;
                     }
                     y_vec*=-1;
                 }
@@ -217,6 +235,15 @@ switch (type) {
             audio_emitter_free(sound_pos);
         }
         if (sound_on==false &amp;&amp; draw_on==false) instance_destroy();
+        break;
+    case 3:
+        //Sound Object
+        if (audio_is_playing(sound_index)==false) {
+            audio_emitter_free(sound_pos);
+            instance_destroy();
+        }
+        break;
+        
 }
 </string>
           </argument>
@@ -263,6 +290,7 @@ switch (type) {
         }
         break;
     case 2:
+        //Ripple animation
         if (draw_on==true &amp;&amp; os_get_config()!="OEM") {
             var gridsize = obj_game.gridsize;
             d3d_transform_set_identity();
@@ -307,6 +335,12 @@ switch (type) {
             audio_stop_sound(sound_index);
             audio_emitter_free(sound_pos);
         }
+        break;
+    case 3:
+        //Sound object
+        audio_stop_sound(sound_index);
+        audio_emitter_free(sound_pos);
+        break;
 }
 
 instance_destroy();
