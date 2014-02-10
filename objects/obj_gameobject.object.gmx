@@ -145,8 +145,11 @@ switch (type) {
         var spd = point_distance(0, 0, x_vec, y_vec);
         
         //Friction/gravity
-        //x_vec = lengthdir_x(spd*0.9, dir);
-        //y_vec = lengthdir_y(spd*0.9, dir);
+        if (type==1) {
+            x_vec = lengthdir_x(spd*0.99, dir);
+            y_vec = lengthdir_y(spd*0.99, dir);
+            z_vec *= 0.99;
+        }
         z_vec -= 0.1*calcspd;
         
         //Collision
@@ -163,7 +166,7 @@ switch (type) {
                     xdist_wall = (1-wallperc-xdist_wall)*0.9;
                 }
                 xdist_wall *= gridsize;
-                if (val&lt;=45) {
+                if (val&lt;=45 &amp;&amp; type!=1) {
                     with (instance_create(x+xdist_wall, y, obj_gameobject)) {
                         type = 2;
                         z = other.z;
@@ -194,7 +197,7 @@ switch (type) {
                 ydist_wall *= gridsize;
                 
                 val = 90-val; 
-                if (val&lt;=45) {
+                if (val&lt;=45 &amp;&amp; type!=1) {
                     with (instance_create(x, y+ydist_wall, obj_gameobject)) {
                         type = 2;
                         z = other.z;
