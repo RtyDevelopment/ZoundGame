@@ -1,6 +1,7 @@
 globalvar net_name, net_pubport, net_landevicemaster, net_interval, net_timer;
 globalvar net_own_key, net_own_ip, net_own_port, net_own_type, net_own_name, net_own_req, net_own_ping, net_own_lastping;
 globalvar net_lan_key, net_lan_ip, net_lan_port, net_lan_type, net_lan_name, net_lan_req, net_lan_ping, net_lan_lastping;
+globalvar net_cmdlist;
 var outputlist = ds_list_create();
 
 if (net_timer==0) {
@@ -38,19 +39,22 @@ for (var i=0; i<ds_list_size(net_lan_lastping); i++) {
     }
 }
 ds_list_destroy(outputlist);
-/*
-if (ds_list_size(netcommands)>0) {
-    repeat (ds_list_size(netcommands)) {
-        switch (ds_list_find_value(netcommands, 0)) {
-            case MSG_PING:
-                
-                break;
-            case MSG_INFOREQUEST:
-                
+
+if (ds_list_size(net_cmdlist)>0) {
+    repeat (ds_list_size(net_cmdlist)) {
+        var execlist;
+        execlist = ds_list_find_value(net_cmdlist, 0);
+        switch (ds_list_find_value(execlist, 0)) {
+            case CMD_PING:
+                var socket;
+                socket = ds_list_find_value(net_cmdlist, 1);
+                ds_list_clear(outputlist);
+                ds_list_add(outputlist, get_timer());
+                net_send(socket, MSG_PING, outputlist);
                 break;
         }
-        ds_list_delete(netcommands, 0);
-        ds_list_delete(netcommands_arg0, 0);
+        ds_list_destroy(execlist);
+        ds_list_delete(net_cmdlist, 0);
     }
-}*/
+}
 
