@@ -170,8 +170,10 @@ net_run();
             <kind>1</kind>
             <string>ds_list_clear(datainputlist);
 if (ds_map_find_value(async_load, "type")==network_type_data) net_buffer_to_dslist(ds_map_find_value(async_load, "buffer"), datainputlist);
-var recvmsgid = net_receive(ds_map_find_value(async_load, "type"), datainputlist);
-
+var recvip = ds_map_find_value(async_load, "ip");
+var recvport = ds_map_find_value(async_load, "port");
+var recvsocket = ds_map_find_value(async_load, "id");
+var recvmsgid = net_receive(ds_map_find_value(async_load, "type"), datainputlist, recvip, recvport, recvid);
 if (recvmsgid!=1 &amp;&amp; recvmsgid!=-1) {
     switch (recvmsgid) {
         case MSG_GETIP:
@@ -206,7 +208,8 @@ if (recvmsgid!=1 &amp;&amp; recvmsgid!=-1) {
             <kind>1</kind>
             <string>ds_list_clear(datainputlist);
 net_string_to_dslist(ds_map_find_value(async_load, "result"), datainputlist);
-var recvmsgid = net_receive(network_type_data, datainputlist);
+var recvurl = ds_map_find_value(async_load, "url");
+var recvmsgid = net_receive(network_type_data, datainputlist, recvurl, 80, -1);
 if (recvmsgid!=1 &amp;&amp; recvmsgid!=-1) {
     switch (recvmsgid) {
         case MSG_GETIP:

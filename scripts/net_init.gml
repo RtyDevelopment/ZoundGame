@@ -1,9 +1,7 @@
 ///net_init(name,key,port,connectiontype,interval);
 globalvar net_name, net_key, net_lanport, net_pubport, net_pubtype, net_interval;
-globalvar net_own_key, net_own_ip, net_own_port, net_own_nettype, net_own_name, net_own_req, net_own_ping, net_own_lastping;
-globalvar net_lan_key, net_lan_ip, net_lan_port, net_lan_nettype, net_lan_name, net_lan_req, net_lan_ping, net_lan_lastping;
-globalvar net_cmdlist;
-globalvar net_sockets, net_sockets_id, net_sockets_ip, net_sockets_port, net_sockets_type, net_sockets_acc, net_sockets_unknown;
+globalvar net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+globalvar net_cmdlist, net_keycounter;
 globalvar net_devicemaster, net_lanserver, net_pubserver, net_timer;
 
 net_name = argument0;
@@ -14,37 +12,21 @@ net_pubtype = argument3;
 net_interval = argument4;
 
 //Serverlists
-net_own_key = ds_list_create();
-net_own_ip = ds_list_create();
-net_own_port = ds_list_create();
-net_own_nettype = ds_list_create();
-net_own_name = ds_list_create();
-net_own_req = ds_list_create();
-net_own_ping = ds_list_create();
-net_own_lastping = ds_list_create();
+net_peer_key = ds_list_create();        //Key: ID of the client
+net_peer_ip = ds_list_create();         //IP
+net_peer_port = ds_list_create();       //Port
+net_peer_nettype = ds_list_create();    //Nettype: type of connection (NET_*: UDP, TCP, BROADCAST, HTTP)
+net_peer_name = ds_list_create();       //Name: Human-readable ID of the client
+net_peer_ping = ds_list_create();       //Last ping time: time to receive an answer of an "empty" package
+net_peer_lastping = ds_list_create();   //Last time a ping was sent
+net_peer_pingrecv = ds_list_create();   //Last time a ping answer was received
+net_peer_type = ds_list_create();       //Type of connection (NETTYPE_*: LAN, EXT, PEER)
+net_peer_socket = ds_list_create();     //Socket ID of the connection
 
-net_lan_key = ds_list_create();
-net_lan_ip = ds_list_create();
-net_lan_port = ds_list_create();
-net_lan_nettype = ds_list_create();
-net_lan_name = ds_list_create();
-net_lan_req = ds_list_create();
-net_lan_ping = ds_list_create();
-net_lan_lastping = ds_list_create();
+net_keycounter = 0;
 
 //Commands
 net_cmdlist = ds_list_create();
-
-//Connections
-net_sockets = ds_list_create();
-net_sockets_id = ds_list_create();
-net_sockets_ip = ds_list_create();
-net_sockets_port = ds_list_create();
-net_sockets_type = ds_list_create();
-net_sockets_acc = ds_list_create();
-
-//Unset sockets
-net_sockets_unknown = ds_map_create();
 
 //LAN
 net_devicemaster = true;

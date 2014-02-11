@@ -5,14 +5,6 @@ buffer_copy(argument0, 0, size, buffer, 0);
 var list = argument1;
 
 buffer_seek(buffer, buffer_seek_start, 0);
-ds_list_add(list, buffer_read(buffer, buffer_u8));
-ds_list_add(list, buffer_read(buffer, buffer_string));
-ds_list_add(list, buffer_read(buffer, buffer_s8));
-ds_list_add(list, buffer_read(buffer, buffer_u16));
-ds_list_add(list, buffer_read(buffer, buffer_u8));
-ds_list_add(list, buffer_read(buffer, buffer_u16));
-ds_list_add(list, buffer_read(buffer, buffer_string));
-
 while (buffer_tell(buffer)<size) {
     var val = buffer_read(buffer, buffer_string);
     ds_list_add(list, val);

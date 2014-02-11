@@ -65,7 +65,7 @@
   <rooms name="rooms">
     <room>rooms\rm_game</room>
   </rooms>
-  <constants number="16">
+  <constants number="20">
     <constant name="MSG_GETIP">2</constant>
     <constant name="/////////"></constant>
     <constant name="CMD_PING">0</constant>
@@ -77,11 +77,15 @@
     <constant name="MSG_LANTRANSFER">-6</constant>
     <constant name="MSG_DISCONN">-7</constant>
     <constant name="MSG_CONN">-8</constant>
-    <constant name="MSG_CONNACCEPT">-9</constant>
+    <constant name="MSG_FORWARD">-9</constant>
+    <constant name="NETTYPE_EXT">0</constant>
+    <constant name="NETTYPE_PEER">1</constant>
+    <constant name="NETTYPE_LAN">2</constant>
     <constant name="NET_BROADCAST">0</constant>
     <constant name="NET_UDP">1</constant>
     <constant name="NET_TCP">2</constant>
     <constant name="NET_HTTP">3</constant>
+    <constant name="NET_TCPRAW"></constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>
