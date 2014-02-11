@@ -1,6 +1,6 @@
 globalvar net_name, net_pubport, net_landevicemaster, net_interval, net_timer;
-globalvar net_own_key, net_own_ip, net_own_port, net_own_type, net_own_name, net_own_req, net_own_ping, net_own_lastping;
-globalvar net_lan_key, net_lan_ip, net_lan_port, net_lan_type, net_lan_name, net_lan_req, net_lan_ping, net_lan_lastping;
+globalvar net_own_key, net_own_ip, net_own_port, net_own_nettype, net_own_name, net_own_req, net_own_ping, net_own_lastping;
+globalvar net_lan_key, net_lan_ip, net_lan_port, net_lan_nettype, net_lan_name, net_lan_req, net_lan_ping, net_lan_lastping;
 globalvar net_cmdlist;
 var outputlist = ds_list_create();
 
@@ -20,7 +20,7 @@ for (var i=0; i<ds_list_size(net_own_lastping); i++) {
     if (get_timer()-ds_list_find_value(net_own_lastping, i)>net_interval/room_speed*1000000 || ds_list_find_value(net_lan_ping, i)==0) {
         ds_list_clear(outputlist);
         ds_list_add(outputlist, get_timer());
-        var type = ds_list_find_value(net_own_type, i);
+        var type = ds_list_find_value(net_own_nettype, i);
         var ip = ds_list_find_value(net_own_ip, i);
         var port = ds_list_find_value(net_own_port, i);
         net_push(type, ip, port, MSG_PING, outputlist);
@@ -31,7 +31,7 @@ for (var i=0; i<ds_list_size(net_lan_lastping); i++) {
     if (get_timer()-ds_list_find_value(net_lan_lastping, i)>net_interval/room_speed*1000000 || ds_list_find_value(net_lan_ping, i)==0) {
         ds_list_clear(outputlist);
         ds_list_add(outputlist, get_timer());
-        var type = ds_list_find_value(net_lan_type, i);
+        var type = ds_list_find_value(net_lan_nettype, i);
         var ip = ds_list_find_value(net_lan_ip, i);
         var port = ds_list_find_value(net_lan_port, i);
         net_push(type, ip, port, MSG_PING, outputlist);

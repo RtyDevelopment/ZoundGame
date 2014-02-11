@@ -1,7 +1,7 @@
 ///net_receive(eventtype,ds_list)
 globalvar net_key, net_name, net_sockets, net_sockets_id, net_sockets_ip, net_sockets_port, net_sockets_type, net_sockets_acc;
-globalvar net_own_key, net_own_ip, net_own_port, net_own_type, net_own_name, net_own_req, net_own_ping, net_own_lastping;
-globalvar net_lan_key, net_lan_ip, net_lan_port, net_lan_type, net_lan_name, net_lan_req, net_lan_ping, net_lan_lastping;
+globalvar net_own_key, net_own_ip, net_own_port, net_own_nettype, net_own_name, net_own_req, net_own_ping, net_own_lastping;
+globalvar net_lan_key, net_lan_ip, net_lan_port, net_lan_nettype, net_lan_name, net_lan_req, net_lan_ping, net_lan_lastping;
 var recvip, recvlist, recvtype, recvid, recvmsg, recvip, recvpubport, recvkey, datalist;
 
 if (argument0!=network_type_data) {
@@ -150,7 +150,7 @@ switch (recvmsg) {
                 ds_list_add(net_lan_key, recvkey);
                 ds_list_add(net_lan_ip, recvip);
                 ds_list_add(net_lan_port, recvlanport);
-                ds_list_add(net_lan_type, network_socket_udp);
+                ds_list_add(net_lan_nettype, network_socket_udp);
                 ds_list_add(net_lan_name, recvname);
                 ds_list_add(net_lan_req, 0);
                 ds_list_add(net_lan_ping, 0);
@@ -162,7 +162,7 @@ switch (recvmsg) {
                 ds_list_add(net_own_key, recvkey);
                 ds_list_add(net_own_ip, recvip);
                 ds_list_add(net_own_port, recvpubport);
-                ds_list_add(net_own_type, recvpubtype);
+                ds_list_add(net_own_nettype, recvpubtype);
                 ds_list_add(net_own_name, recvname);
                 ds_list_add(net_own_req, 0);
                 ds_list_add(net_own_ping, 0);
@@ -182,7 +182,7 @@ switch (recvmsg) {
         lantransfer_port = ds_list_create();
         ds_list_copy(lantransfer_port, net_lan_port);
         lantransfer_type = ds_list_create();
-        ds_list_copy(lantransfer_type, net_lan_type);
+        ds_list_copy(lantransfer_type, net_lan_nettype);
         lantransfer_name = ds_list_create();
         ds_list_copy(lantransfer_name, net_lan_name);
         datalist = ds_list_create();
@@ -238,7 +238,7 @@ switch (recvmsg) {
                 ds_list_add(net_lan_key, ds_list_find_value(lantransfer_key, i));
                 ds_list_add(net_lan_ip, ds_list_find_value(lantransfer_ip, i));
                 ds_list_add(net_lan_port, ds_list_find_value(lantransfer_port, i));
-                ds_list_add(net_lan_type, ds_list_find_value(lantransfer_type, i));
+                ds_list_add(net_lan_nettype, ds_list_find_value(lantransfer_type, i));
                 ds_list_add(net_lan_name, ds_list_find_value(lantransfer_name, i));
                 ds_list_add(net_lan_req, 0);
                 ds_list_add(net_lan_ping, 0);
