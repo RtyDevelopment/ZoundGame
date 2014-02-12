@@ -1,7 +1,9 @@
 ///net_connect(url,port,socket);
 globalvar net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
 globalvar net_keycounter;
-var socket, conntype, url, port;
+var key, socket, conntype, url, port;
+net_keycounter++;
+key = "?"+string(net_keycounter);
 socket = -1;
 conntype = argument0;
 url = argument1;
@@ -37,8 +39,7 @@ if (conntype==NET_TCP || conntype==NET_TCPRAW) {
     }
 }
 
-net_keycounter++;
-ds_list_add(net_peer_key, "?"+string(net_keycounter));
+ds_list_add(net_peer_key, key);
 ds_list_add(net_peer_ip, url);
 ds_list_add(net_peer_port, port);
 ds_list_add(net_peer_nettype, conntype);
@@ -61,3 +62,5 @@ switch (argument0) {
     case NET_HTTP:
         break;
 }
+
+return key;

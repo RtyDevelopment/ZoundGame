@@ -57,7 +57,7 @@ recvtokey = ds_list_find_value(recvlist, 5);
 datastart = 6;
 
 if (recvtype==NET_TCP || recvtype==NET_TCPRAW) {
-    var socketpos = ds_list_find_index(net_peer_socket, recvsocket);
+    var peerpos = ds_list_find_index(net_peer_socket, recvsocket);
     if (peerpos>=0) {
         if (string_copy(ds_list_find_value(net_peer_key, peerpos), 1, 1)=="?") ds_list_replace(net_peer_key, peerpos, recvkey);
         if (ds_list_find_value(net_peer_name, peerpos)=="?") ds_list_replace(net_peer_name, peerpos, recvname);
@@ -73,7 +73,11 @@ if (recvtype==NET_TCP || recvtype==NET_TCPRAW) {
         ds_list_add(net_peer_ping, 0);
         ds_list_add(net_peer_lastping, 0);
         ds_list_add(net_peer_pingrecv, 0);
-        ds_list_add(net_peer_type, NETTYPE_PEER);
+        if (recvtype==NET_BROADCAST) {
+            ds_list_add(net_peer_type, NETTYPE_LAN);
+        } else {
+            ds_list_add(net_peer_type, NETTYPE_PEER);
+        }
         switch (recvtype) {
             case NET_BROADCAST:
             case NET_UDP:
@@ -143,40 +147,13 @@ switch (recvmsg) {
     case MSG_INFOREQUEST:
         ///SERVER
         datalist = ds_list_create();
-        ds_list_add(datalist, 0);
         net_send(recvkey, MSG_INFO, datalist);
         ds_list_destroy(datalist);
         return 1;
         
     case MSG_INFO:
         ///CLIENT
-        var recvlan = real(ds_list_find_value(recvlist, datastart));
-        var recvname = ds_list_find_value(recvlist, datastart+1);
-        if (recvlan==true) {
-            if (ds_list_find_index(net_lan_key, recvkey)<0 && net_key!=recvkey) {
-                ds_list_add(net_lan_key, recvkey);
-                ds_list_add(net_lan_ip, recvip);
-                ds_list_add(net_lan_port, recvlanport);
-                ds_list_add(net_lan_nettype, network_socket_udp);
-                ds_list_add(net_lan_name, recvname);
-                ds_list_add(net_lan_req, 0);
-                ds_list_add(net_lan_ping, 0);
-                ds_list_add(net_lan_lastping, 0);
-                show_debug_message("New server found at: "+recvip+"   called: "+recvname);
-            }
-        } else {
-            if (ds_list_find_index(net_own_key, recvkey)<0 && net_key!=recvkey) {
-                ds_list_add(net_own_key, recvkey);
-                ds_list_add(net_own_ip, recvip);
-                ds_list_add(net_own_port, recvpubport);
-                ds_list_add(net_own_nettype, recvpubtype);
-                ds_list_add(net_own_name, recvname);
-                ds_list_add(net_own_req, 0);
-                ds_list_add(net_own_ping, 0);
-                ds_list_add(net_own_lastping, 0);
-                show_debug_message("New server added at: "+recvip+"   called: "+recvname);
-            }
-        }
+        ds_list_replace(net_peer_type, ds_list_find_index(net_peer_key, recvkey), NETTYPE_EXT);
         return 1;
         
     case MSG_LANREQUEST:
