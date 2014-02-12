@@ -10,7 +10,7 @@ if (net_timer==0) {
     net_push(NET_BROADCAST, -1, 6510, MSG_INFO, outputlist);
     if (net_devicemaster==false) {
         ds_list_clear(outputlist);
-        net_push(NET_UDP, "127.0.0.1", 6510, MSG_LANREQUEST, outputlist);
+        net_push(NET_UDP, "127.0.0.1", 6510, MSG_PEERREQUEST, outputlist);
     }
     net_timer = net_interval;
 }
@@ -27,8 +27,13 @@ for (var i=0; i<ds_list_size(net_peer_lastping); i++) {
 
 if (ds_list_size(net_cmdlist)>0) {
     repeat (ds_list_size(net_cmdlist)) {
-        var execlist;
+        var execlist, timer;
         execlist = ds_list_find_value(net_cmdlist, 0);
+        timer = ds_list_find_value(execlist, 1);
+        if (timer>0) {
+            ds_list_replace(execlist, 1, timer-1);
+            continue;
+        }
         switch (ds_list_find_value(execlist, 0)) {
             case CMD_PING:
                 var _id = ds_list_find_value(net_cmdlist, 1);

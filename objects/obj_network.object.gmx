@@ -132,8 +132,14 @@ net_run();
 if (ds_map_find_value(async_load, "type")==network_type_data) net_buffer_to_dslist(ds_map_find_value(async_load, "buffer"), datainputlist);
 var recvip = ds_map_find_value(async_load, "ip");
 var recvport = ds_map_find_value(async_load, "port");
-var recvsocket = ds_map_find_value(async_load, "id");
-var recvmsgid = net_receive(ds_map_find_value(async_load, "type"), datainputlist, recvip, recvport, recvid);
+var recvtype = ds_map_find_value(async_load, "type");
+var recvsocket;
+if (recvtype==network_type_data) {
+    recvsocket = ds_map_find_value(async_load, "id");
+} else {
+    recvsocket = ds_map_find_value(async_load, "socket");
+}
+var recvmsgid = net_receive(recvtype, datainputlist, recvip, recvport, recvsocket);
 if (recvmsgid!=1 &amp;&amp; recvmsgid!=-1) {
     switch (recvmsgid) {
         case MSG_GETIP:

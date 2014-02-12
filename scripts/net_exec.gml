@@ -5,6 +5,7 @@
 **
 ** CMD_PING; ID
 **
+**
 */
 globalvar net_cmds;
 if (argument_count>=1) {
