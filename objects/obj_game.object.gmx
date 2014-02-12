@@ -31,7 +31,7 @@ gridsize = 10;
 surfsize = 50;
 wallperc = 0.2;
 
-maze = create_maze(w, h);
+maze = maze_create(w, h);
 surf = -1;
 col1 = -1;
 col2 = -1;
@@ -387,7 +387,7 @@ if (os_get_config()!="OEM") {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>maze = create_maze(w, h);
+            <string>maze = maze_create(w, h);
 surface_free(surf);
 x = (irandom(w-1)+0.5)*gridsize;
 y = (irandom(h-1)+0.5)*gridsize;

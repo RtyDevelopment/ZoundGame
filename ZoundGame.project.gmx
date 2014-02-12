@@ -32,28 +32,32 @@
   <paths name="paths"/>
   <scripts name="scripts">
     <script>scripts\choose_weighted.gml</script>
-    <script>scripts\create_maze.gml</script>
     <script>scripts\get_decimals.gml</script>
     <script>scripts\string_set_at.gml</script>
     <script>scripts\in_list_double.gml</script>
     <script>scripts\draw_line_glow.gml</script>
-    <script>scripts\maze_draw_map.gml</script>
-    <script>scripts\maze_draw_d3d.gml</script>
     <script>scripts\d3d_set_projection_euler.gml</script>
     <script>scripts\draw_circle_glow.gml</script>
     <script>scripts\fade.gml</script>
-    <script>scripts\net_string_to_dslist.gml</script>
-    <script>scripts\net_buffer_to_dslist.gml</script>
-    <script>scripts\net_exec.gml</script>
-    <script>scripts\net_receive.gml</script>
-    <script>scripts\net_connect.gml</script>
-    <script>scripts\net_disconnect.gml</script>
-    <script>scripts\net_send.gml</script>
-    <script>scripts\net_push.gml</script>
-    <script>scripts\net_run.gml</script>
-    <script>scripts\net_init.gml</script>
     <script>scripts\line_isect.gml</script>
-    <script>scripts\maze_move_self.gml</script>
+    <scripts name="OpenP2PNET">
+      <script>scripts\net_init.gml</script>
+      <script>scripts\net_run.gml</script>
+      <script>scripts\net_receive.gml</script>
+      <script>scripts\net_connect.gml</script>
+      <script>scripts\net_disconnect.gml</script>
+      <script>scripts\net_push.gml</script>
+      <script>scripts\net_send.gml</script>
+      <script>scripts\net_buffer_to_dslist.gml</script>
+      <script>scripts\net_string_to_dslist.gml</script>
+      <script>scripts\net_exec.gml</script>
+    </scripts>
+    <scripts name="Maze">
+      <script>scripts\maze_create.gml</script>
+      <script>scripts\maze_draw_map.gml</script>
+      <script>scripts\maze_draw_d3d.gml</script>
+      <script>scripts\maze_move_self.gml</script>
+    </scripts>
   </scripts>
   <objects name="objects">
     <object>objects\obj_network</object>

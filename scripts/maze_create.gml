@@ -1,4 +1,4 @@
-///create_maze(w,h)
+///maze_create(w,h)
 //Copyright Jasper Weyne (c) 2013
 
 /*
