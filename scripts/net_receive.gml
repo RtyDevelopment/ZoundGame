@@ -9,8 +9,8 @@
 ** any: Unknown OPENP2PNET Message, return value is message type
 */
 globalvar net_key, net_name;
-globalvar net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
-globalvar net_keycounter;
+globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+globalvar net_idcounter;
 var recvlist, recvip, recvport, recvsocket, recvmsg, recvtype, recvkey, recvtokey, datalist, datastart;
 
 recvlist = argument1;
@@ -20,8 +20,9 @@ recvsocket = argument4;
 
 if (argument0!=network_type_data) {
     if (argument0==network_type_connect) {
-        net_keycounter++;
-        ds_list_add(net_peer_key, "?"+string(net_keycounter));
+        net_idcounter++;
+        ds_list_add(net_peer_id, net_idcounter);
+        ds_list_add(net_peer_key, "?");
         ds_list_add(net_peer_ip, recvip);
         ds_list_add(net_peer_port, recvport);
         ds_list_add(net_peer_nettype, NET_TCP); //Since you can't run a raw server, and all other protocols are connectionless, it must be built-in TCP
@@ -33,6 +34,7 @@ if (argument0!=network_type_data) {
         ds_list_add(net_peer_socket, recvsocket);
     } else {
         pos = ds_list_find_index(net_peer_socket, recvsocket);
+        ds_list_delete(net_peer_id, pos);
         ds_list_delete(net_peer_key, pos);
         ds_list_delete(net_peer_ip, pos);
         ds_list_delete(net_peer_port, pos);
@@ -65,6 +67,8 @@ if (recvtype==NET_TCP || recvtype==NET_TCPRAW) {
 } else {
     var peerpos = ds_list_find_index(net_peer_key, recvkey);
     if (peerpos<0) {
+        net_idcounter++;
+        ds_list_add(net_peer_id, net_idcounter);
         ds_list_add(net_peer_key, recvkey);
         ds_list_add(net_peer_ip, recvip);
         ds_list_add(net_peer_port, recvport);
@@ -100,7 +104,7 @@ if (recvtokey!=net_key) {
     ds_list_insert(fwdlist, 1, recvport);
     if (ds_list_find_index(net_peer_key, recvtokey)==-1) {
         for (var i=0; i<ds_list_size(net_peer_key); i++) {
-            net_send(ds_list_find_value(net_peer_key, i), MSG_FORWARD, fwdlist);
+            net_send(ds_list_find_value(net_peer_id, i), MSG_FORWARD, fwdlist);
         }
     } else {
         net_send(recvtokey, recvmsg, recvlist);
@@ -133,8 +137,9 @@ switch (recvmsg) {
     case MSG_PING:
         ///SERVER
         datalist = ds_list_create();
+        pos = ds_list_find_index(net_peer_key, recvkey);
         ds_list_add(datalist, ds_list_find_value(recvlist, datastart));
-        net_send(recvkey, MSG_PONG, datalist);
+        net_send(ds_list_find_value(net_peer_id, pos), MSG_PONG, datalist);
         ds_list_destroy(datalist);
         return 1;
         
@@ -147,7 +152,8 @@ switch (recvmsg) {
     case MSG_INFOREQUEST:
         ///SERVER
         datalist = ds_list_create();
-        net_send(recvkey, MSG_INFO, datalist);
+        pos = ds_list_find_index(net_peer_key, recvkey);
+        net_send(ds_list_find_value(net_peer_id, pos), MSG_INFO, datalist);
         ds_list_destroy(datalist);
         return 1;
         

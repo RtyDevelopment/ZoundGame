@@ -3,7 +3,7 @@
 ** AVAILABLE COMMANDS **
 ************************
 **
-** CMD_PING; KEY
+** CMD_PING; ID
 **
 */
 globalvar net_cmds;

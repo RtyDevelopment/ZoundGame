@@ -1,6 +1,7 @@
 ///net_push(conntype,url,port,msgtype,datalist)
 //globalvar net_sockets, net_sockets_id, net_sockets_ip, net_sockets_port, net_sockets_type, net_sockets_acc;
-globalvar net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+globalvar net_idcounter;
 var socket, conntype, url, port;
 socket = -1;
 conntype = argument0;
@@ -35,6 +36,8 @@ if (argument0==NET_TCP || argument0==NET_TCPRAW) {
         i++;
     }
 }
+net_idcounter++;
+ds_list_add(net_peer_id, net_idcounter);
 ds_list_add(net_peer_key, "-1");
 ds_list_add(net_peer_ip, url);
 ds_list_add(net_peer_port, port);
@@ -46,6 +49,6 @@ ds_list_add(net_peer_pingrecv, 0);
 ds_list_add(net_peer_type, NETTYPE_PEER);
 ds_list_add(net_peer_socket, socket);
 
-net_send("-1", argument3, argument4);
+net_send(net_idcounter, argument3, argument4);
 
-net_disconnect("-1");
+net_disconnect(net_idcounter);
