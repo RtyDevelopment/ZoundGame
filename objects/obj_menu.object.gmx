@@ -52,10 +52,18 @@ if (view_enabled==true) {
 }
 
 
+var hscale, wscale;
+hscale = scrheight/1080;
+wscale = scrwidth/1920;
+if (wscale&gt;hscale) {
+    scale = wscale;
+} else {
+    scale = hscale;
+}
 
 if (os_get_config()=="OEM") {
-    global.networkmenu = true;
-    menu = 1;
+    global.networkmenu = false;
+    menu = 0;
 } else {
     global.networkmenu = false;
     menu = -1;
@@ -92,7 +100,8 @@ instance_create(0, 0, obj_network);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (menu==1) global.networkmenu = true; else global.networkmenu = false;
+            <string>globalvar scrwidth, scrheight;
+if (menu==1) global.networkmenu = true; else global.networkmenu = false;
 if (lastmenu!=menu) {
     var i=0;
     repeat (instance_count) {
@@ -102,11 +111,15 @@ if (lastmenu!=menu) {
     }
     switch (menu) {
         case -1:
-            with (instance_create(global.scrwidth/2-100, global.scrheight/5*2, obj_execonpress)) {
+            with (instance_create(scrwidth/2, 136*scale, obj_execonpress)) {
+                sprite = spr_none;
+                type = "Title";
+            }
+            with (instance_create(scrwidth/2-100, scrheight/5*2, obj_execonpress)) {
                 sprite = spr_button;
                 text = "start";
             }
-            with (instance_create(global.scrwidth/2-100, global.scrheight/5*3, obj_execonpress)) {
+            with (instance_create(scrwidth/2-100, scrheight/5*3, obj_execonpress)) {
                 sprite = spr_button;
                 text = "options";
             }
@@ -116,7 +129,7 @@ if (lastmenu!=menu) {
             break;
         case 1:
             if (os_get_config()!="OEM") {
-                with (instance_create(global.scrwidth-150, global.scrheight-75, obj_execonpress)) {
+                with (instance_create(scrwidth-150, scrheight-75, obj_execonpress)) {
                     sprite = spr_back;
                 }
             }
@@ -146,7 +159,12 @@ if (lastmenu!=menu) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>//Draw background
+            <string>globalvar scrwidth, scrheight;
+//Draw background
+show_debug_message("Scale: "+string(scale));
+draw_sprite_ext(spr_menubck, 0, 0, 0, scale, scale, 0, c_white, 1);
+
+//Draw back overlay
 for (i=0; i&lt;ds_list_size(_x); i+=1) {
     if (ds_list_find_value(_t, i)&gt;=ds_list_find_value(_l, i)) {
         ds_list_delete(_x, i);
@@ -170,6 +188,7 @@ for (i=0; i&lt;ds_list_size(_x); i+=1) {
     l = ds_list_find_value(_l, i);
     draw_circle_glow(ds_list_find_value(_x, i),ds_list_find_value(_y, i),t,min(t/5, 20),5,make_color_hsv(0, 0, 255*(1-t/l)),make_color_hsv(0, 100, 255*(1-t/l)));
 }
+//*/
 </string>
           </argument>
         </arguments>
