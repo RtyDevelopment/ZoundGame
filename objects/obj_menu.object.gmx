@@ -25,7 +25,13 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>randomize();
+            <string>option_fullscreen = false;
+option_width = 1280;
+option_height = 720;
+option_username = "Steve";
+option_port = 43520;
+
+randomize();
 
 music = audio_play_sound(snd_music, 10, 1);
 audio_sound_gain(music, 0.6, 0);
@@ -44,11 +50,10 @@ n = irandom_range(5, 40);*/
 
 //Menu vars
 
-
 view_xview[0] = 0;
 view_yview[0] = 0;
-view_wview[0] = 1920;
-view_hview[0] = 1080;
+view_wview[0] = option_width;
+view_hview[0] = option_height;
 view_object[0] = noone;
 view_visible[0] = true;
 view_enabled = true;
@@ -57,7 +62,7 @@ globalvar scrwidth, scrheight;
 scrwidth = view_wview[0];
 scrheight = view_hview[0];
 window_set_size(scrwidth, scrheight);
-window_set_fullscreen(true);
+window_set_fullscreen(option_fullscreen);
 
 hscale = scrheight/sprite_get_height(spr_menubck);
 wscale = scrwidth/sprite_get_width(spr_menubck);
@@ -72,10 +77,15 @@ if (os_get_config()=="OEM") {
     menu = -1;
 }
 lastmenu = menu-1;
+menuswitch = 1;
+menuswitch_t = 0;
+
+globalvar alphamulti;
+alphamulti = 0;
 
 //Self vars (to be changed to file)
-global.name = "Steve";
-global.port = 43520;
+global.name = option_username;
+global.port = option_port;
 global.key = "";
 for (var i=0; i&lt;160; i++) global.key += string(irandom(9));
 
@@ -103,42 +113,71 @@ instance_create(0, 0, obj_network);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>globalvar scrwidth, scrheight;
+            <string>globalvar scrwidth, scrheight, alphamulti;
+
+if (keyboard_check(vk_alt)==true &amp;&amp; keyboard_check(vk_f4)==true || keyboard_check(vk_escape)) game_end();
+
 if (menu==1) global.networkmenu = true; else global.networkmenu = false;
 if (lastmenu!=menu) {
-    var i=0;
-    repeat (instance_count) {
-        with (instance_find(all, i)) {
-            if (object_index==obj_menu || object_index==obj_network) i++; else instance_destroy();
-        }
-    }
-    switch (menu) {
-        case -1:
-            with (instance_create(scrwidth/2, 136*hscale, obj_execonpress)) {
-                sprite = spr_none;
-                type = "Title";
-            }
-            with (instance_create(scrwidth/2-100, scrheight/5*2, obj_execonpress)) {
-                sprite = spr_button;
-                text = "start";
-            }
-            with (instance_create(scrwidth/2-100, scrheight/5*3, obj_execonpress)) {
-                sprite = spr_button;
-                text = "options";
-            }
-            break;
+    var menuswitch_time = room_speed;
+    switch (menuswitch) {
         case 0:
-            instance_create(0, 0, obj_game);
-            break;
+            menuswitch = 1;
+            menuswitch_t = menuswitch_time;
         case 1:
-            if (os_get_config()!="OEM") {
-                with (instance_create(scrwidth-150, scrheight-75, obj_execonpress)) {
-                    sprite = spr_back;
+            if (menuswitch_t==0) {
+                var i=0;
+                repeat (instance_count) {
+                    with (instance_find(all, i)) {
+                        if (object_index==obj_menu || object_index==obj_network) i++; else instance_destroy();
+                    }
                 }
+                switch (menu) {
+                    case -1:
+                        //Main menu
+                        with (instance_create(scrwidth/2, 136*hscale, obj_execonpress)) {
+                            sprite = spr_none;
+                            type = "Title";
+                        }
+                        with (instance_create(scrwidth/2-100, scrheight/5*2, obj_execonpress)) {
+                            sprite = spr_button;
+                            text = "start";
+                        }
+                        with (instance_create(scrwidth/2-100, scrheight/5*3, obj_execonpress)) {
+                            sprite = spr_button;
+                            text = "options";
+                        }
+                        break;
+                    case 0:
+                        //In-Game
+                        instance_create(0, 0, obj_game);
+                        break;
+                    case 1:
+                        //Network menu
+                        if (os_get_config()!="OEM") {
+                            with (instance_create(scrwidth-150, scrheight-75, obj_execonpress)) {
+                                sprite = spr_back;
+                            }
+                        }
+                        break;
+                }
+                menuswitch = 2;
+                menuswitch_t = 0;
+            } else {
+                menuswitch_t--;
             }
             break;
+        case 2:
+            if (menuswitch_t==menuswitch_time) {
+                lastmenu = menu;
+                menuswitch = 0;
+            } else {
+                menuswitch_t++;
+            }
     }
-    lastmenu = menu;
+    alphamulti = menuswitch_t/menuswitch_time;
+} else {
+    alphamulti = 1;
 }
 </string>
           </argument>

@@ -261,14 +261,13 @@ if (pressedimg==true) mouse = 1;
             <kind>1</kind>
             <string>///Draw event
 if (start==false) exit;
-draw_set_color(c_white);
-draw_set_alpha(1);
-draw_sprite(sprite, mouse, x, y);
+globalvar alphamulti;
+draw_sprite_ext(sprite, mouse, x, y, 1, 1, 0, c_white, 1*alphamulti);
 ///
 switch (sprite) {
     case spr_button:
         draw_set_color(c_black);
-        draw_set_alpha(1);
+        draw_set_alpha(1*alphamulti);
         draw_set_halign(fa_left);
         draw_set_valign(fa_top);
         draw_set_font(fnt_default);
@@ -277,7 +276,7 @@ switch (sprite) {
     case spr_none:
         switch (type) {
             case "Title":
-                draw_set_alpha(1);
+                draw_set_alpha(1*alphamulti);
                 draw_set_color(make_color_rgb(0, 120, 255));
                 draw_set_halign(fa_center);
                 draw_set_valign(fa_middle);

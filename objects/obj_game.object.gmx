@@ -100,8 +100,6 @@ if (os_get_config()!="OEM") {
     window_mouse_set(cx,cy);
 }
 
-if (keyboard_check(vk_alt)==true &amp;&amp; keyboard_check(vk_f4)==true || keyboard_check(vk_escape)) game_end();
-
 var xold, yold;
 xold = x;
 yold = y;
