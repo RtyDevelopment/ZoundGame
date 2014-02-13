@@ -14,9 +14,9 @@ globalvar net_idcounter;
 globalvar net_lanserver, net_pubserver;
 var recvlist, recvip, recvport, recvsocket, recvmsg, recvtype, recvkey, recvtokey, datalist, datastart;
 
+recvlist = argument1;
 if (string_copy(ds_list_find_value(recvlist, 0), 1, 12)!="[OPENP2PNET]") return -1;
 if (string_delete(ds_list_find_value(recvlist, 0), 1, 12)!="[v0.1.0.0]") return -2;
-recvlist = argument1;
 recvip = argument2;
 recvport = argument3;
 recvsocket = argument4;
