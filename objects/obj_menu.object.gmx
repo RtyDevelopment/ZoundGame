@@ -31,7 +31,7 @@ music = audio_play_sound(snd_music, 10, 1);
 audio_sound_gain(music, 0.6, 0);
 
 //Menu background
-_x = ds_list_create();
+/*_x = ds_list_create();
 _y = ds_list_create();
 _l = ds_list_create();
 _t = ds_list_create();
@@ -40,26 +40,29 @@ ds_list_add(_x, irandom(room_width));
 ds_list_add(_y, irandom(room_height));
 ds_list_add(_l, irandom_range(50, 100));
 ds_list_add(_t, 1);
-n = irandom_range(5, 40);
+n = irandom_range(5, 40);*/
 
 //Menu vars
-if (view_enabled==true) {
-    global.scrwidth = view_wview[0];
-    global.scrheight = view_hview[0];
-} else {
-    global.scrwidth = room_width;
-    global.scrheight = room_height;
-}
 
 
-var hscale, wscale;
-hscale = scrheight/1080;
-wscale = scrwidth/1920;
-if (wscale&gt;hscale) {
-    scale = wscale;
-} else {
-    scale = hscale;
-}
+view_xview[0] = 0;
+view_yview[0] = 0;
+view_wview[0] = 1920;
+view_hview[0] = 1080;
+view_object[0] = noone;
+view_visible[0] = true;
+view_enabled = true;
+
+globalvar scrwidth, scrheight;
+scrwidth = view_wview[0];
+scrheight = view_hview[0];
+window_set_size(scrwidth, scrheight);
+window_set_fullscreen(true);
+
+hscale = scrheight/sprite_get_height(spr_menubck);
+wscale = scrwidth/sprite_get_width(spr_menubck);
+scale = max(wscale, hscale);
+minscale = min(wscale, hscale);
 
 if (os_get_config()=="OEM") {
     global.networkmenu = false;
@@ -111,7 +114,7 @@ if (lastmenu!=menu) {
     }
     switch (menu) {
         case -1:
-            with (instance_create(scrwidth/2, 136*scale, obj_execonpress)) {
+            with (instance_create(scrwidth/2, 136*hscale, obj_execonpress)) {
                 sprite = spr_none;
                 type = "Title";
             }
@@ -161,11 +164,10 @@ if (lastmenu!=menu) {
             <kind>1</kind>
             <string>globalvar scrwidth, scrheight;
 //Draw background
-show_debug_message("Scale: "+string(scale));
-draw_sprite_ext(spr_menubck, 0, 0, 0, scale, scale, 0, c_white, 1);
+draw_sprite_ext(spr_menubck, 0, scrwidth/2-sprite_get_width(spr_menubck)*scale/2, scrheight/2-sprite_get_height(spr_menubck)*scale/2, scale, scale, 0, c_white, 1);
 
 //Draw back overlay
-for (i=0; i&lt;ds_list_size(_x); i+=1) {
+/*for (i=0; i&lt;ds_list_size(_x); i+=1) {
     if (ds_list_find_value(_t, i)&gt;=ds_list_find_value(_l, i)) {
         ds_list_delete(_x, i);
         ds_list_delete(_y, i);
