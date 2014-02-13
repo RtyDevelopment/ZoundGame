@@ -89,7 +89,7 @@
     <constant name="NET_UDP">1</constant>
     <constant name="NET_TCP">2</constant>
     <constant name="NET_HTTP">3</constant>
-    <constant name="NET_TCPRAW"></constant>
+    <constant name="NET_TCPRAW">4</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>
