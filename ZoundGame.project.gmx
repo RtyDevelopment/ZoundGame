@@ -33,6 +33,7 @@
   <backgrounds name="background"/>
   <paths name="paths"/>
   <scripts name="scripts">
+    <script>scripts\get_time_string.gml</script>
     <script>scripts\choose_weighted.gml</script>
     <script>scripts\get_decimals.gml</script>
     <script>scripts\string_set_at.gml</script>

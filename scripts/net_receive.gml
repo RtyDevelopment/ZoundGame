@@ -10,9 +10,9 @@
 */
 globalvar net_key, net_name;
 globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
-globalvar net_idcounter;
+globalvar net_msglist, net_idcounter;
 globalvar net_lanserver, net_pubserver;
-var recvlist, recvip, recvport, recvsocket, recvmsg, recvtype, recvkey, recvtokey, datalist, datastart;
+var recvlist, recvip, recvport, recvsocket, recvmsg, recvtype, recvkey, recvtokey, recvsignature, recvtime, recvhash, datalist, datastart;
 
 recvlist = argument1;
 if (string_copy(ds_list_find_value(recvlist, 0), 1, 12)!="[OPENP2PNET]") return -1;
@@ -24,8 +24,18 @@ recvmsg = real(ds_list_find_value(recvlist, 1));
 recvtype = real(ds_list_find_value(recvlist, 2));
 recvkey = ds_list_find_value(recvlist, 3);
 recvname = ds_list_find_value(recvlist, 4);
-recvtokey = ds_list_find_value(recvlist, 5);
-datastart = 6;
+recvsignature = ds_list_find_value(recvlist, 5);
+recvtokey = ds_list_find_value(recvlist, 6);
+recvtime = ds_list_find_value(recvlist, 7);
+var hashstr = "";
+for (i=6; i<ds_list_size(recvlist); i++) {
+    hashstr += ds_list_find_value(recvlist, i);
+}
+recvhash = sha1_string_unicode(hashstr);
+datastart = 8;
+
+//Check signature
+//pass
 
 //(Dis)connections
 switch (recvtype) {
@@ -95,6 +105,13 @@ switch (recvtype) {
             ds_list_replace(net_peer_name, pos, recvname);
         }
         break;
+}
+
+//Discard when known
+if (ds_list_find_index(net_msglist, net_recvhash)>=0) {
+    return 1;
+} else {
+    ds_list_add(net_msglist, net_recvhash);
 }
 
 //To be forwarded

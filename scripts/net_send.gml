@@ -28,7 +28,10 @@ switch (conntype) {
         buffer_write(buffer, buffer_string, string(conntype));
         buffer_write(buffer, buffer_string, net_key);
         buffer_write(buffer, buffer_string, net_name);
+        buffer_write(buffer, buffer_string, "-1"); //Signature
+        //Hash from here
         buffer_write(buffer, buffer_string, destkey);
+        buffer_write(buffer, buffer_string, get_time_string());
         for (var i=0; i<ds_list_size(datalist); i++) {
             buffer_write(buffer, buffer_string, string(ds_list_find_value(datalist, i)));
         }
@@ -52,7 +55,10 @@ switch (conntype) {
         str_ += "&msgtype="+string(msgtype);
         str_ += "&key="+net_key;
         str_ += "&name="+net_name;
+        str_ += "&signature="+"-1";
+        //Hash
         str_ += "&destkey="+destkey;
+        str_ += "&msgid="+get_time_string();
         for (var i=0; i<ds_list_size(datalist); i++) {
             str_ += "&arg"+string(i)+"="+string(ds_list_find_value(datalist, i));
         }
