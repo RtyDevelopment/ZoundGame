@@ -1,16 +1,14 @@
-globalvar net_name, net_pubport, net_landevicemaster, net_interval, net_timer;
+globalvar net_name, net_pubport, net_devicemaster, net_devicemasterid, net_interval, net_timer;
 globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
 globalvar net_cmdlist;
 var outputlist = ds_list_create();
 
 if (net_timer==0) {
     ds_list_clear(outputlist);
-    ds_list_add(outputlist, 1);
-    ds_list_add(outputlist, net_name);
-    net_push(NET_BROADCAST, -1, 6510, MSG_INFO, outputlist);
+    net_push(NET_BROADCAST, -1, 6510, "-1", MSG_INFO, outputlist);
     if (net_devicemaster==false) {
         ds_list_clear(outputlist);
-        net_push(NET_UDP, "127.0.0.1", 6510, MSG_PEERREQUEST, outputlist);
+        net_send(net_devicemasterid, MSG_PEERREQUEST, outputlist);
     }
     net_timer = net_interval;
 }

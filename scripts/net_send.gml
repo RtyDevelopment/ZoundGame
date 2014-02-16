@@ -16,6 +16,29 @@ socket = ds_list_find_value(net_peer_socket, pos);
 msgtype = argument1;
 datalist = argument2;
 
+file = file_text_open_append(working_directory+"\export.txt");
+file_text_writeln(file);
+file_text_write_string(file, " / SEND / ");
+file_text_writeln(file);
+file_text_write_string(file, "IP     : "+string(url));
+file_text_writeln(file);
+file_text_write_string(file, "Port   : "+string(port));
+file_text_writeln(file);
+file_text_write_string(file, "Message: "+string(msgtype));
+file_text_writeln(file);
+file_text_write_string(file, "NetType: "+string(conntype));
+file_text_writeln(file);
+file_text_write_string(file, "ToKey  : "+sha1_string_unicode(destkey));
+file_text_writeln(file);
+file_text_writeln(file);
+file_text_write_string(file, " / PKGDATA / ");
+file_text_writeln(file);
+for (var i=0; i<ds_list_size(datalist); i++) {
+    file_text_write_string(file, string(ds_list_find_value(datalist, i)));
+    file_text_writeln(file);
+    }
+file_text_close(file);
+
 switch (conntype) {
     case NET_BROADCAST:
     case NET_UDP:

@@ -94,13 +94,13 @@ if (timer==0) {
         lanhash = string(random(100000)*random(100000))+string(random(100000));
         ds_list_clear(dataoutputlist);
         ds_list_add(dataoutputlist, md5_string_unicode(lanhash));
-        net_push(NET_BROADCAST, -1, global.net_lanport, MSG_GETIP, dataoutputlist);
+        net_push(NET_BROADCAST, -1, global.net_lanport, global.net_key, MSG_GETIP, dataoutputlist);
     }
     if (publicip=="?") {
         pubhash = string(random(100000)*random(100000))+string(random(100000));
         ds_list_clear(dataoutputlist);
         ds_list_add(dataoutputlist, md5_string_unicode(pubhash));
-        net_push(NET_HTTP, "http://gmhtml5host.net46.net/gmnet.php", -1, MSG_GETIP, dataoutputlist);
+        net_push(NET_HTTP, "http://gmhtml5host.net46.net/gmnet.php", -1, "1a2b3c4e5f67890", MSG_GETIP, dataoutputlist);
     }
     timer = 90;
 }
@@ -193,6 +193,7 @@ if (recvmsgid&gt;1) {
             <kind>1</kind>
             <string>ds_list_clear(datainputlist);
 net_string_to_dslist(ds_map_find_value(async_load, "result"), datainputlist);
+//for (var i=0;i&lt;ds_list_size(datainputlist);i++) show_debug_message(ds_list_find_value(datainputlist, i));
 var recvurl = ds_map_find_value(async_load, "url");
 var recvmsgid = net_receive(network_type_data, datainputlist, recvurl, 80, -1);
 if (recvmsgid&gt;1) {
@@ -224,6 +225,82 @@ if (recvmsgid&gt;1) {
         break;
     }
 }
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="7" enumb="3">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+var file;
+file = file_text_open_append(working_directory+"\export.txt");
+file_text_writeln(file);
+file_text_write_string(file, " # PEERS # ");
+for (var i=0; i&lt;ds_list_size(net_peer_id); i++) {
+    file_text_write_string(file, " - "+string(i)+": - ");
+    file_text_writeln(file);
+    file_text_write_string(file, "ID       : ");
+    file_text_write_string(file, string(ds_list_find_value(net_peer_id, i)));
+    file_text_writeln(file);
+    file_text_write_string(file, "Key      : ");
+    file_text_write_string(file, sha1_string_unicode(ds_list_find_value(net_peer_key, i)));
+    file_text_writeln(file);
+    file_text_write_string(file, "IP       : ");
+    file_text_write_string(file, ds_list_find_value(net_peer_ip, i));
+    file_text_writeln(file);
+    file_text_write_string(file, "Port     : ");
+    file_text_write_string(file, string(ds_list_find_value(net_peer_port, i)));
+    file_text_writeln(file);
+    file_text_write_string(file, "NetType  : ");
+    switch (ds_list_find_value(net_peer_nettype, i)) {
+        case NET_UDP:
+            file_text_write_string(file, "UDP"); break;
+        case NET_TCP:
+            file_text_write_string(file, "TCP_GM"); break;
+        case NET_TCPRAW:
+            file_text_write_string(file, "TCP"); break;
+        case NET_BROADCAST:
+            file_text_write_string(file, "UDP_BC"); break;
+        case NET_HTTP:
+            file_text_write_string(file, "HTTP"); break;
+    }
+    file_text_writeln(file);
+    file_text_write_string(file, "Name     : ");
+    file_text_write_string(file, ds_list_find_value(net_peer_name, i));
+    file_text_writeln(file);
+    file_text_write_string(file, "Ping     : ");
+    file_text_write_string(file, string(ds_list_find_value(net_peer_ping, i)));
+    file_text_writeln(file);
+    file_text_write_string(file, "Last ping: ");
+    file_text_write_string(file, string(ds_list_find_value(net_peer_lastping, i)));
+    file_text_writeln(file);
+    file_text_write_string(file, "Last pong: ");
+    file_text_write_string(file, string(ds_list_find_value(net_peer_pingrecv, i)));
+    file_text_writeln(file);
+    file_text_write_string(file, "Save type: ");
+    file_text_write_string(file, string(ds_list_find_value(net_peer_type, i)));
+    file_text_writeln(file);
+    file_text_write_string(file, "Socket   : ");
+    file_text_write_string(file, string(ds_list_find_value(net_peer_socket, i)));
+    file_text_writeln(file);
+}
+file_text_close(file);
 </string>
           </argument>
         </arguments>

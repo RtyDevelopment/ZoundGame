@@ -22,6 +22,7 @@ recvport = argument3;
 recvsocket = argument4;
 recvmsg = real(ds_list_find_value(recvlist, 1));
 recvtype = real(ds_list_find_value(recvlist, 2));
+show_debug_message("RECV TYPE: "+string(recvtype));
 recvkey = ds_list_find_value(recvlist, 3);
 recvname = ds_list_find_value(recvlist, 4);
 recvsignature = ds_list_find_value(recvlist, 5);
@@ -33,6 +34,33 @@ for (i=6; i<ds_list_size(recvlist); i++) {
 }
 recvhash = sha1_string_unicode(hashstr);
 datastart = 8;
+
+file = file_text_open_append(working_directory+"\export.txt");
+file_text_writeln(file);
+file_text_write_string(file, " / RECV / ");
+file_text_writeln(file);
+file_text_write_string(file, "IP     : "+recvip);
+file_text_writeln(file);
+file_text_write_string(file, "Port   : "+string(recvport));
+file_text_writeln(file);
+file_text_write_string(file, "Message: "+string(recvmsg));
+file_text_writeln(file);
+file_text_write_string(file, "NetType: "+string(recvtype));
+file_text_writeln(file);
+file_text_write_string(file, "Key    : "+sha1_string_unicode(recvkey));
+file_text_writeln(file);
+file_text_write_string(file, "Name   : "+recvname);
+file_text_writeln(file);
+file_text_write_string(file, "ToKey  : "+sha1_string_unicode(recvtokey));
+file_text_writeln(file);
+file_text_writeln(file);
+file_text_write_string(file, " / PKGDATA / ");
+file_text_writeln(file);
+for (var i=8; i<ds_list_size(recvlist); i++) {
+    file_text_write_string(file, ds_list_find_value(recvlist, i));
+    file_text_writeln(file);
+}
+file_text_close(file);
 
 //Check signature
 //pass
@@ -115,7 +143,7 @@ if (ds_list_find_index(net_msglist, recvhash)>=0) {
 }
 
 //To be forwarded
-if (recvtokey!="-1" && recvtokey!=net_key) {
+if (recvtokey!=net_key && recvtype!=NET_BROADCAST) {
     var fwdlist = ds_list_create();
     ds_list_copy(fwdlist, recvlist);
     ds_list_insert(fwdlist, 0, recvip);
