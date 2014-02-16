@@ -16,5 +16,5 @@ for (var i=1; i<=string_length(str_); i++) {
         ds_list_replace(list, pos, ds_list_find_value(list, pos)+char);
     }
 }
-
+ds_list_delete(list, ds_list_size(list)-1);
 return list;

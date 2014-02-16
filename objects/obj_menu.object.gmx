@@ -70,8 +70,8 @@ scale = max(wscale, hscale);
 minscale = min(wscale, hscale);
 
 if (os_get_config()=="OEM") {
-    global.networkmenu = false;
-    menu = 0;
+    global.networkmenu = true;
+    menu = 1;
 } else {
     global.networkmenu = false;
     menu = -1;

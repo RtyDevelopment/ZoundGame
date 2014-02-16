@@ -140,11 +140,30 @@ if (recvtype==network_type_data) {
     recvsocket = ds_map_find_value(async_load, "socket");
 }
 var recvmsgid = net_receive(recvtype, datainputlist, recvip, recvport, recvsocket);
-if (recvmsgid!=1 &amp;&amp; recvmsgid!=-1) {
+if (recvmsgid&gt;1) {
+    recvlist = datainputlist;//recvlist = argument1;
+    //if (string_copy(ds_list_find_value(recvlist, 0), 1, 12)!="[OPENP2PNET]") return -1;
+    //if (string_delete(ds_list_find_value(recvlist, 0), 1, 12)!="[v0.1.0.0]") return -2;
+    //recvip = argument2;
+    //recvport = argument3;
+    //recvsocket = argument4;
+    recvmsg = real(ds_list_find_value(recvlist, 1));
+    recvtype = real(ds_list_find_value(recvlist, 2));
+    recvkey = ds_list_find_value(recvlist, 3);
+    recvname = ds_list_find_value(recvlist, 4);
+    //recvsignature = ds_list_find_value(recvlist, 5);
+    //recvtokey = ds_list_find_value(recvlist, 6);
+    //recvtime = ds_list_find_value(recvlist, 7);
+    //var hashstr = "";
+    //for (i=6; i&lt;ds_list_size(recvlist); i++) {
+        //hashstr += ds_list_find_value(recvlist, i);
+    //}
+    //recvhash = sha1_string_unicode(hashstr);
+    datastart = 8;
     switch (recvmsgid) {
         case MSG_GETIP:
-            if (ds_list_find_value(datainputlist, 0)==md5_string_unicode(lanhash) &amp;&amp; lanhash!="-1") {
-                lanip = ds_map_find_value(async_load, "ip");
+            if (ds_list_find_value(datainputlist, datastart)==md5_string_unicode(lanhash) &amp;&amp; lanhash!="-1") {
+                lanip = recvip;
                 lanhash = "-1";
             }
         break;
@@ -176,11 +195,30 @@ if (recvmsgid!=1 &amp;&amp; recvmsgid!=-1) {
 net_string_to_dslist(ds_map_find_value(async_load, "result"), datainputlist);
 var recvurl = ds_map_find_value(async_load, "url");
 var recvmsgid = net_receive(network_type_data, datainputlist, recvurl, 80, -1);
-if (recvmsgid!=1 &amp;&amp; recvmsgid!=-1) {
+if (recvmsgid&gt;1) {
+    recvlist = datainputlist;//recvlist = argument1;
+    //if (string_copy(ds_list_find_value(recvlist, 0), 1, 12)!="[OPENP2PNET]") return -1;
+    //if (string_delete(ds_list_find_value(recvlist, 0), 1, 12)!="[v0.1.0.0]") return -2;
+    //recvip = argument2;
+    //recvport = argument3;
+    //recvsocket = argument4;
+    recvmsg = real(ds_list_find_value(recvlist, 1));
+    recvtype = real(ds_list_find_value(recvlist, 2));
+    recvkey = ds_list_find_value(recvlist, 3);
+    recvname = ds_list_find_value(recvlist, 4);
+    //recvsignature = ds_list_find_value(recvlist, 5);
+    //recvtokey = ds_list_find_value(recvlist, 6);
+    //recvtime = ds_list_find_value(recvlist, 7);
+    //var hashstr = "";
+    //for (i=6; i&lt;ds_list_size(recvlist); i++) {
+        //hashstr += ds_list_find_value(recvlist, i);
+    //}
+    //recvhash = sha1_string_unicode(hashstr);
+    datastart = 8;
     switch (recvmsgid) {
         case MSG_GETIP:
-            if (ds_list_find_value(datainputlist, 0)==md5_string_unicode(pubhash) &amp;&amp; pubhash!="-1") {
-                publicip = ds_list_find_value(datainputlist, 1);
+            if (ds_list_find_value(datainputlist, datastart)==md5_string_unicode(pubhash) &amp;&amp; pubhash!="-1") {
+                publicip = ds_list_find_value(datainputlist, datastart+1);
                 pubhash = "-1";
             }
         break;
@@ -208,11 +246,13 @@ if (recvmsgid!=1 &amp;&amp; recvmsgid!=-1) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>globalvar net_own_key, net_own_ip, net_own_port, net_own_name, net_own_req, net_own_ping;
-globalvar net_lan_key, net_lan_ip, net_lan_port, net_lan_name, net_lan_req, net_lan_ping;
+            <string>globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
 
 if (global.networkmenu==true) {
     //Draw IP box
+    draw_set_valign(fa_top);
+    draw_set_halign(fa_left);
+    draw_set_font(fnt_default);
     draw_set_alpha(0.6);
     draw_set_color(c_white);
     draw_rectangle(30, 30, global.scrwidth-30, 70, 0);
@@ -222,34 +262,15 @@ if (global.networkmenu==true) {
     draw_text(40, 40, "IP: "+ipstr);
     draw_set_color(c_dkgray);
     draw_text(40, 60, "Own address: "+publicip+" ("+lanip+")");
-    //Draw players predefined
-    for (var i=0; i&lt;ds_list_size(net_own_key); i++) {
+    //Draw players
+    for (var i=0; i&lt;ds_list_size(net_peer_id); i++) {
         draw_set_color(c_white);
         draw_rectangle(30, 90+50*i, global.scrwidth-30, 140+50*i, 0);
         draw_set_color(c_black);
         draw_rectangle(30, 90+50*i, global.scrwidth-30, 140+50*i, 1);
-        switch (ds_list_find_value(net_own_req, i)) {
-            case 1: draw_set_color(c_green); break;//Request sent
-            case 2: draw_set_color(c_yellow); break;//Request rec
-        }
-        draw_text(40, 105+50*i, ds_list_find_value(net_own_name, i)+" ("+string(ds_list_find_value(net_own_ping, i))+" ms)");
+        draw_text(40, 105+50*i, ds_list_find_value(net_peer_name, i)+" ("+string(ds_list_find_value(net_peer_ping, i))+" ms)");
         draw_set_color(c_dkgray);
-        draw_text(40, 125+50*i, ds_list_find_value(net_own_ip, i)+":"+string(ds_list_find_value(net_own_port, i)));
-    }
-    //Draw players in network
-    var prelength = 50*ds_list_size(net_own_key);
-    for (var i=0; i&lt;ds_list_size(net_lan_key); i++) {
-        draw_set_color(c_white);
-        draw_rectangle(30, 90+50*i+prelength, global.scrwidth-30, 140+50*i+prelength, 0);
-        draw_set_color(c_black);
-        draw_rectangle(30, 90+50*i+prelength, global.scrwidth-30, 140+50*i+prelength, 1);
-        switch (ds_list_find_value(net_lan_req, i)) {
-            case 1: draw_set_color(c_green); break;//Request sent
-            case 2: draw_set_color(c_yellow); break;//Request rec
-        }
-        draw_text(40, 105+50*i+prelength, ds_list_find_value(net_lan_name, i)+" ("+string(ds_list_find_value(net_lan_ping, i))+" ms)");
-        draw_set_color(c_dkgray);
-        draw_text(40, 125+50*i+prelength, ds_list_find_value(net_lan_ip, i)+":"+string(ds_list_find_value(net_lan_port, i)));
+        draw_text(40, 125+50*i, ds_list_find_value(net_peer_ip, i)+":"+string(ds_list_find_value(net_peer_port, i)));
     }
 }
 </string>

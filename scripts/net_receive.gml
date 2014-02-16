@@ -108,10 +108,10 @@ switch (recvtype) {
 }
 
 //Discard when known
-if (ds_list_find_index(net_msglist, net_recvhash)>=0) {
+if (ds_list_find_index(net_msglist, recvhash)>=0) {
     return 1;
 } else {
-    ds_list_add(net_msglist, net_recvhash);
+    ds_list_add(net_msglist, recvhash);
 }
 
 //To be forwarded
