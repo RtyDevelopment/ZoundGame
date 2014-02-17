@@ -268,20 +268,20 @@ with (obj_gameobject) {
 
 for (var i=0; i&lt;ds_list_size(livelist); i++) {
     var life, name;
-    life = ds_list_find_value(livelist, i)*100;
+    life = ds_list_find_value(livelist, i)*125;
     //name = ds_list_find_value(namelist, i);
     
     draw_set_color(c_green);
     draw_rectangle(5, 5+i*25, 5+life, (i+1)*25, 0);
     draw_set_color(c_red);
-    draw_rectangle(5+life, 5+i*25, 105, (i+1)*25, 0);
+    draw_rectangle(5+life, 5+i*25, 130, (i+1)*25, 0);
     draw_set_color(c_black);
-    draw_rectangle(5, 5+i*25, 105, (i+1)*25, 1);
+    draw_rectangle(5, 5+i*25, 130, (i+1)*25, 1);
     draw_set_color(c_white);
     draw_set_font(fnt_default);
     draw_set_valign(fa_middle);
     draw_set_halign(fa_left);
-    //draw_text(115, 15+i*25, name);
+    //draw_text(140, 15+i*25, name);
 }
 ds_list_destroy(livelist);
 //ds_list_destroy(namelist);
