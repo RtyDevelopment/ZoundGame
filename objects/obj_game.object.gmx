@@ -41,6 +41,8 @@ y = (irandom(h-1)+0.5)*gridsize;
 z = 0.65*gridsize;
 direction = 0;
 zdirection = 0;
+name = global.name;
+live = 1;
 
 bumpsnd = false;
 
@@ -242,13 +244,42 @@ if (mouse_check_button_pressed(mb_left)==true) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>draw_set_alpha(1);
+            <string>globalvar scrwidth;
+draw_set_alpha(1);
 draw_set_color(c_green);
-var cx = room_width-50;
+var cx = scrwidth-50;
 var cy = 50;
 draw_circle(cx, cy, 50, 1);
 draw_triangle(cx+lengthdir_x(10, direction+90), cy+lengthdir_y(10, direction+90), cx+lengthdir_x(10, direction-90), cy+lengthdir_y(10, direction-90), cx+lengthdir_x(50, direction), cy+lengthdir_y(50, direction), 0);
 draw_triangle(cx+lengthdir_x(10, direction+90), cy+lengthdir_y(10, direction+90), cx+lengthdir_x(10, direction-90), cy+lengthdir_y(10, direction-90), cx+lengthdir_x(30, direction+180), cy+lengthdir_y(30, direction+180), 0);
+
+livelist = ds_list_create();
+namelist = ds_list_create();
+
+ds_list_add(livelist, live);
+ds_list_add(namelist, name);
+
+with (obj_gameobject) {
+    if (type==3) {
+        ds_list_add(other.livelist, live);
+        ds_list_add(other.namelist, name);
+    }
+}
+
+for (var i=0; i&lt;ds_list_size(xlist); i++) {
+    var life, name;
+    life = ds_list_find_value(livelist, i)*100;
+    name = ds_list_find_value(namelist, i);
+    
+    draw_set_color(c_black);
+    draw_rectangle(5+i*55, 5, 5+(i+1)*55, 105, 1);
+    draw_set_color(c_green);
+    draw_rectangle(5+i*55, 5, 5+(i+1)*55, 5+life, 0);
+    draw_set_color(c_red);
+    draw_rectangle(5+i*55, 5+life, 5+(i+1)*55, 105, 0);
+}
+ds_list_destroy(livelist);
+ds_list_destroy(namelist);
 </string>
           </argument>
         </arguments>

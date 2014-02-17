@@ -106,6 +106,10 @@ switch (type) {
         audio_emitter_falloff(sound_pos, 1.5*gridsize, 5*gridsize, 1);
         sound_index = audio_play_sound_on(sound_pos, snd_list[sndtype, irandom(snd_list_length[sndtype])], 0, 0);
         break;
+    case 4:
+        //Other player
+        live = 1;
+        break;
 }
 </string>
           </argument>

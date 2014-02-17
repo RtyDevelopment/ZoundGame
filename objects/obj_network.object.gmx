@@ -324,13 +324,14 @@ file_text_close(file);
           <argument>
             <kind>1</kind>
             <string>globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+globalvar alphamulti;
 
 if (global.networkmenu==true) {
     //Draw IP box
     draw_set_valign(fa_top);
     draw_set_halign(fa_left);
     draw_set_font(fnt_default);
-    draw_set_alpha(0.6);
+    draw_set_alpha(0.6*alphamulti);
     draw_set_color(c_white);
     draw_rectangle(30, 30, global.scrwidth-30, 70, 0);
     draw_set_color(c_black);

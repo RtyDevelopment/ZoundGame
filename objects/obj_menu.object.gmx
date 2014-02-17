@@ -63,6 +63,7 @@ scrwidth = view_wview[0];
 scrheight = view_hview[0];
 window_set_size(scrwidth, scrheight);
 window_set_fullscreen(option_fullscreen);
+window_center();
 
 hscale = scrheight/sprite_get_height(spr_menubck);
 wscale = scrwidth/sprite_get_width(spr_menubck);
@@ -117,7 +118,6 @@ instance_create(0, 0, obj_network);
 
 if (keyboard_check(vk_alt)==true &amp;&amp; keyboard_check(vk_f4)==true || keyboard_check(vk_escape)) game_end();
 
-if (menu==1) global.networkmenu = true; else global.networkmenu = false;
 if (lastmenu!=menu) {
     var menuswitch_time = room_speed;
     switch (menuswitch) {
@@ -132,6 +132,7 @@ if (lastmenu!=menu) {
                         if (object_index==obj_menu || object_index==obj_network) i++; else instance_destroy();
                     }
                 }
+                if (menu==1) global.networkmenu = true; else global.networkmenu = false;
                 switch (menu) {
                     case -1:
                         //Main menu

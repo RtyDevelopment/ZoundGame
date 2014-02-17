@@ -1,2 +1,4 @@
 ///get_time_string
-return string(current_year)+string(current_month)+string(current_day)+string(current_hour)+string(current_minute)+string(current_second);
+var str_;
+str_ = string_format(current_year, 4, 0)+string_format(current_month, 2, 0)+string_format(current_day, 2, 0)+string_format(current_hour, 2, 0)+string_format(current_minute, 2, 0)+string_format(current_second, 2, 0);
+return string_replace_all(str_, " ", "0");

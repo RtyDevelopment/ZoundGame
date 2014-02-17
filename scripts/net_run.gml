@@ -14,7 +14,7 @@ if (net_timer==0) {
 }
 net_timer--;
 for (var i=0; i<ds_list_size(net_peer_lastping); i++) {
-    if (get_timer()-ds_list_find_value(net_peer_lastping, i)>net_interval/room_speed*1000000 || ds_list_find_value(net_peer_ping, i)==0) {
+    if (get_timer()-ds_list_find_value(net_peer_lastping, i)>net_interval/room_speed*1000000){// || ds_list_find_value(net_peer_ping, i)==0) {
         ds_list_clear(outputlist);
         ds_list_add(outputlist, get_timer());
         var _id = ds_list_find_value(net_peer_id, i);

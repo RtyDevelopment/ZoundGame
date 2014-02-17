@@ -37,29 +37,36 @@ datastart = 8;
 
 file = file_text_open_append(working_directory+"\export.txt");
 file_text_writeln(file);
-file_text_write_string(file, " / RECV / ");
+file_text_write_string(file, "////////////////");
 file_text_writeln(file);
-file_text_write_string(file, "IP     : "+recvip);
+file_text_write_string(file, "// / RECV / ");
 file_text_writeln(file);
-file_text_write_string(file, "Port   : "+string(recvport));
+file_text_write_string(file, "// IP     : "+recvip);
 file_text_writeln(file);
-file_text_write_string(file, "Message: "+string(recvmsg));
+file_text_write_string(file, "// Port   : "+string(recvport));
 file_text_writeln(file);
-file_text_write_string(file, "NetType: "+string(recvtype));
+file_text_write_string(file, "// Message: "+string(recvmsg));
 file_text_writeln(file);
-file_text_write_string(file, "Key    : "+sha1_string_unicode(recvkey));
+file_text_write_string(file, "// NetType: "+string(recvtype));
 file_text_writeln(file);
-file_text_write_string(file, "Name   : "+recvname);
+file_text_write_string(file, "// Key    : "+sha1_string_unicode(recvkey));
 file_text_writeln(file);
-file_text_write_string(file, "ToKey  : "+sha1_string_unicode(recvtokey));
+file_text_write_string(file, "// Name   : "+recvname);
+file_text_writeln(file);
+file_text_write_string(file, "// ToKey  : "+sha1_string_unicode(recvtokey));
 file_text_writeln(file);
 file_text_writeln(file);
-file_text_write_string(file, " / PKGDATA / ");
+file_text_write_string(file, "// / PKGDATA / ");
 file_text_writeln(file);
 for (var i=8; i<ds_list_size(recvlist); i++) {
-    file_text_write_string(file, ds_list_find_value(recvlist, i));
-    file_text_writeln(file);
+    var val = ds_list_find_value(recvlist, i);
+    if (val!="") {
+        file_text_write_string(file, "// "+val);
+        file_text_writeln(file);
+    }
 }
+file_text_write_string(file, "////////////////");
+file_text_writeln(file);
 file_text_close(file);
 
 //Check signature
@@ -143,7 +150,7 @@ if (ds_list_find_index(net_msglist, recvhash)>=0) {
 }
 
 //To be forwarded
-if (recvtokey!=net_key && recvtype!=NET_BROADCAST) {
+if (recvtokey!=net_key && recvtokey!="-1") {
     var fwdlist = ds_list_create();
     ds_list_copy(fwdlist, recvlist);
     ds_list_insert(fwdlist, 0, recvip);
