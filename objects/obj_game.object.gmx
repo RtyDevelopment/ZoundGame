@@ -254,32 +254,37 @@ draw_triangle(cx+lengthdir_x(10, direction+90), cy+lengthdir_y(10, direction+90)
 draw_triangle(cx+lengthdir_x(10, direction+90), cy+lengthdir_y(10, direction+90), cx+lengthdir_x(10, direction-90), cy+lengthdir_y(10, direction-90), cx+lengthdir_x(30, direction+180), cy+lengthdir_y(30, direction+180), 0);
 
 livelist = ds_list_create();
-namelist = ds_list_create();
+//namelist = ds_list_create();
 
 ds_list_add(livelist, live);
-ds_list_add(namelist, name);
+//ds_list_add(namelist, name);
 
 with (obj_gameobject) {
-    if (type==3) {
+    if (type==4) {
         ds_list_add(other.livelist, live);
-        ds_list_add(other.namelist, name);
+        //ds_list_add(other.namelist, name);
     }
 }
 
-for (var i=0; i&lt;ds_list_size(xlist); i++) {
+for (var i=0; i&lt;ds_list_size(livelist); i++) {
     var life, name;
     life = ds_list_find_value(livelist, i)*100;
-    name = ds_list_find_value(namelist, i);
+    //name = ds_list_find_value(namelist, i);
     
-    draw_set_color(c_black);
-    draw_rectangle(5+i*55, 5, 5+(i+1)*55, 105, 1);
     draw_set_color(c_green);
-    draw_rectangle(5+i*55, 5, 5+(i+1)*55, 5+life, 0);
+    draw_rectangle(5, 5+i*25, 5+life, (i+1)*25, 0);
     draw_set_color(c_red);
-    draw_rectangle(5+i*55, 5+life, 5+(i+1)*55, 105, 0);
+    draw_rectangle(5+life, 5+i*25, 105, (i+1)*25, 0);
+    draw_set_color(c_black);
+    draw_rectangle(5, 5+i*25, 105, (i+1)*25, 1);
+    draw_set_color(c_white);
+    draw_set_font(fnt_default);
+    draw_set_valign(fa_middle);
+    draw_set_halign(fa_left);
+    //draw_text(115, 15+i*25, name);
 }
 ds_list_destroy(livelist);
-ds_list_destroy(namelist);
+//ds_list_destroy(namelist);
 </string>
           </argument>
         </arguments>
