@@ -58,12 +58,10 @@ view_object[0] = noone;
 view_visible[0] = true;
 view_enabled = true;
 
-globalvar scrwidth, scrheight;
-scrwidth = view_wview[0];
-scrheight = view_hview[0];
-window_set_size(scrwidth, scrheight);
-window_set_fullscreen(option_fullscreen);
-window_center();
+globalvar scrwidth, scrheight, scrfull;
+scrwidth = option_width;
+scrheight = option_height;
+scrfull = option_fullscreen;
 
 hscale = scrheight/sprite_get_height(spr_menubck);
 wscale = scrwidth/sprite_get_width(spr_menubck);
@@ -92,6 +90,8 @@ for (var i=0; i&lt;160; i++) global.key += string(irandom(9));
 
 //To execute
 instance_create(0, 0, obj_network);
+
+room_goto(rm_resize);
 </string>
           </argument>
         </arguments>
@@ -255,6 +255,28 @@ for (i=0; i&lt;ds_list_size(_x); i+=1) {
             <kind>1</kind>
             <string>if (menu!=0) menu = 0;
 </string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="10" enumb="16">
+      <action>
+        <libid>1</libid>
+        <id>224</id>
+        <kind>0</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>0</useapplyto>
+        <exetype>1</exetype>
+        <functionname>action_another_room</functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>11</kind>
+            <room>rm_resize</room>
           </argument>
         </arguments>
       </action>

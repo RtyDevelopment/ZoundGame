@@ -15,7 +15,7 @@ port = ds_list_find_value(net_peer_port, pos);
 socket = ds_list_find_value(net_peer_socket, pos);
 msgtype = argument1;
 datalist = argument2;
-
+/*
 file = file_text_open_append(working_directory+"\export.txt");
 file_text_writeln(file);
 file_text_write_string(file, "////////////////");
@@ -42,6 +42,7 @@ for (var i=0; i<ds_list_size(datalist); i++) {
 file_text_write_string(file, "////////////////");
 file_text_writeln(file);
 file_text_close(file);
+//*/
 
 switch (conntype) {
     case NET_BROADCAST:

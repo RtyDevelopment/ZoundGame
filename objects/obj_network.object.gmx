@@ -247,7 +247,8 @@ if (recvmsgid&gt;1) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+            <string>/*
+globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
 var file;
 file = file_text_open_append(working_directory+"\export.txt");
 file_text_writeln(file);
@@ -301,6 +302,7 @@ for (var i=0; i&lt;ds_list_size(net_peer_id); i++) {
     file_text_writeln(file);
 }
 file_text_close(file);
+//*/
 </string>
           </argument>
         </arguments>

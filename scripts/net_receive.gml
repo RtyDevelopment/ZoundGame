@@ -14,6 +14,16 @@ globalvar net_msglist, net_idcounter;
 globalvar net_lanserver, net_pubserver;
 var recvlist, recvip, recvport, recvsocket, recvmsg, recvtype, recvkey, recvtokey, recvsignature, recvtime, recvhash, datalist, datastart;
 
+show_debug_message("////////////////");
+var curmap, lastmap;
+curmap = ds_map_find_first(async_load);
+lastmap = ds_map_find_last(async_load);
+while (curmap!=lastmap) {
+    show_debug_message(string(curmap)+": "+string(ds_map_find_value(async_load, curmap)));
+    curmap = ds_map_find_next(async_load, curmap);
+}
+show_debug_message(string(curmap)+": "+string(ds_map_find_value(async_load, curmap)));
+
 recvlist = argument1;
 if (string_copy(ds_list_find_value(recvlist, 0), 1, 12)!="[OPENP2PNET]") return -1;
 if (string_delete(ds_list_find_value(recvlist, 0), 1, 12)!="[v0.1.0.0]") return -2;
@@ -22,7 +32,6 @@ recvport = argument3;
 recvsocket = argument4;
 recvmsg = real(ds_list_find_value(recvlist, 1));
 recvtype = real(ds_list_find_value(recvlist, 2));
-show_debug_message("RECV TYPE: "+string(recvtype));
 recvkey = ds_list_find_value(recvlist, 3);
 recvname = ds_list_find_value(recvlist, 4);
 recvsignature = ds_list_find_value(recvlist, 5);
@@ -34,7 +43,7 @@ for (i=6; i<ds_list_size(recvlist); i++) {
 }
 recvhash = sha1_string_unicode(hashstr);
 datastart = 8;
-
+/*
 file = file_text_open_append(working_directory+"\export.txt");
 file_text_writeln(file);
 file_text_write_string(file, "////////////////");
@@ -68,6 +77,7 @@ for (var i=8; i<ds_list_size(recvlist); i++) {
 file_text_write_string(file, "////////////////");
 file_text_writeln(file);
 file_text_close(file);
+//*/
 
 //Check signature
 //pass

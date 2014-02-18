@@ -50,6 +50,7 @@ if (net_lanserver<0) {
 
 net_timer = 0;
 
+/*
 var file;
 file = file_text_open_write(working_directory+"\export.txt");
 file_text_write_string(file, " # VARS # ");
@@ -71,3 +72,4 @@ file_text_writeln(file);
 file_text_write_string(file, " # PACKAGES # ");
 file_text_writeln(file);
 file_text_close(file);
+//*/
