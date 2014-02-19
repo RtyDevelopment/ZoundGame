@@ -63,6 +63,8 @@ scrwidth = option_width;
 scrheight = option_height;
 scrfull = option_fullscreen;
 
+surface_resize(application_surface, option_width, option_height)
+
 hscale = scrheight/sprite_get_height(spr_menubck);
 wscale = scrwidth/sprite_get_width(spr_menubck);
 scale = max(wscale, hscale);

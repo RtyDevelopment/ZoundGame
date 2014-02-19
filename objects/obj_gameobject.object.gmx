@@ -290,23 +290,19 @@ draw_set_alpha(1);
 switch (type) {
     case 0:
         //Ball
-        if (os_get_config()!="OEM") {
-            var gridsize = obj_game.gridsize;
-            draw_set_color(c_white);
-            d3d_draw_ellipsoid(x-0.1*gridsize, y-0.1*gridsize, z-0.1*gridsize, x+0.1*gridsize, y+0.1*gridsize, z+0.1*gridsize, -1, 1, 1, 24);
-        }
+        var gridsize = obj_game.gridsize;
+        draw_set_color(c_white);
+        d3d_draw_ellipsoid(x-0.1*gridsize, y-0.1*gridsize, z-0.1*gridsize, x+0.1*gridsize, y+0.1*gridsize, z+0.1*gridsize, -1, 1, 1, 24);
         break;
     case 1:
         //Bomb
-        if (os_get_config()!="OEM") {
-            var gridsize = obj_game.gridsize;
-            draw_set_color(c_orange);
-            d3d_draw_ellipsoid(x-0.1*gridsize, y-0.1*gridsize, z-0.1*gridsize, x+0.1*gridsize, y+0.1*gridsize, z+0.1*gridsize, -1, 1, 1, 24);
-        }
+        var gridsize = obj_game.gridsize;
+        draw_set_color(c_orange);
+        d3d_draw_ellipsoid(x-0.1*gridsize, y-0.1*gridsize, z-0.1*gridsize, x+0.1*gridsize, y+0.1*gridsize, z+0.1*gridsize, -1, 1, 1, 24);
         break;
     case 2:
         //Ripple animation
-        if (draw_on==true &amp;&amp; os_get_config()!="OEM") {
+        if (draw_on==true) {
             var gridsize = obj_game.gridsize;
             d3d_transform_set_identity();
             var scale = 1/8;
