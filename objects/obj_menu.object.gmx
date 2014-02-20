@@ -25,9 +25,9 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>option_fullscreen = false;
-option_width = 1280;
-option_height = 720;
+            <string>option_fullscreen = true;
+option_width = 1920;
+option_height = 1080;
 option_username = "Steve";
 option_port = 43520;
 
@@ -63,7 +63,8 @@ scrwidth = option_width;
 scrheight = option_height;
 scrfull = option_fullscreen;
 
-surface_resize(application_surface, option_width, option_height)
+window_set_size(scrwidth, scrheight);
+window_set_fullscreen(scrfull);
 
 hscale = scrheight/sprite_get_height(spr_menubck);
 wscale = scrwidth/sprite_get_width(spr_menubck);
@@ -92,8 +93,6 @@ for (var i=0; i&lt;160; i++) global.key += string(irandom(9));
 
 //To execute
 instance_create(0, 0, obj_network);
-
-room_goto(rm_resize);
 </string>
           </argument>
         </arguments>
@@ -205,6 +204,7 @@ if (lastmenu!=menu) {
           <argument>
             <kind>1</kind>
             <string>globalvar scrwidth, scrheight;
+
 //Draw background
 draw_sprite_ext(spr_menubck, 0, scrwidth/2-sprite_get_width(spr_menubck)*scale/2, scrheight/2-sprite_get_height(spr_menubck)*scale/2, scale, scale, 0, c_white, 1);
 
@@ -278,7 +278,7 @@ for (i=0; i&lt;ds_list_size(_x); i+=1) {
         <arguments>
           <argument>
             <kind>11</kind>
-            <room>rm_resize</room>
+            <room>&lt;undefined&gt;</room>
           </argument>
         </arguments>
       </action>

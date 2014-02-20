@@ -108,7 +108,6 @@ switch (type) {
         break;
     case 4:
         //Other player
-        live = 1;
         break;
 }
 </string>
@@ -258,7 +257,9 @@ switch (type) {
             instance_destroy();
         }
         break;
-        
+    case 4:
+        //Other player
+        break;
 }
 </string>
           </argument>
@@ -315,6 +316,9 @@ switch (type) {
             //draw_circle(0,0,min(i/5, 20), true);
             d3d_transform_set_identity();
         }
+        break;
+    case 4:
+        //Other player
         break;
 }
 </string>

@@ -1,4 +1,4 @@
-///maze_draw_map(maze,x,y,w,h,gridperc,color,width,color,r);
+///maze_draw_map(maze,x,y,w,h,gridperc,color,width);
 var maze, mazewidth, mazeheight, gridsizex, gridsizey, walldistx, walldisty, col;
 maze = argument0;
 mazewidth = ds_grid_width(maze);
@@ -7,10 +7,8 @@ gridsizex = argument3/mazewidth;
 gridsizey = argument4/mazeheight;
 walldistx = gridsizex*(1-argument5)/2;
 walldisty = gridsizey*(1-argument5)/2;
-col = argument8;
-col = argument9;
 col = draw_get_color();
-draw_set_color(c_white);
+draw_set_color(argument6);
 
 for (var i=0; i<mazewidth; i++) {
     for (var j=0; j<mazeheight; j++) {

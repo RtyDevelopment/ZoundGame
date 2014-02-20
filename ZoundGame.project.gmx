@@ -72,10 +72,10 @@
     <object>objects\obj_menu</object>
     <object>objects\obj_execonpress</object>
     <object>objects\obj_gameobject</object>
+    <object>objects\obj_hud</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\rm_game</room>
-    <room>rooms\rm_resize</room>
   </rooms>
   <constants number="20">
     <constant name="MSG_GETIP">2</constant>
