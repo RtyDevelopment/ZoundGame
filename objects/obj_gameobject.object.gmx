@@ -56,10 +56,14 @@ if (type==-1) instance_destroy();
 start = true;
 ///
 switch (type) {
-    case 0:
-        //Ball
     case 1:
         //Bomb
+        timer = 0;
+        times = 0;
+        show = true;
+        tswitch = 8;
+    case 0:
+        //Ball
         spd = 0.0245;
         z = 5;
         ///
@@ -77,9 +81,11 @@ switch (type) {
         draw_on = true;
     case 3:
         //Sound object
-        //SoundConstants
+        //SoundConstants (Start at the end to not to have to recreate the array again)
+        snd_list_length[6] = 0;
+        snd_list[6,0] = snd_ball_explode;
         snd_list_length[5] = 2;
-        snd_list[5,2] = snd_move_wall_2; //Start at the end to not to have to recreate the array again
+        snd_list[5,2] = snd_move_wall_2; 
         snd_list[5,1] = snd_move_wall_1;
         snd_list[5,0] = snd_move_wall_0;
         snd_list_length[4] = 3;
@@ -136,10 +142,32 @@ switch (type) {
 if (start==false) exit;
 ///
 switch (type) {
-    case 0:
-        //Ball
     case 1:
         //Bomb
+        timer++;
+        if (timer==tswitch) {
+            timer = 0;
+            show ^= true;
+            if (show==true) {
+                times++;
+                if (times==10) {
+                    times = 0;
+                    tswitch -= 3;
+                    if (tswitch&lt;=1) {
+                        with (instance_create(x, y, obj_gameobject)) {
+                            type = 2;
+                            z = 0;
+                            x_vec = 0;
+                            z_vec = 0;
+                            sndtype = 6;
+                        }
+                        instance_destroy();
+                    }
+                }
+            }
+        }
+    case 0:
+        //Ball
         var gridsize = obj_game.gridsize;
         var wallperc = obj_game.wallperc;
         var gridperc = obj_game.gridperc;
@@ -298,7 +326,7 @@ switch (type) {
     case 1:
         //Bomb
         var gridsize = obj_game.gridsize;
-        draw_set_color(c_orange);
+        if (show==true) draw_set_color(c_orange); else draw_set_color(c_black);
         d3d_draw_ellipsoid(x-0.1*gridsize, y-0.1*gridsize, z-0.1*gridsize, x+0.1*gridsize, y+0.1*gridsize, z+0.1*gridsize, -1, 1, 1, 24);
         break;
     case 2:
