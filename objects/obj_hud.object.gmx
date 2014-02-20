@@ -27,6 +27,9 @@
             <kind>1</kind>
             <string>livelist = ds_list_create();
 namelist = ds_list_create();
+collist = ds_list_create();
+xlist = ds_list_create();
+ylist = ds_list_create();
 </string>
           </argument>
         </arguments>
@@ -51,6 +54,9 @@ namelist = ds_list_create();
             <kind>1</kind>
             <string>ds_list_destroy(livelist);
 ds_list_destroy(namelist);
+ds_list_destroy(collist);
+ds_list_destroy(xlist);
+ds_list_destroy(ylist);
 </string>
           </argument>
         </arguments>
@@ -75,14 +81,23 @@ ds_list_destroy(namelist);
             <kind>1</kind>
             <string>ds_list_clear(livelist);
 ds_list_clear(namelist);
+ds_list_clear(collist);
+ds_list_clear(xlist);
+ds_list_clear(ylist);
 
 ds_list_add(livelist, obj_game.live);
 ds_list_add(namelist, "Self");
+ds_list_add(collist, make_color_rgb(0, 120, 255));
+ds_list_add(xlist, -1);
+ds_list_add(ylist, -1);
 
 with (obj_gameobject) {
     if (type==4) {
         ds_list_add(other.livelist, live);
         ds_list_add(other.namelist, name);
+        ds_list_add(other.collist, color);
+        ds_list_add(other.xlist, x);
+        ds_list_add(other.ylist, y);
     }
 }
 </string>
@@ -120,16 +135,20 @@ draw_triangle(cx+lengthdir_x(10, dir+90), cy+lengthdir_y(10, dir+90), cx+lengthd
 
 draw_set_alpha(1);
 for (var i=0; i&lt;ds_list_size(livelist); i++) {
-    var life, name;
+    var life, name, color;
     life = ds_list_find_value(livelist, i)*150;
     name = ds_list_find_value(namelist, i);
+    color = ds_list_find_value(collist, i);
     
-    draw_line_width(30, 5+i*35, 5, (i+1)*35, 3);
-    draw_line_width(180, 5+i*35, 155, (i+1)*35, 3);
-    draw_line_width(30, 5+i*35, 180, 5+i*35, 3);
-    draw_line_width(5, (i+1)*35, 155, (i+1)*35, 3);
-    draw_triangle(5, (i+1)*35, 30, 5+i*35, 5+life, (i+1)*35, 0);
-    draw_triangle(30, 5+i*35, 5+life, (i+1)*35, 30+life, 5+i*35, 0);
+    draw_set_color(color);
+    draw_triangle(5,    (i+1)*35,  5+25,   10+i*35,   5+life,  (i+1)*35,  0);
+    draw_triangle(5+25, 10+i*35,   5+life, (i+1)*35,  30+life, 10+i*35,   0);
+    
+    draw_set_color(make_color_rgb(0, 120, 255));
+    draw_line_width(30,  10+i*35,   5,   (i+1)*35, 3);
+    draw_line_width(180, 10+i*35,   155, (i+1)*35, 3);
+    draw_line_width(30,  10+i*35,   180, 10+i*35,  3);
+    draw_line_width(5,   (i+1)*35,  155, (i+1)*35, 3);
     
     draw_set_color(c_white);
     draw_set_font(fnt_default);
@@ -169,20 +188,11 @@ var scale = 1/(power(2, obj_game.gridsize*0.7));
 d3d_transform_add_scaling(scale, scale, scale);
 d3d_transform_add_translation(obj_game.x+lengthdir_x(0.5*obj_game.gridsize,obj_game.direction), obj_game.y+lengthdir_y(0.5*obj_game.gridsize,obj_game.direction), 0.2*obj_game.gridsize);
 draw_surface(obj_game.surf, 0-surface_get_width(obj_game.surf)/2, 0-surface_get_height(obj_game.surf)/2);
-xlist = ds_list_create();
-ylist = ds_list_create();
-with (obj_gameobject) {
-    if (type==4) {
-        ds_list_add(other.xlist, x);
-        ds_list_add(other.ylist, y);
-    }
-}
-draw_set_color(c_white);
-for (var i=0; i&lt;ds_list_size(xlist); i++) {
+
+for (var i=1; i&lt;ds_list_size(xlist); i++) {
+    draw_set_color(ds_list_find_value(collist, i));
     draw_circle(ds_list_find_value(xlist, i)/(obj_game.w*obj_game.gridsize)*(obj_game.w*obj_game.surfsize)-(obj_game.w*obj_game.surfsize)/2, ds_list_find_value(ylist, i)/(obj_game.h*obj_game.gridsize)*(obj_game.h*obj_game.surfsize)-(obj_game.h*obj_game.surfsize)/2, 0.1*obj_game.surfsize, 0);
 }
-ds_list_destroy(xlist);
-ds_list_destroy(ylist);
 d3d_transform_set_identity();
 d3d_set_hidden(true);
 </string>
