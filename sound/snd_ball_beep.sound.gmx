@@ -2,7 +2,7 @@
 <sound>
   <kind>0</kind>
   <extension>.wav</extension>
-  <origname>Bom.wav</origname>
+  <origname>Piep.wav</origname>
   <effects>0</effects>
   <volume>
     <volume>1</volume>
@@ -18,15 +18,15 @@
     <sampleRate>44100</sampleRate>
   </sampleRates>
   <types>
-    <type>2</type>
     <type>0</type>
+    <type>2</type>
   </types>
   <bitDepths>
     <bitDepth>16</bitDepth>
     <bitDepth>16</bitDepth>
   </bitDepths>
   <preload>-1</preload>
-  <data>snd_ball_explode.wav</data>
+  <data>snd_ball_beep.wav</data>
   <compressed>1</compressed>
   <streamed>0</streamed>
   <uncompressOnLoad>1</uncompressOnLoad>

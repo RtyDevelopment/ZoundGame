@@ -61,11 +61,11 @@ switch (type) {
         timer = 0;
         times = 0;
         show = true;
-        tswitch = 8;
+        tswitch = 5;
     case 0:
         //Ball
         spd = 0.0245;
-        z = 5;
+        z = 6;
         ///
         first = true;
         calcspd = spd*obj_game.gridsize;
@@ -82,6 +82,8 @@ switch (type) {
     case 3:
         //Sound object
         //SoundConstants (Start at the end to not to have to recreate the array again)
+        snd_list_length[7] = 0;
+        snd_list[7,0] = snd_ball_beep;
         snd_list_length[6] = 0;
         snd_list[6,0] = snd_ball_explode;
         snd_list_length[5] = 2;
@@ -149,10 +151,15 @@ switch (type) {
             timer = 0;
             show ^= true;
             if (show==true) {
+                with (instance_create(x, y, obj_gameobject)) {
+                    type = 3;
+                    sndtype = 7;
+                    z = other.z;
+                }
                 times++;
                 if (times==10) {
                     times = 0;
-                    tswitch -= 3;
+                    tswitch -= 2;
                     if (tswitch&lt;=1) {
                         with (instance_create(x, y, obj_gameobject)) {
                             type = 2;
