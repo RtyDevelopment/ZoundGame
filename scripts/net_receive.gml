@@ -8,21 +8,29 @@
 **  -2: OPENP2PNET implementation is outdated
 ** any: Unknown OPENP2PNET Message, return value is message type
 */
-globalvar net_key, net_name;
-globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
-globalvar net_msglist, net_idcounter;
-globalvar net_lanserver, net_pubserver;
-var recvlist, recvip, recvport, recvsocket, recvmsg, recvtype, recvkey, recvtokey, recvsignature, recvtime, recvhash, datalist, datastart;
-
-show_debug_message("////////////////");
-var curmap, lastmap;
-curmap = ds_map_find_first(async_load);
-lastmap = ds_map_find_last(async_load);
-while (curmap!=lastmap) {
-    show_debug_message(string(curmap)+": "+string(ds_map_find_value(async_load, curmap)));
-    curmap = ds_map_find_next(async_load, curmap);
-}
-show_debug_message(string(curmap)+": "+string(ds_map_find_value(async_load, curmap)));
+globalvar net_vars;
+var net_key;
+var net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+var net_msglist, net_idcounter;
+var net_lanserver, net_pubserver;
+//Download vars
+net_key =               ds_map_find_value(net_vars, "net_key");
+net_peer_id =           ds_map_find_value(net_vars, "net_peer_id");
+net_peer_key =          ds_map_find_value(net_vars, "net_peer_key");
+net_peer_ip =           ds_map_find_value(net_vars, "net_peer_ip");
+net_peer_port =         ds_map_find_value(net_vars, "net_peer_port");
+net_peer_nettype =      ds_map_find_value(net_vars, "net_peer_nettype");
+net_peer_name =         ds_map_find_value(net_vars, "net_peer_name");
+net_peer_ping =         ds_map_find_value(net_vars, "net_peer_ping");
+net_peer_lastping =     ds_map_find_value(net_vars, "net_peer_lastping");
+net_peer_pingrecv =     ds_map_find_value(net_vars, "net_peer_pingrecv");
+net_peer_type =         ds_map_find_value(net_vars, "net_peer_type");
+net_peer_socket =       ds_map_find_value(net_vars, "net_peer_socket");
+net_msglist =           ds_map_find_value(net_vars, "net_msglist");
+net_idcounter =         ds_map_find_value(net_vars, "net_idcounter");
+net_lanserver =         ds_map_find_value(net_vars, "net_lanserver");
+net_pubserver =         ds_map_find_value(net_vars, "net_pubserver");
+var recvlist, recvip, recvport, recvsocket, recvmsg, recvtype, recvkey, recvname, recvtokey, recvsignature, recvtime, recvhash, datalist, datastart;
 
 recvlist = argument1;
 if (string_copy(ds_list_find_value(recvlist, 0), 1, 12)!="[OPENP2PNET]") return -1;
@@ -43,41 +51,6 @@ for (i=6; i<ds_list_size(recvlist); i++) {
 }
 recvhash = sha1_string_unicode(hashstr);
 datastart = 8;
-/*
-file = file_text_open_append(working_directory+"\export.txt");
-file_text_writeln(file);
-file_text_write_string(file, "////////////////");
-file_text_writeln(file);
-file_text_write_string(file, "// / RECV / ");
-file_text_writeln(file);
-file_text_write_string(file, "// IP     : "+recvip);
-file_text_writeln(file);
-file_text_write_string(file, "// Port   : "+string(recvport));
-file_text_writeln(file);
-file_text_write_string(file, "// Message: "+string(recvmsg));
-file_text_writeln(file);
-file_text_write_string(file, "// NetType: "+string(recvtype));
-file_text_writeln(file);
-file_text_write_string(file, "// Key    : "+sha1_string_unicode(recvkey));
-file_text_writeln(file);
-file_text_write_string(file, "// Name   : "+recvname);
-file_text_writeln(file);
-file_text_write_string(file, "// ToKey  : "+sha1_string_unicode(recvtokey));
-file_text_writeln(file);
-file_text_writeln(file);
-file_text_write_string(file, "// / PKGDATA / ");
-file_text_writeln(file);
-for (var i=8; i<ds_list_size(recvlist); i++) {
-    var val = ds_list_find_value(recvlist, i);
-    if (val!="") {
-        file_text_write_string(file, "// "+val);
-        file_text_writeln(file);
-    }
-}
-file_text_write_string(file, "////////////////");
-file_text_writeln(file);
-file_text_close(file);
-//*/
 
 //Check signature
 //pass
@@ -90,6 +63,7 @@ switch (recvtype) {
             if (argument0==network_type_connect) {
                 //Connect
                 net_idcounter++;
+                ds_map_replace(net_vars, "net_idcounter", net_idcounter);
                 ds_list_add(net_peer_id, net_idcounter);
                 ds_list_add(net_peer_key, "?");
                 ds_list_add(net_peer_ip, recvip);
@@ -132,6 +106,7 @@ switch (recvtype) {
             while (socket<0) socket = network_create_socket(network_socket_udp);
             recvsocket = socket;
             net_idcounter++;
+            ds_map_replace(net_vars, "net_idcounter", net_idcounter);
             ds_list_add(net_peer_id, net_idcounter);
             ds_list_add(net_peer_key, recvkey);
             ds_list_add(net_peer_ip, recvip);

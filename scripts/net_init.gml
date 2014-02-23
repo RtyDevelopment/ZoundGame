@@ -1,8 +1,9 @@
 ///net_init(name,key,port,connectiontype,interval);
-globalvar net_name, net_key, net_lanport, net_pubport, net_pubtype, net_interval;
-globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
-globalvar net_cmdlist, net_msglist, net_idcounter;
-globalvar net_devicemaster, net_devicemasterid, net_lanserver, net_pubserver, net_timer;
+globalvar net_vars;
+var net_name, net_key, net_lanport, net_pubport, net_pubtype, net_interval;
+var net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+var net_cmdlist, net_msglist, net_idcounter;
+var net_devicemaster, net_devicemasterid, net_lanserver, net_pubserver, net_timer;
 
 net_name = argument0;
 net_key = argument1;
@@ -50,26 +51,30 @@ if (net_lanserver<0) {
 
 net_timer = 0;
 
-/*
-var file;
-file = file_text_open_write(working_directory+"\export.txt");
-file_text_write_string(file, " # VARS # ");
-file_text_writeln(file);
-file_text_write_string(file, "Time started: "+get_time_string());
-file_text_writeln(file);
-file_text_write_string(file, "DevMaster   : "+string(net_devicemaster));
-file_text_writeln(file);
-file_text_write_string(file, "LAN port    : "+string(net_lanport));
-file_text_writeln(file);
-file_text_write_string(file, "Public port : "+string(net_pubport));
-file_text_writeln(file);
-file_text_write_string(file, "Public type : "+string(net_pubtype));
-file_text_writeln(file);
-file_text_write_string(file, "Name        : "+net_name);
-file_text_writeln(file);
-file_text_write_string(file, "Key         : "+sha1_string_unicode(net_key));
-file_text_writeln(file);
-file_text_write_string(file, " # PACKAGES # ");
-file_text_writeln(file);
-file_text_close(file);
-//*/
+net_vars = ds_map_create()
+ds_map_add(net_vars, "net_name", net_name);
+ds_map_add(net_vars, "net_key", net_key);
+ds_map_add(net_vars, "net_lanport", net_lanport);
+ds_map_add(net_vars, "net_pubport", net_pubport);
+ds_map_add(net_vars, "net_pubtype", net_pubtype);
+ds_map_add(net_vars, "net_interval", net_interval);
+ds_map_add(net_vars, "net_peer_id", net_peer_id);
+ds_map_add(net_vars, "net_peer_key", net_peer_key);
+ds_map_add(net_vars, "net_peer_ip", net_peer_ip);
+ds_map_add(net_vars, "net_peer_port", net_peer_port);
+ds_map_add(net_vars, "net_peer_nettype", net_peer_nettype);
+ds_map_add(net_vars, "net_peer_name", net_peer_name);
+ds_map_add(net_vars, "net_peer_ping", net_peer_ping);
+ds_map_add(net_vars, "net_peer_lastping", net_peer_lastping);
+ds_map_add(net_vars, "net_peer_pingrecv", net_peer_pingrecv);
+ds_map_add(net_vars, "net_peer_type", net_peer_type);
+ds_map_add(net_vars, "net_peer_socket", net_peer_socket);
+ds_map_add(net_vars, "net_cmdlist", net_cmdlist);
+ds_map_add(net_vars, "net_msglist", net_msglist);
+ds_map_add(net_vars, "net_idcounter", net_idcounter);           //R/W
+ds_map_add(net_vars, "net_devicemaster", net_devicemaster);
+ds_map_add(net_vars, "net_devicemasterid", net_devicemasterid);
+ds_map_add(net_vars, "net_lanserver", net_lanserver);
+ds_map_add(net_vars, "net_pubserver", net_pubserver);
+ds_map_add(net_vars, "net_timer", net_timer);                   //R/W
+

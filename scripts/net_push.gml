@@ -1,7 +1,21 @@
 ///net_push(conntype,url,port,key,msgtype,datalist)
-//globalvar net_sockets, net_sockets_id, net_sockets_ip, net_sockets_port, net_sockets_type, net_sockets_acc;
-globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
-globalvar net_idcounter;
+globalvar net_vars;
+var net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+var net_idcounter;
+net_peer_id =           ds_map_find_value(net_vars, "net_peer_id");
+net_peer_key =          ds_map_find_value(net_vars, "net_peer_key");
+net_peer_ip =           ds_map_find_value(net_vars, "net_peer_ip");
+net_peer_port =         ds_map_find_value(net_vars, "net_peer_port");
+net_peer_nettype =      ds_map_find_value(net_vars, "net_peer_nettype");
+net_peer_name =         ds_map_find_value(net_vars, "net_peer_name");
+net_peer_ping =         ds_map_find_value(net_vars, "net_peer_ping");
+net_peer_lastping =     ds_map_find_value(net_vars, "net_peer_lastping");
+net_peer_pingrecv =     ds_map_find_value(net_vars, "net_peer_pingrecv");
+net_peer_type =         ds_map_find_value(net_vars, "net_peer_type");
+net_peer_socket =       ds_map_find_value(net_vars, "net_peer_socket");
+net_idcounter =         ds_map_find_value(net_vars, "net_idcounter");
+net_idcounter++;
+ds_map_replace(net_vars, "net_idcounter", net_idcounter);
 var socket, conntype, url, port, key;
 socket = -1;
 conntype = argument0;
@@ -37,7 +51,6 @@ if (argument0==NET_TCP || argument0==NET_TCPRAW) {
         i++;
     }
 }
-net_idcounter++;
 ds_list_add(net_peer_id, net_idcounter);
 ds_list_add(net_peer_key, key);
 ds_list_add(net_peer_ip, url);

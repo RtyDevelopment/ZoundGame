@@ -1,6 +1,25 @@
-globalvar net_name, net_pubport, net_devicemaster, net_devicemasterid, net_interval, net_timer;
-globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
-globalvar net_cmdlist;
+globalvar net_vars;
+var net_interval;
+var net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+var net_cmdlist;
+var net_devicemaster, net_devicemasterid, net_timer;
+//Download vars
+net_interval =          ds_map_find_value(net_vars, "net_interval");
+net_peer_id =           ds_map_find_value(net_vars, "net_peer_id");
+net_peer_key =          ds_map_find_value(net_vars, "net_peer_key");
+net_peer_ip =           ds_map_find_value(net_vars, "net_peer_ip");
+net_peer_port =         ds_map_find_value(net_vars, "net_peer_port");
+net_peer_nettype =      ds_map_find_value(net_vars, "net_peer_nettype");
+net_peer_name =         ds_map_find_value(net_vars, "net_peer_name");
+net_peer_ping =         ds_map_find_value(net_vars, "net_peer_ping");
+net_peer_lastping =     ds_map_find_value(net_vars, "net_peer_lastping");
+net_peer_pingrecv =     ds_map_find_value(net_vars, "net_peer_pingrecv");
+net_peer_type =         ds_map_find_value(net_vars, "net_peer_type");
+net_peer_socket =       ds_map_find_value(net_vars, "net_peer_socket");
+net_cmdlist =           ds_map_find_value(net_vars, "net_cmdlist");
+net_devicemaster =      ds_map_find_value(net_vars, "net_devicemaster");
+net_devicemasterid =    ds_map_find_value(net_vars, "net_devicemasterid");
+net_timer =             ds_map_find_value(net_vars, "net_timer");
 var outputlist = ds_list_create();
 
 if (net_timer==0) {
@@ -47,3 +66,6 @@ if (ds_list_size(net_cmdlist)>0) {
 }
 
 ds_list_destroy(outputlist);
+
+//Upload vars
+ds_map_replace(net_vars, "net_timer", net_timer);

@@ -1,9 +1,23 @@
 ///net_send(id,msgtype,datalist)
-globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
-globalvar net_key, net_name;
-var destkey, msgtype, datalist;
-var conntype, url, port, socket, buffer, str_;
+globalvar net_vars;
+var net_key, net_name;
+var net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+net_key =               ds_map_find_value(net_vars, "net_key");
+net_name =              ds_map_find_value(net_vars, "net_name");
+net_peer_id =           ds_map_find_value(net_vars, "net_peer_id");
+net_peer_key =          ds_map_find_value(net_vars, "net_peer_key");
+net_peer_ip =           ds_map_find_value(net_vars, "net_peer_ip");
+net_peer_port =         ds_map_find_value(net_vars, "net_peer_port");
+net_peer_nettype =      ds_map_find_value(net_vars, "net_peer_nettype");
+net_peer_name =         ds_map_find_value(net_vars, "net_peer_name");
+net_peer_ping =         ds_map_find_value(net_vars, "net_peer_ping");
+net_peer_lastping =     ds_map_find_value(net_vars, "net_peer_lastping");
+net_peer_pingrecv =     ds_map_find_value(net_vars, "net_peer_pingrecv");
+net_peer_type =         ds_map_find_value(net_vars, "net_peer_type");
+net_peer_socket =       ds_map_find_value(net_vars, "net_peer_socket");
 
+var destid, pos, msgtype, datalist;
+var destkey, conntype, url, port, socket, buffer, str_;
 destid = argument0;
 pos = ds_list_find_index(net_peer_id, destid);
 if (pos<0) return -1;
@@ -15,34 +29,6 @@ port = ds_list_find_value(net_peer_port, pos);
 socket = ds_list_find_value(net_peer_socket, pos);
 msgtype = argument1;
 datalist = argument2;
-/*
-file = file_text_open_append(working_directory+"\export.txt");
-file_text_writeln(file);
-file_text_write_string(file, "////////////////");
-file_text_writeln(file);
-file_text_write_string(file, "// / SEND / ");
-file_text_writeln(file);
-file_text_write_string(file, "// IP     : "+string(url));
-file_text_writeln(file);
-file_text_write_string(file, "// Port   : "+string(port));
-file_text_writeln(file);
-file_text_write_string(file, "// Message: "+string(msgtype));
-file_text_writeln(file);
-file_text_write_string(file, "// NetType: "+string(conntype));
-file_text_writeln(file);
-file_text_write_string(file, "// ToKey  : "+sha1_string_unicode(destkey));
-file_text_writeln(file);
-file_text_writeln(file);
-file_text_write_string(file, "// / PKGDATA / ");
-file_text_writeln(file);
-for (var i=0; i<ds_list_size(datalist); i++) {
-    file_text_write_string(file, "// "+string(ds_list_find_value(datalist, i)));
-    file_text_writeln(file);
-}
-file_text_write_string(file, "////////////////");
-file_text_writeln(file);
-file_text_close(file);
-//*/
 
 switch (conntype) {
     case NET_BROADCAST:

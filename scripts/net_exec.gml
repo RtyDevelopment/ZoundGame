@@ -7,7 +7,9 @@
 **
 **
 */
-globalvar net_cmds;
+globalvar net_vars;
+var net_cmds;
+net_cmds =              ds_map_find_value(net_vars, "net_cmds");
 if (argument_count>=1) {
     var list;
     list = ds_list_create();

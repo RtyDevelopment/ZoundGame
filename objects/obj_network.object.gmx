@@ -31,17 +31,57 @@ ipstr = ""
 publicip = "?";
 lanip = "?";
 
-pubhash = "-1";
-lanhash = "-1";
+getip_salt = "";
+for (var i=0; i&lt;20; i++) getip_salt += string(irandom(9));
+getip_salt = sha1_string_unicode(getip_salt);
 
 net_init(global.name, global.key, global.port, network_socket_tcp, room_speed*3);
 
-timer = 0;
-
-//OutputBuffer
-dataoutputlist = ds_list_create();
-//InputBuffer
-datainputlist = ds_list_create();
+alarm[0] = 1;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="2" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>var update = false;
+if (lanip=="?") {
+    var dataoutputlist, hash;
+    dataoutputlist = ds_list_create();
+    hash = sha1_string_unicode(string(random(100000)*random(100000))+string(random(100000)));
+    ds_list_add(dataoutputlist, hash);
+    ds_list_add(dataoutputlist, sha1_string_unicode(hash+getip_salt));
+    net_push(NET_BROADCAST, -1, ds_map_find_value(global.net_vars, "net_lanport"), global.key, MSG_GETIP, dataoutputlist);
+    ds_list_destroy(dataoutputlist);
+    update = true;
+}
+if (publicip=="?") {
+    var dataoutputlist, hash;
+    dataoutputlist = ds_list_create();
+    hash = sha1_string_unicode(string(random(100000)*random(100000))+string(random(100000)));
+    ds_list_add(dataoutputlist, hash);
+    ds_list_add(dataoutputlist, sha1_string_unicode(hash+getip_salt));
+    net_push(NET_HTTP, "http://gmhtml5host.net46.net/gmnet.php", -1, "1a2b3c4e5f67890", MSG_GETIP, dataoutputlist);
+    ds_list_destroy(dataoutputlist);
+    //update = true;
+}
+if (update==true) alarm[0] = room_speed;
 </string>
           </argument>
         </arguments>
@@ -82,29 +122,44 @@ datainputlist = ds_list_create();
         }
         if (port=="") port = 43520;
         
-        ds_list_clear(dataoutputlist);
         var _id = net_connect(NET_TCP, ip, port);
+        var dataoutputlist = ds_list_create();
         net_send(_id, MSG_INFOREQUEST, dataoutputlist);
+        ds_list_destroy(dataoutputlist);
         ipstr = "";
     }
 }
-//////////////////////////////////////
-if (timer==0) {
-    if (lanip=="?") {
-        lanhash = string(random(100000)*random(100000))+string(random(100000));
-        ds_list_clear(dataoutputlist);
-        ds_list_add(dataoutputlist, md5_string_unicode(lanhash));
-        net_push(NET_BROADCAST, -1, global.net_lanport, global.net_key, MSG_GETIP, dataoutputlist);
-    }
-    if (publicip=="?") {
-        pubhash = string(random(100000)*random(100000))+string(random(100000));
-        ds_list_clear(dataoutputlist);
-        ds_list_add(dataoutputlist, md5_string_unicode(pubhash));
-        net_push(NET_HTTP, "http://gmhtml5host.net46.net/gmnet.php", -1, "1a2b3c4e5f67890", MSG_GETIP, dataoutputlist);
-    }
-    timer = 90;
+//Update all NET variables within this object
+if (debug_mode==true) {
+    globalvar net_vars;
+    net_name =              ds_map_find_value(net_vars, "net_name");
+    net_key =               ds_map_find_value(net_vars, "net_key");
+    net_lanport =           ds_map_find_value(net_vars, "net_lanport");
+    net_pubport =           ds_map_find_value(net_vars, "net_pubport");
+    net_pubtype =           ds_map_find_value(net_vars, "net_pubtype");
+    net_interval =          ds_map_find_value(net_vars, "net_interval");
+    net_peer_id =           ds_map_find_value(net_vars, "net_peer_id");
+    net_peer_key =          ds_map_find_value(net_vars, "net_peer_key");
+    net_peer_ip =           ds_map_find_value(net_vars, "net_peer_ip");
+    net_peer_port =         ds_map_find_value(net_vars, "net_peer_port");
+    net_peer_nettype =      ds_map_find_value(net_vars, "net_peer_nettype");
+    net_peer_name =         ds_map_find_value(net_vars, "net_peer_name");
+    net_peer_ping =         ds_map_find_value(net_vars, "net_peer_ping");
+    net_peer_lastping =     ds_map_find_value(net_vars, "net_peer_lastping");
+    net_peer_pingrecv =     ds_map_find_value(net_vars, "net_peer_pingrecv");
+    net_peer_type =         ds_map_find_value(net_vars, "net_peer_type");
+    net_peer_socket =       ds_map_find_value(net_vars, "net_peer_socket");
+    net_cmdlist =           ds_map_find_value(net_vars, "net_cmdlist");
+    net_msglist =           ds_map_find_value(net_vars, "net_msglist");
+    net_idcounter =         ds_map_find_value(net_vars, "net_idcounter");
+    net_devicemaster =      ds_map_find_value(net_vars, "net_devicemaster");
+    net_devicemasterid =    ds_map_find_value(net_vars, "net_devicemasterid");
+    net_lanserver =         ds_map_find_value(net_vars, "net_lanserver");
+    net_pubserver =         ds_map_find_value(net_vars, "net_pubserver");
+    net_timer =             ds_map_find_value(net_vars, "net_timer");
 }
-timer--;
+
+//////////////////////////////////////
 net_run();
 </string>
           </argument>
@@ -128,47 +183,35 @@ net_run();
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>ds_list_clear(datainputlist);
+            <string>var datainputlist = ds_list_create();
 if (ds_map_find_value(async_load, "type")==network_type_data) net_buffer_to_dslist(ds_map_find_value(async_load, "buffer"), datainputlist);
-var recvip = ds_map_find_value(async_load, "ip");
-var recvport = ds_map_find_value(async_load, "port");
-var recvtype = ds_map_find_value(async_load, "type");
-var recvsocket;
+var recvip, recvport, recvtype, recvsocket, recvmsgid;
+recvip = ds_map_find_value(async_load, "ip");
+recvport = ds_map_find_value(async_load, "port");
+recvtype = ds_map_find_value(async_load, "type");
 if (recvtype==network_type_data) {
     recvsocket = ds_map_find_value(async_load, "id");
 } else {
     recvsocket = ds_map_find_value(async_load, "socket");
 }
-var recvmsgid = net_receive(recvtype, datainputlist, recvip, recvport, recvsocket);
+recvmsgid = net_receive(recvtype, datainputlist, recvip, recvport, recvsocket);
 if (recvmsgid&gt;1) {
-    recvlist = datainputlist;//recvlist = argument1;
-    //if (string_copy(ds_list_find_value(recvlist, 0), 1, 12)!="[OPENP2PNET]") return -1;
-    //if (string_delete(ds_list_find_value(recvlist, 0), 1, 12)!="[v0.1.0.0]") return -2;
-    //recvip = argument2;
-    //recvport = argument3;
-    //recvsocket = argument4;
+    var recvlist, recvmsg, recvtype, recvkey, recvname, datastart;
+    recvlist = datainputlist;
     recvmsg = real(ds_list_find_value(recvlist, 1));
     recvtype = real(ds_list_find_value(recvlist, 2));
     recvkey = ds_list_find_value(recvlist, 3);
     recvname = ds_list_find_value(recvlist, 4);
-    //recvsignature = ds_list_find_value(recvlist, 5);
-    //recvtokey = ds_list_find_value(recvlist, 6);
-    //recvtime = ds_list_find_value(recvlist, 7);
-    //var hashstr = "";
-    //for (i=6; i&lt;ds_list_size(recvlist); i++) {
-        //hashstr += ds_list_find_value(recvlist, i);
-    //}
-    //recvhash = sha1_string_unicode(hashstr);
     datastart = 8;
-    switch (recvmsgid) {
+    switch (recvmsg) {
         case MSG_GETIP:
-            if (ds_list_find_value(datainputlist, datastart)==md5_string_unicode(lanhash) &amp;&amp; lanhash!="-1") {
+            if (sha1_string_unicode(ds_list_find_value(datainputlist, datastart)+getip_salt)==ds_list_find_value(datainputlist, datastart+1) &amp;&amp; lanip=="?") {
                 lanip = recvip;
-                lanhash = "-1";
             }
         break;
     }
 }
+ds_list_destroy(datainputlist);
 </string>
           </argument>
         </arguments>
@@ -191,118 +234,28 @@ if (recvmsgid&gt;1) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>ds_list_clear(datainputlist);
+            <string>var datainputlist = ds_list_create();
 net_string_to_dslist(ds_map_find_value(async_load, "result"), datainputlist);
-//for (var i=0;i&lt;ds_list_size(datainputlist);i++) show_debug_message(ds_list_find_value(datainputlist, i));
-var recvurl = ds_map_find_value(async_load, "url");
-var recvmsgid = net_receive(network_type_data, datainputlist, recvurl, 80, -1);
+var recvip, recvmsgid;
+recvip = ds_map_find_value(async_load, "url");
+recvmsgid = net_receive(network_type_data, datainputlist, recvip, 80, -1);
 if (recvmsgid&gt;1) {
-    recvlist = datainputlist;//recvlist = argument1;
-    //if (string_copy(ds_list_find_value(recvlist, 0), 1, 12)!="[OPENP2PNET]") return -1;
-    //if (string_delete(ds_list_find_value(recvlist, 0), 1, 12)!="[v0.1.0.0]") return -2;
-    //recvip = argument2;
-    //recvport = argument3;
-    //recvsocket = argument4;
+    var recvlist, recvmsg, recvtype, recvkey, recvname, datastart;
+    recvlist = datainputlist;
     recvmsg = real(ds_list_find_value(recvlist, 1));
     recvtype = real(ds_list_find_value(recvlist, 2));
     recvkey = ds_list_find_value(recvlist, 3);
     recvname = ds_list_find_value(recvlist, 4);
-    //recvsignature = ds_list_find_value(recvlist, 5);
-    //recvtokey = ds_list_find_value(recvlist, 6);
-    //recvtime = ds_list_find_value(recvlist, 7);
-    //var hashstr = "";
-    //for (i=6; i&lt;ds_list_size(recvlist); i++) {
-        //hashstr += ds_list_find_value(recvlist, i);
-    //}
-    //recvhash = sha1_string_unicode(hashstr);
     datastart = 8;
-    switch (recvmsgid) {
+    switch (recvmsg) {
         case MSG_GETIP:
-            if (ds_list_find_value(datainputlist, datastart)==md5_string_unicode(pubhash) &amp;&amp; pubhash!="-1") {
-                publicip = ds_list_find_value(datainputlist, datastart+1);
-                pubhash = "-1";
+            if (sha1_string_unicode(ds_list_find_value(datainputlist, datastart)+getip_salt)==ds_list_find_value(datainputlist, datastart+1) &amp;&amp; publicip=="?") {
+                publicip = ds_list_find_value(datainputlist, datastart+2);
             }
         break;
     }
 }
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="7" enumb="3">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/*
-globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
-var file;
-file = file_text_open_append(working_directory+"\export.txt");
-file_text_writeln(file);
-file_text_write_string(file, " # PEERS # ");
-for (var i=0; i&lt;ds_list_size(net_peer_id); i++) {
-    file_text_write_string(file, " - "+string(i)+": - ");
-    file_text_writeln(file);
-    file_text_write_string(file, "ID       : ");
-    file_text_write_string(file, string(ds_list_find_value(net_peer_id, i)));
-    file_text_writeln(file);
-    file_text_write_string(file, "Key      : ");
-    file_text_write_string(file, sha1_string_unicode(ds_list_find_value(net_peer_key, i)));
-    file_text_writeln(file);
-    file_text_write_string(file, "IP       : ");
-    file_text_write_string(file, ds_list_find_value(net_peer_ip, i));
-    file_text_writeln(file);
-    file_text_write_string(file, "Port     : ");
-    file_text_write_string(file, string(ds_list_find_value(net_peer_port, i)));
-    file_text_writeln(file);
-    file_text_write_string(file, "NetType  : ");
-    switch (ds_list_find_value(net_peer_nettype, i)) {
-        case NET_UDP:
-            file_text_write_string(file, "UDP"); break;
-        case NET_TCP:
-            file_text_write_string(file, "TCP_GM"); break;
-        case NET_TCPRAW:
-            file_text_write_string(file, "TCP"); break;
-        case NET_BROADCAST:
-            file_text_write_string(file, "UDP_BC"); break;
-        case NET_HTTP:
-            file_text_write_string(file, "HTTP"); break;
-    }
-    file_text_writeln(file);
-    file_text_write_string(file, "Name     : ");
-    file_text_write_string(file, ds_list_find_value(net_peer_name, i));
-    file_text_writeln(file);
-    file_text_write_string(file, "Ping     : ");
-    file_text_write_string(file, string(ds_list_find_value(net_peer_ping, i)));
-    file_text_writeln(file);
-    file_text_write_string(file, "Last ping: ");
-    file_text_write_string(file, string(ds_list_find_value(net_peer_lastping, i)));
-    file_text_writeln(file);
-    file_text_write_string(file, "Last pong: ");
-    file_text_write_string(file, string(ds_list_find_value(net_peer_pingrecv, i)));
-    file_text_writeln(file);
-    file_text_write_string(file, "Save type: ");
-    file_text_write_string(file, string(ds_list_find_value(net_peer_type, i)));
-    file_text_writeln(file);
-    file_text_write_string(file, "Socket   : ");
-    file_text_write_string(file, string(ds_list_find_value(net_peer_socket, i)));
-    file_text_writeln(file);
-}
-file_text_close(file);
-//*/
+ds_list_destroy(datainputlist);
 </string>
           </argument>
         </arguments>
@@ -325,7 +278,19 @@ file_text_close(file);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>globalvar net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+            <string>globalvar net_vars;
+var net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+net_peer_id =           ds_map_find_value(net_vars, "net_peer_id");
+net_peer_key =          ds_map_find_value(net_vars, "net_peer_key");
+net_peer_ip =           ds_map_find_value(net_vars, "net_peer_ip");
+net_peer_port =         ds_map_find_value(net_vars, "net_peer_port");
+net_peer_nettype =      ds_map_find_value(net_vars, "net_peer_nettype");
+net_peer_name =         ds_map_find_value(net_vars, "net_peer_name");
+net_peer_ping =         ds_map_find_value(net_vars, "net_peer_ping");
+net_peer_lastping =     ds_map_find_value(net_vars, "net_peer_lastping");
+net_peer_pingrecv =     ds_map_find_value(net_vars, "net_peer_pingrecv");
+net_peer_type =         ds_map_find_value(net_vars, "net_peer_type");
+net_peer_socket =       ds_map_find_value(net_vars, "net_peer_socket");
 globalvar alphamulti;
 
 if (global.networkmenu==true) {
