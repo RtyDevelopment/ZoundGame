@@ -1,4 +1,4 @@
-///maze_create(w,h)
+///maze_create(w,h,seed)
 //Copyright Jasper Weyne (c) 2013
 
 /*
@@ -12,7 +12,10 @@ NESW
 1=connection
 0=wall
 */
-var grid, listx1, listy1, listx2, listy2, minconn, maxconn, setconn, wallno, connlist, index, first, selfx, selfy, searchx, searchy;
+var rndseed, grid, listx1, listy1, listx2, listy2, minconn, maxconn, setconn, wallno, connlist, index, first, selfx, selfy, searchx, searchy;
+
+rndseed = random_get_seed();
+random_set_seed(argument2);
 
 grid = ds_grid_create(argument0, argument1);
 listx1 = ds_list_create();
@@ -282,5 +285,7 @@ ds_list_destroy(listy1);
 ds_list_destroy(listx2);
 ds_list_destroy(listy2);
 //*/
+
+random_set_seed(rndseed);
 
 return grid;

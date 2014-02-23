@@ -31,7 +31,7 @@ gridsize = 10;
 surfsize = 50;
 wallperc = 0.2;
 
-maze = maze_create(w, h);
+maze = maze_create(w, h, 12345678);
 surf = -1;
 col1 = -1;
 col2 = -1;
@@ -318,32 +318,6 @@ d3d_draw_floor(0,0,-0.1,w*gridsize,h*gridsize,-0.1,-1,1,1);
 d3d_draw_floor(0,0,gridsize,w*gridsize,h*gridsize,gridsize,-1,1,1);
 draw_set_color(c_black);
 maze_draw_d3d(maze,0,0,0,w*gridsize,h*gridsize,gridsize,surface_get_texture(col2), surface_get_texture(col2), gridperc);
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="10" enumb="38">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>maze = maze_create(w, h);
-surface_free(surf);
-x = (irandom(w-1)+0.5)*gridsize;
-y = (irandom(h-1)+0.5)*gridsize;
 </string>
           </argument>
         </arguments>
