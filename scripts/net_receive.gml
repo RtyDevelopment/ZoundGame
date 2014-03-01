@@ -45,11 +45,6 @@ recvname = ds_list_find_value(recvlist, 4);
 recvsignature = ds_list_find_value(recvlist, 5);
 recvtokey = ds_list_find_value(recvlist, 6);
 recvtime = ds_list_find_value(recvlist, 7);
-var hashstr = "";
-for (i=6; i<ds_list_size(recvlist); i++) {
-    hashstr += ds_list_find_value(recvlist, i);
-}
-recvhash = sha1_string_unicode(hashstr);
 datastart = 8;
 
 //Check signature
@@ -127,7 +122,35 @@ switch (recvtype) {
         break;
 }
 
+//Modify vars when forwared message
+while (recvmsg==MSG_FORWARD) {
+    recvip = ds_list_find_value(recvlist, datastart);
+    recvport = real(ds_list_find_value(recvlist, datastart+1));
+    if (string_copy(ds_list_find_value(recvlist, datastart+2), 1, 12)!="[OPENP2PNET]") return -1;
+    if (string_delete(ds_list_find_value(recvlist, datastart+2), 1, 12)!="[v0.1.0.0]") return -2;
+    recvmsg = real(ds_list_find_value(recvlist, datastart+3));
+    recvtype = real(ds_list_find_value(recvlist, datastart+4));
+    recvkey = ds_list_find_value(recvlist, datastart+5);
+    recvname = ds_list_find_value(recvlist, datastart+6);
+    recvsignature = ds_list_find_value(recvlist, datastart+7);
+    recvtokey = ds_list_find_value(recvlist, datastart+8);
+    recvtime = ds_list_find_value(recvlist, datastart+9);
+    datastart += 10;
+    
+    //Add current peer in chain
+    if (ds_list_find_index(net_peer_key, recvkey)<0) net_connect(recvtype, recvip, recvport);
+    
+    //Quit when no message provided
+    if (ds_list_size(recvlist)==datastart) return 1;
+}
+
 //Discard when known
+var hashstr = "";
+for (i=datastart-2; i<ds_list_size(recvlist); i++) {
+    hashstr += ds_list_find_value(recvlist, i);
+}
+recvhash = sha1_string_unicode(hashstr);
+
 if (ds_list_find_index(net_msglist, recvhash)>=0) {
     return 1;
 } else {
@@ -140,7 +163,7 @@ if (recvtokey!=net_key && recvtokey!="-1") {
     ds_list_copy(fwdlist, recvlist);
     ds_list_insert(fwdlist, 0, recvip);
     ds_list_insert(fwdlist, 1, recvport);
-    if (ds_list_find_index(net_peer_key, recvtokey)==-1) {
+    if (ds_list_find_index(net_peer_key, recvtokey)==-1 || ds_list_find_index(net_peer_key, recvkey)<0) {
         for (var i=0; i<ds_list_size(net_peer_key); i++) {
             net_send(ds_list_find_value(net_peer_id, i), MSG_FORWARD, fwdlist);
         }
@@ -160,17 +183,6 @@ switch (recvmsg) {
         ///SERVER
         net_disconnect(recvkey);
         return 1;
-    
-    case MSG_FORWARD:
-        var fwdip, fwdport, fwdlist, fwdrecv;
-        fwdip = ds_list_find_value(recvlist, datastart);
-        fwdport = real(ds_list_find_value(recvlist, datastart+1));
-        fwdlist = ds_list_create();
-        ds_list_copy(fwdlist, recvlist);
-        repeat (datastart+2) ds_list_delete(fwdlist, 0);
-        fwdrecv = net_receive(network_type_data, fwdlist, fwdip, fwdport, recvsocket);
-        ds_list_destroy(fwdlist);
-        return fwdrecv;
         
     case MSG_PING:
         ///SERVER
