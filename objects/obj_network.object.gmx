@@ -35,7 +35,7 @@ getip_salt = "";
 for (var i=0; i&lt;20; i++) getip_salt += string(irandom(9));
 getip_salt = sha1_string_unicode(getip_salt);
 
-net_init(global.name, global.key, global.port, network_socket_tcp, room_speed*3);
+net_init(global.name, global.key, global.port, network_socket_tcp, room_speed*3, 128);
 
 alarm[0] = 1;
 </string>
