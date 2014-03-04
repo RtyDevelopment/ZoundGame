@@ -25,9 +25,9 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>option_fullscreen = true;
-option_width = 1920;
-option_height = 1080;
+            <string>option_fullscreen = false;
+option_width = 1280;
+option_height = 720;
 option_username = "Steve";
 option_port = 43520;
 
@@ -63,6 +63,7 @@ scrwidth = option_width;
 scrheight = option_height;
 scrfull = option_fullscreen;
 
+surface_resize(application_surface, scrwidth, scrheight);
 window_set_size(scrwidth, scrheight);
 window_set_fullscreen(scrfull);
 
@@ -255,7 +256,7 @@ for (i=0; i&lt;ds_list_size(_x); i+=1) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (menu!=0) menu = 0;
+            <string>if (menu!=0 &amp;&amp; os_get_config()!="NETONLY") menu = 0;
 </string>
           </argument>
         </arguments>
