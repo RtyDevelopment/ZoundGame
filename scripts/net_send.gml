@@ -1,7 +1,7 @@
 ///net_send(netInst,id,msgtype,datalist)
 var net_vars = argument0;
 var net_name, net_key, net_pubport, net_pubtype, net_compatible;
-var net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+var net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_lan, net_peer_socket;
 var net_lanserver;
 net_name =              ds_map_find_value(net_vars, "net_name");
 net_key =               ds_map_find_value(net_vars, "net_key");
@@ -17,7 +17,7 @@ net_peer_name =         ds_map_find_value(net_vars, "net_peer_name");
 net_peer_ping =         ds_map_find_value(net_vars, "net_peer_ping");
 net_peer_lastping =     ds_map_find_value(net_vars, "net_peer_lastping");
 net_peer_pingrecv =     ds_map_find_value(net_vars, "net_peer_pingrecv");
-net_peer_type =         ds_map_find_value(net_vars, "net_peer_type");
+net_peer_lan =          ds_map_find_value(net_vars, "net_peer_lan");
 net_peer_socket =       ds_map_find_value(net_vars, "net_peer_socket");
 net_lanserver =         ds_map_find_value(net_vars, "net_lanserver");
 
@@ -34,7 +34,7 @@ if (destid<0) {
     buffer_seek(buffer, buffer_seek_start, 0);
     buffer_write(buffer, buffer_string, "[OPENP2PNET]");
     buffer_write(buffer, buffer_string, "msg:"+string(msgtype));
-    buffer_write(buffer, buffer_string, "type:"+string(NET_BROADCAST));
+    buffer_write(buffer, buffer_string, "type:"+string("NET_BROADCAST"));
     buffer_write(buffer, buffer_string, "srckey:"+net_key);
     buffer_write(buffer, buffer_string, "srcname:"+net_name);
     buffer_write(buffer, buffer_string, "srcport:"+string(net_pubport));
@@ -48,7 +48,7 @@ if (destid<0) {
     }
     network_send_broadcast(net_lanserver, port, buffer, buffer_get_size(buffer));
     buffer_delete(buffer);
-} else if (destid==0 || ds_list_find_index(net_peer_id, destid)<0) {
+} else if (destid==0 || ds_list_find_index(net_peer_id, destid)<0 || ds_list_find_value(net_peer_ip, ds_list_find_index(net_peer_id, destid))=="?") {
     for (pos=0; pos<ds_list_size(net_peer_id); pos++) {
         destkey = ds_list_find_value(net_peer_key, pos);
         conntype = ds_list_find_value(net_peer_nettype, pos);
@@ -56,9 +56,9 @@ if (destid<0) {
         port = ds_list_find_value(net_peer_port, pos);
         socket = ds_list_find_value(net_peer_socket, pos);
         switch (conntype) {
-            case NET_UDP:
-            case NET_TCP:
-            case NET_TCPRAW:
+            case "NET_UDP":
+            case "NET_TCP":
+            case "NET_TCPRAW":
                 buffer = buffer_create(1, buffer_grow, 1);
                 buffer_seek(buffer, buffer_seek_start, 0);
                 buffer_write(buffer, buffer_string, "[OPENP2PNET]");
@@ -76,17 +76,17 @@ if (destid<0) {
                     buffer_write(buffer, buffer_string, string(ds_list_find_value(datalist, i)));
                 }
                 switch (conntype) {
-                    case NET_UDP:
+                    case "NET_UDP":
                         network_send_udp(socket, url, port, buffer, buffer_get_size(buffer));
                         break;
-                    case NET_TCP:
-                    case NET_TCPRAW:
+                    case "NET_TCP":
+                    case "NET_TCPRAW":
                         network_send_packet(socket, buffer, buffer_get_size(buffer));
                         break;
                 }
                 buffer_delete(buffer);
                 break;
-            case NET_HTTP:
+            case "NET_HTTP":
                 str_ = "[OPENP2PNET]"+chr(10);
                 str_ += "msg:"+string(msgtype)+chr(10);
                 str_ += "type:"+string(conntype)+chr(10);
@@ -114,9 +114,9 @@ if (destid<0) {
     port = ds_list_find_value(net_peer_port, pos);
     socket = ds_list_find_value(net_peer_socket, pos);
     switch (conntype) {
-        case NET_UDP:
-        case NET_TCP:
-        case NET_TCPRAW:
+        case "NET_UDP":
+        case "NET_TCP":
+        case "NET_TCPRAW":
             buffer = buffer_create(1, buffer_grow, 1);
             buffer_seek(buffer, buffer_seek_start, 0);
             buffer_write(buffer, buffer_string, "[OPENP2PNET]");
@@ -134,17 +134,17 @@ if (destid<0) {
                 buffer_write(buffer, buffer_string, string(ds_list_find_value(datalist, i)));
             }
             switch (conntype) {
-                case NET_UDP:
+                case "NET_UDP":
                     network_send_udp(socket, url, port, buffer, buffer_get_size(buffer));
                     break;
-                case NET_TCP:
-                case NET_TCPRAW:
+                case "NET_TCP":
+                case "NET_TCPRAW":
                     network_send_packet(socket, buffer, buffer_get_size(buffer));
                     break;
             }
             buffer_delete(buffer);
             break;
-        case NET_HTTP:
+        case "NET_HTTP":
             str_ = "[OPENP2PNET]"+chr(10)
             str_ += "msg:"+string(msgtype)+chr(10);
             str_ += "type:"+string(conntype)+chr(10);

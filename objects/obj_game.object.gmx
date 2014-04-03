@@ -25,8 +25,8 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>w = 10;
-h = 10;
+            <string>w = 5;
+h = 5;
 gridsize = 10;
 surfsize = 50;
 wallperc = 0.2;

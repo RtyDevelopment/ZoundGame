@@ -35,7 +35,8 @@ getip_salt = "";
 for (var i=0; i&lt;20; i++) getip_salt += string(irandom(9));
 getip_salt = sha1_string_unicode(getip_salt);
 
-net_init(global.name, global.key, global.port, network_socket_tcp, room_speed*3, 128);
+netInst = net_init(global.name, global.key, global.port, network_socket_tcp, room_speed*3, 128, "");
+server = net_connect(netInst, "NET_HTTP", "1a2b3c4e5f67890", "http://gmhtml5host.net46.net/gmnet.php", 80);
 
 alarm[0] = 1;
 </string>
@@ -67,7 +68,7 @@ if (lanip=="?") {
     hash = sha1_string_unicode(string(random(100000)*random(100000))+string(random(100000)));
     ds_list_add(dataoutputlist, hash);
     ds_list_add(dataoutputlist, sha1_string_unicode(hash+getip_salt));
-    net_push(NET_BROADCAST, -1, ds_map_find_value(global.net_vars, "net_lanport"), global.key, MSG_GETIP, dataoutputlist);
+    net_send(netInst, -6510, "MSG_GETIP", dataoutputlist);
     ds_list_destroy(dataoutputlist);
     update = true;
 }
@@ -77,9 +78,9 @@ if (publicip=="?") {
     hash = sha1_string_unicode(string(random(100000)*random(100000))+string(random(100000)));
     ds_list_add(dataoutputlist, hash);
     ds_list_add(dataoutputlist, sha1_string_unicode(hash+getip_salt));
-    net_push(NET_HTTP, "http://gmhtml5host.net46.net/gmnet.php", -1, "1a2b3c4e5f67890", MSG_GETIP, dataoutputlist);
+    net_send(netInst, server, "MSG_GETIP", dataoutputlist);
     ds_list_destroy(dataoutputlist);
-    //update = true;
+    update = true;
 }
 if (update==true) alarm[0] = room_speed;
 </string>
@@ -111,56 +112,45 @@ if (update==true) alarm[0] = room_speed;
     }
     if (keyboard_check_pressed(vk_backspace)==true) ipstr = string_delete(ipstr, string_length(ipstr), 1);
     if (keyboard_check_released(vk_enter)==true) {
+        var key = "";
         var ip = "";
         var port = "";
         var tellswitch = 0;
         for (var i=1; i&lt;=string_length(ipstr); i++) {
             var char = string_char_at(ipstr, i);
-            if (char==":") tellswitch = 1; else {
-                if (tellswitch==0) ip += char; else port += string_digits(char);
+            if (char=="@") {
+                tellswitch = 1;
+            } else if (char==":") {
+                tellswitch = 2; 
+            } else {
+                switch (tellswitch) {
+                    case 0:
+                        key += char;
+                        break;
+                    case 1:
+                        ip += char;
+                        break;
+                    default:
+                        port += string_digits(char);
+                }
             }
         }
-        if (port=="") port = 43520;
+        if (port=="") port = 43520; else port = real(port);
         
-        var _id = net_connect(NET_TCP, ip, port);
+        var _id;
+        if (tellswitch==0) {
+            _id = net_connect(netInst, "NET_TCP", key);
+        } else {
+            _id = net_connect(netInst, "NET_TCP", key, ip, port);
+        }
         var dataoutputlist = ds_list_create();
-        net_send(_id, MSG_INFOREQUEST, dataoutputlist);
+        net_send(netInst, _id, "MSG_CONN", dataoutputlist);
         ds_list_destroy(dataoutputlist);
         ipstr = "";
     }
 }
-//Update all NET variables within this object
-if (debug_mode==true) {
-    globalvar net_vars;
-    net_name =              ds_map_find_value(net_vars, "net_name");
-    net_key =               ds_map_find_value(net_vars, "net_key");
-    net_lanport =           ds_map_find_value(net_vars, "net_lanport");
-    net_pubport =           ds_map_find_value(net_vars, "net_pubport");
-    net_pubtype =           ds_map_find_value(net_vars, "net_pubtype");
-    net_interval =          ds_map_find_value(net_vars, "net_interval");
-    net_peer_id =           ds_map_find_value(net_vars, "net_peer_id");
-    net_peer_key =          ds_map_find_value(net_vars, "net_peer_key");
-    net_peer_ip =           ds_map_find_value(net_vars, "net_peer_ip");
-    net_peer_port =         ds_map_find_value(net_vars, "net_peer_port");
-    net_peer_nettype =      ds_map_find_value(net_vars, "net_peer_nettype");
-    net_peer_name =         ds_map_find_value(net_vars, "net_peer_name");
-    net_peer_ping =         ds_map_find_value(net_vars, "net_peer_ping");
-    net_peer_lastping =     ds_map_find_value(net_vars, "net_peer_lastping");
-    net_peer_pingrecv =     ds_map_find_value(net_vars, "net_peer_pingrecv");
-    net_peer_type =         ds_map_find_value(net_vars, "net_peer_type");
-    net_peer_socket =       ds_map_find_value(net_vars, "net_peer_socket");
-    net_cmdlist =           ds_map_find_value(net_vars, "net_cmdlist");
-    net_msglist =           ds_map_find_value(net_vars, "net_msglist");
-    net_idcounter =         ds_map_find_value(net_vars, "net_idcounter");
-    net_devicemaster =      ds_map_find_value(net_vars, "net_devicemaster");
-    net_devicemasterid =    ds_map_find_value(net_vars, "net_devicemasterid");
-    net_lanserver =         ds_map_find_value(net_vars, "net_lanserver");
-    net_pubserver =         ds_map_find_value(net_vars, "net_pubserver");
-    net_timer =             ds_map_find_value(net_vars, "net_timer");
-}
 
-//////////////////////////////////////
-net_run();
+net_run(netInst);
 </string>
           </argument>
         </arguments>
@@ -185,7 +175,7 @@ net_run();
             <kind>1</kind>
             <string>var datainputlist = ds_list_create();
 if (ds_map_find_value(async_load, "type")==network_type_data) net_buffer_to_dslist(ds_map_find_value(async_load, "buffer"), datainputlist);
-var recvip, recvport, recvtype, recvsocket, recvmsgid;
+var recvip, recvport, recvtype, recvsocket, returnval;
 recvip = ds_map_find_value(async_load, "ip");
 recvport = ds_map_find_value(async_load, "port");
 recvtype = ds_map_find_value(async_load, "type");
@@ -194,23 +184,35 @@ if (recvtype==network_type_data) {
 } else {
     recvsocket = ds_map_find_value(async_load, "socket");
 }
-recvmsgid = net_receive(recvtype, datainputlist, recvip, recvport, recvsocket);
-if (recvmsgid&gt;1) {
-    var recvlist, recvmsg, recvtype, recvkey, recvname, datastart;
-    recvlist = datainputlist;
-    recvmsg = real(ds_list_find_value(recvlist, 1));
-    recvtype = real(ds_list_find_value(recvlist, 2));
-    recvkey = ds_list_find_value(recvlist, 3);
-    recvname = ds_list_find_value(recvlist, 4);
-    datastart = 8;
-    switch (recvmsg) {
-        case MSG_GETIP:
-            if (sha1_string_unicode(ds_list_find_value(datainputlist, datastart)+getip_salt)==ds_list_find_value(datainputlist, datastart+1) &amp;&amp; lanip=="?") {
-                lanip = recvip;
-            }
+returnval = net_receive(netInst, recvtype, datainputlist, recvip, recvport, recvsocket);
+switch (returnval) {
+    case 1:
+        ds_list_destroy(datainputlist);
+        exit;
+    case 0:
+        ds_list_destroy(datainputlist);
+        exit;
+    default:
+        var recvheaders, recvlist, datastart, recvtype, recvkey, recvtime, recvmsg,;
+        recvheaders = abs(returnval);
+        recvlist = datainputlist;
+        recvip = ds_map_find_value(recvheaders, "ip");
+        recvport = ds_map_find_value(recvheaders, "port");
+        datastart = ds_map_find_value(recvheaders, "datastart");
+        recvtype = ds_map_find_value(recvheaders, "type");
+        recvkey = ds_map_find_value(recvheaders, "srckey");
+        recvtime = ds_map_find_value(recvheaders, "time");
+        if (ds_map_exists(recvheaders, "msg")==true) recvmsg = ds_map_find_value(recvheaders, "msg"); else recvmsg = "default";
+        switch (recvmsg) {
+            case "MSG_GETIP":
+                if (sha1_string_unicode(ds_list_find_value(datainputlist, datastart)+getip_salt)==ds_list_find_value(datainputlist, datastart+1) &amp;&amp; lanip=="?") {
+                    lanip = recvip;
+                }
+            break;
+        }
         break;
-    }
 }
+ds_map_destroy(recvheaders);
 ds_list_destroy(datainputlist);
 </string>
           </argument>
@@ -236,25 +238,38 @@ ds_list_destroy(datainputlist);
             <kind>1</kind>
             <string>var datainputlist = ds_list_create();
 net_string_to_dslist(ds_map_find_value(async_load, "result"), datainputlist);
-var recvip, recvmsgid;
+var recvip, returnval;
 recvip = ds_map_find_value(async_load, "url");
-recvmsgid = net_receive(network_type_data, datainputlist, recvip, 80, -1);
-if (recvmsgid&gt;1) {
-    var recvlist, recvmsg, recvtype, recvkey, recvname, datastart;
-    recvlist = datainputlist;
-    recvmsg = real(ds_list_find_value(recvlist, 1));
-    recvtype = real(ds_list_find_value(recvlist, 2));
-    recvkey = ds_list_find_value(recvlist, 3);
-    recvname = ds_list_find_value(recvlist, 4);
-    datastart = 8;
-    switch (recvmsg) {
-        case MSG_GETIP:
-            if (sha1_string_unicode(ds_list_find_value(datainputlist, datastart)+getip_salt)==ds_list_find_value(datainputlist, datastart+1) &amp;&amp; publicip=="?") {
-                publicip = ds_list_find_value(datainputlist, datastart+2);
-            }
+returnval = net_receive(netInst, network_type_data, datainputlist, recvip, 80, -1);
+switch (returnval) {
+    case 1:
+        ds_list_destroy(datainputlist);
+        exit;
+    case 0:
+        ds_list_destroy(datainputlist);
+        exit;
+    default:
+        var recvheaders, recvlist, recvport, datastart, recvtype, recvkey, recvtime, recvmsg,;
+        recvheaders = abs(returnval);
+        recvlist = datainputlist;
+        recvip = ds_map_find_value(recvheaders, "ip");
+        recvport = ds_map_find_value(recvheaders, "port");
+        datastart = ds_map_find_value(recvheaders, "datastart");
+        recvtype = ds_map_find_value(recvheaders, "type");
+        recvkey = ds_map_find_value(recvheaders, "srckey");
+        recvtime = ds_map_find_value(recvheaders, "time");
+        if (ds_map_exists(recvheaders, "msg")==true) recvmsg = ds_map_find_value(recvheaders, "msg"); else recvmsg = "default";
+        switch (recvmsg) {
+            case "MSG_GETIP":
+                if (sha1_string_unicode(ds_list_find_value(datainputlist, datastart)+getip_salt)==ds_list_find_value(datainputlist, datastart+1) &amp;&amp; publicip=="?") {
+                    publicip = ds_list_find_value(datainputlist, datastart+2);
+                    net_disconnect(netInst, server);
+                }
+            break;
+        }
         break;
-    }
 }
+ds_map_destroy(recvheaders);
 ds_list_destroy(datainputlist);
 </string>
           </argument>
@@ -278,19 +293,18 @@ ds_list_destroy(datainputlist);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>globalvar net_vars;
-var net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
-net_peer_id =           ds_map_find_value(net_vars, "net_peer_id");
-net_peer_key =          ds_map_find_value(net_vars, "net_peer_key");
-net_peer_ip =           ds_map_find_value(net_vars, "net_peer_ip");
-net_peer_port =         ds_map_find_value(net_vars, "net_peer_port");
-net_peer_nettype =      ds_map_find_value(net_vars, "net_peer_nettype");
-net_peer_name =         ds_map_find_value(net_vars, "net_peer_name");
-net_peer_ping =         ds_map_find_value(net_vars, "net_peer_ping");
-net_peer_lastping =     ds_map_find_value(net_vars, "net_peer_lastping");
-net_peer_pingrecv =     ds_map_find_value(net_vars, "net_peer_pingrecv");
-net_peer_type =         ds_map_find_value(net_vars, "net_peer_type");
-net_peer_socket =       ds_map_find_value(net_vars, "net_peer_socket");
+            <string>var net_peer_id, net_peer_key, net_peer_ip, net_peer_port, net_peer_nettype, net_peer_name, net_peer_ping, net_peer_lastping, net_peer_pingrecv, net_peer_type, net_peer_socket;
+net_peer_id =           ds_map_find_value(netInst, "net_peer_id");
+net_peer_key =          ds_map_find_value(netInst, "net_peer_key");
+net_peer_ip =           ds_map_find_value(netInst, "net_peer_ip");
+net_peer_port =         ds_map_find_value(netInst, "net_peer_port");
+net_peer_nettype =      ds_map_find_value(netInst, "net_peer_nettype");
+net_peer_name =         ds_map_find_value(netInst, "net_peer_name");
+net_peer_ping =         ds_map_find_value(netInst, "net_peer_ping");
+net_peer_lastping =     ds_map_find_value(netInst, "net_peer_lastping");
+net_peer_pingrecv =     ds_map_find_value(netInst, "net_peer_pingrecv");
+net_peer_type =         ds_map_find_value(netInst, "net_peer_type");
+net_peer_socket =       ds_map_find_value(netInst, "net_peer_socket");
 globalvar alphamulti;
 
 if (global.networkmenu==true) {
@@ -300,22 +314,24 @@ if (global.networkmenu==true) {
     draw_set_font(fnt_default);
     draw_set_alpha(0.6*alphamulti);
     draw_set_color(c_white);
-    draw_rectangle(30, 30, global.scrwidth-30, 70, 0);
+    draw_rectangle(30, 30, global.scrwidth-30, 90, 0);
     draw_set_color(c_black);
-    draw_rectangle(30, 30, global.scrwidth-30, 70, 1);
+    draw_rectangle(30, 30, global.scrwidth-30, 90, 1);
     draw_set_valign(fa_middle);
-    draw_text(40, 40, "IP: "+ipstr);
+    draw_text(40, 40, "Key@IP:port: "+ipstr);
     draw_set_color(c_dkgray);
     draw_text(40, 60, "Own address: "+publicip+" ("+lanip+")");
+    draw_set_color(c_dkgray);
+    draw_text(40, 80, "Own key: "+global.key);
     //Draw players
     for (var i=0; i&lt;ds_list_size(net_peer_id); i++) {
         draw_set_color(c_white);
-        draw_rectangle(30, 90+50*i, global.scrwidth-30, 140+50*i, 0);
+        draw_rectangle(30, 110+50*i, global.scrwidth-30, 160+50*i, 0);
         draw_set_color(c_black);
-        draw_rectangle(30, 90+50*i, global.scrwidth-30, 140+50*i, 1);
-        draw_text(40, 105+50*i, ds_list_find_value(net_peer_name, i)+" ("+string(ds_list_find_value(net_peer_ping, i))+" ms)");
+        draw_rectangle(30, 110+50*i, global.scrwidth-30, 160+50*i, 1);
+        draw_text(40, 125+50*i, ds_list_find_value(net_peer_name, i)+" ("+string(ds_list_find_value(net_peer_ping, i))+" ms)");
         draw_set_color(c_dkgray);
-        draw_text(40, 125+50*i, ds_list_find_value(net_peer_ip, i)+":"+string(ds_list_find_value(net_peer_port, i)));
+        draw_text(40, 145+50*i, ds_list_find_value(net_peer_ip, i)+":"+string(ds_list_find_value(net_peer_port, i)));
     }
 }
 </string>

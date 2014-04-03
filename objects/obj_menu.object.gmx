@@ -91,6 +91,7 @@ global.name = option_username;
 global.port = option_port;
 global.key = "";
 for (var i=0; i&lt;160; i++) global.key += string(irandom(9));
+global.key = sha1_string_unicode(global.key);
 
 //To execute
 instance_create(0, 0, obj_network);
