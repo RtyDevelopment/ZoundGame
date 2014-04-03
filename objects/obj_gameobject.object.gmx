@@ -62,6 +62,11 @@ switch (type) {
         times = 0;
         show = true;
         tswitch = 5;
+        with (instance_create(0, 0, obj_gameobject)) {
+            type = 5;
+            objid = other.id;
+            z = 0;
+        }
     case 0:
         //Ball
         spd = 0.0245;
@@ -117,6 +122,9 @@ switch (type) {
     case 4:
         //Other player
         break;
+    case 5:
+        //Bomb ground overlay
+        i = -room_speed/3;
 }
 </string>
           </argument>
@@ -295,6 +303,15 @@ switch (type) {
     case 4:
         //Other player
         break;
+    case 5:
+        //Bomb ground animation
+        if (instance_exists(objid)==true) {
+            x = objid.x;
+            y = objid.y;
+        } else if (i&lt;0) i=0;
+        if (i&gt;=0) i++;
+        if (i&gt;=room_speed) instance_destroy();
+        break;
 }
 </string>
           </argument>
@@ -355,6 +372,17 @@ switch (type) {
     case 4:
         //Other player
         break;
+    case 5:
+        var gridsize = obj_game.gridsize;
+        d3d_transform_set_identity();
+        var scale = 1/8;
+        d3d_transform_add_scaling(scale, scale, scale);
+        d3d_transform_add_translation(x, y, z+0.1);
+        draw_set_alpha(((room_speed-i)%room_speed)/room_speed);
+        draw_set_color(c_red);
+        //draw_circle_glow(0, 0, gridsize*(1/scale), 20, 5, c_red, c_red);
+        draw_circle(0, 0, gridsize*(1/scale), false);
+        d3d_transform_set_identity();
 }
 </string>
           </argument>
